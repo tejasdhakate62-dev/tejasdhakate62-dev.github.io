@@ -5,17 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tejas Dhakate | Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
-            background: #050505;
             overflow-x: hidden;
-            color: white;
             scroll-behavior: smooth;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
         #canvas-container {
@@ -23,63 +21,89 @@
             top: 0;
             left: 0;
             z-index: -1;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
         }
 
+        /* 🎛️ DYNAMIC THEME DEFINITIONS (Inspired by image_dc751c.jpg) */
+        body[data-theme="dark"] {
+            background-color: #0d0d0f;
+            color: #f8fafc;
+        }
+        body[data-theme="light"] {
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+
+        /* 🪟 FROSTED LIQUID GLASS COMPONENT SPEC SHEET */
         .glass {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(30px) saturate(160%);
+            -webkit-backdrop-filter: blur(30px) saturate(160%);
+            border-radius: 24px;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                        background 0.5s ease, 
+                        border-color 0.5s ease, 
+                        box-shadow 0.5s ease;
+        }
+        
+        body[data-theme="dark"] .glass {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1.5px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+        }
+        
+        body[data-theme="light"] .glass {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
+            border: 1px solid rgba(15, 23, 42, 0.05);
+            border-top: 1.5px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 30px 60px -15px rgba(100, 116, 139, 0.12), inset 0 1px 2px rgba(255, 255, 255, 0.4);
         }
 
         .glass:hover {
-            transform: translateY(-10px) rotateX(3deg) rotateY(3deg);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-6px) scale(1.005);
+        }
+        
+        body[data-theme="dark"] .glass:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        body[data-theme="light"] .glass:hover {
+            border-color: rgba(15, 23, 42, 0.15);
+            background: rgba(255, 255, 255, 0.55);
         }
 
-        .gradient-text {
-            background: linear-gradient(90deg, #60a5fa, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* Fully Curved Glass Pills */
+        .glass-pill {
+            border-radius: 9999px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        body[data-theme="dark"] .glass-pill {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #cbd5e1;
+        }
+        body[data-theme="light"] .glass-pill {
+            background: rgba(15, 23, 42, 0.03);
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            color: #334155;
+        }
+        .glass-pill:hover {
+            transform: scale(1.03);
+        }
+        body[data-theme="dark"] .glass-pill:hover { background: rgba(255, 255, 255, 0.1); color: white; }
+        body[data-theme="light"] .glass-pill:hover { background: rgba(15, 23, 42, 0.08); color: black; }
 
-        /* Fixed Social Sidebar */
-        .social-sidebar {
-            position: fixed;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            z-index: 100;
-        }
-
-        .social-icon {
-            width: 45px;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            transition: 0.3s;
-        }
-
-        .social-icon:hover {
-            background: rgba(96, 165, 250, 0.2);
-            border-color: #60a5fa;
-            transform: scale(1.1) translateX(5px);
-        }
+        /* Dynamic Text Colors */
+        body[data-theme="dark"] .main-title { color: white; }
+        body[data-theme="light"] .main-title { color: #0f172a; }
+        body[data-theme="dark"] .sub-title { color: #94a3b8; }
+        body[data-theme="light"] .sub-title { color: #475569; }
 
         .skill-bar {
             width: 0%;
-            transition: width 2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+            transition: width 2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .status-dot {
@@ -94,278 +118,282 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
             70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
     </style>
 </head>
-<body>
+<body data-theme="dark">
 
-    <div id="canvas-container"></div>
-
-    <div class="social-sidebar hidden lg:flex">
-        <a href="https://github.com/tejasdhakate62-dev" target="_blank" class="social-icon" title="GitHub">
-            <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.042-1.416-4.042-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-        </a>
-        <a href="https://www.linkedin.com/in/tejas-suresh-dhakate-ab3a22321/" target="_blank" class="social-icon" title="LinkedIn">
-            <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-        </a>
+    <!-- Chrome Reflection Canvas Background Container -->
+    <div id="canvas-container">
+        <canvas id="chrome-canvas"></canvas>
     </div>
 
-    <nav class="fixed top-0 w-full p-6 z-50 flex justify-between items-center px-10 glass">
+    <!-- Top Sticky Bar Navigation Layout -->
+    <nav class="fixed top-0 w-full p-5 z-50 flex justify-between items-center px-10 glass rounded-none border-t-0 border-l-0 border-r-0">
         <div class="text-xl font-bold tracking-tighter">TD.</div>
         <div class="flex items-center gap-6">
-            <div class="hidden sm:flex items-center px-4 py-1.5 glass rounded-full text-[10px] uppercase tracking-widest border border-emerald-500/30">
+            <div class="hidden sm:flex items-center px-4 py-1.5 glass rounded-full text-[10px] uppercase tracking-widest font-semibold sub-title">
                 <span class="status-dot"></span> Student At RTMNU Nagpur
             </div>
-            <div class="space-x-8 text-sm uppercase tracking-widest opacity-70 hidden md:flex">
+            <div class="space-x-8 text-sm font-medium tracking-wide sub-title hidden md:flex">
                 <a href="#about" class="hover:opacity-100 transition">About</a>
                 <a href="#education" class="hover:opacity-100 transition">Education</a>
                 <a href="#documents" class="hover:opacity-100 transition">Documents</a>
                 <a href="#projects" class="hover:opacity-100 transition">Projects</a>
             </div>
+            
+            <!-- 🌗 THEME TOGGLE RADIAL PILL BUTTON -->
+            <button onclick="toggleTheme()" class="px-4 py-2 glass-pill text-xs uppercase tracking-widest font-bold flex items-center gap-2">
+                <span id="theme-icon">☀️</span> <span id="theme-text">Light</span>
+            </button>
         </div>
     </nav>
 
+    <!-- Hero Section Matrix Layout -->
     <section class="relative min-h-screen flex items-center justify-center px-6 text-center">
-        <div class="glass p-12 rounded-[40px] max-w-4xl w-full relative overflow-hidden">
-            <h1 class="text-6xl md:text-8xl font-bold mb-4 tracking-tight">
-                Tejas <span class="gradient-text">Dhakate</span>
+        <div class="glass p-12 max-w-4xl w-full relative overflow-hidden">
+            <h1 class="text-6xl md:text-8xl font-bold mb-4 tracking-tight main-title">
+                Tejas Dhakate
             </h1>
-            <p class="text-lg md:text-xl opacity-60 mb-8 font-light leading-relaxed">
+            <p class="text-lg md:text-xl sub-title mb-8 font-light leading-relaxed">
                 Computer Engineering Student @ RTMNU Nagpur <br> 
                 UI Design & Android Development
             </p>
             <div class="flex flex-wrap justify-center gap-4">
-                <a href="https://github.com/tejasdhakate62-dev" target="_blank" class="px-8 py-3 bg-white/10 rounded-full border border-white/20 hover:bg-white/20 transition">View GitHub</a>
-                <a href="#contact" class="px-8 py-3 bg-white/5 rounded-full border border-white/10 hover:bg-white/10 transition">Let's Talk</a>
+                <a href="https://github.com/tejasdhakate62-dev" target="_blank" class="px-8 py-3 glass-pill text-sm font-semibold transition">View GitHub</a>
+                <a href="#contact" class="px-8 py-3 glass-pill text-sm font-semibold transition">Let's Talk</a>
             </div>
         </div>
     </section>
 
+    <!-- About Section Layer -->
     <section id="about" class="py-20 px-10">
         <div class="max-w-6xl mx-auto space-y-12">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div class="glass p-10 rounded-[30px]">
-                    <h2 class="text-3xl font-bold mb-6 gradient-text">The Journey</h2>
-                    <p class="opacity-80 font-light leading-relaxed mb-6">
+                <div class="glass p-10">
+                    <h2 class="text-3xl font-bold mb-6 main-title">The Journey</h2>
+                    <p class="sub-title font-light leading-relaxed mb-6">
                         I build technology that is powerful, intuitive, and most importantly, delivered ahead of schedule. My focus is bridging the gap between backend logic and beautiful frontend interfaces.
                     </p>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="p-4 bg-white/5 rounded-xl border border-white/10 text-center uppercase text-[10px] tracking-widest">Python</div>
-                        <div class="p-4 bg-white/5 rounded-xl border border-white/10 text-center uppercase text-[10px] tracking-widest">Java</div>
-                        <div class="p-4 bg-white/5 rounded-xl border border-white/10 text-center uppercase text-[10px] tracking-widest">XML</div>
-                        <div class="p-4 bg-white/5 rounded-xl border border-white/10 text-center uppercase text-[10px] tracking-widest">ML</div>
+                        <div class="p-4 glass text-center uppercase text-[10px] tracking-widest font-bold sub-title">Python</div>
+                        <div class="p-4 glass text-center uppercase text-[10px] tracking-widest font-bold sub-title">Java</div>
+                        <div class="p-4 glass text-center uppercase text-[10px] tracking-widest font-bold sub-title">XML</div>
+                        <div class="p-4 glass text-center uppercase text-[10px] tracking-widest font-bold sub-title">ML</div>
                     </div>
                 </div>
 
-                <div class="glass p-10 rounded-[30px]" id="skills-trigger">
-                    <h2 class="text-3xl font-bold mb-8 gradient-text">Proficiency</h2>
+                <div class="glass p-10" id="skills-trigger">
+                    <h2 class="text-3xl font-bold mb-8 main-title">Proficiency</h2>
                     <div class="space-y-6">
                         <div>
-                            <div class="flex justify-between text-xs mb-2 tracking-widest uppercase">Android (Java/XML) <span>95%</span></div>
-                            <div class="h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/10">
-                                <div class="skill-bar h-full bg-blue-500 shadow-[0_0_15px_#3b82f6]" data-width="95%"></div>
+                            <div class="flex justify-between text-xs mb-2 tracking-widest uppercase font-semibold sub-title">Android (Java/XML) <span>95%</span></div>
+                            <div class="h-2.5 bg-black/10 rounded-full overflow-hidden p-[2px] border border-white/10">
+                                <div class="skill-bar h-full bg-blue-500 rounded-full" data-width="95%"></div>
                             </div>
                         </div>
                         <div>
-                            <div class="flex justify-between text-xs mb-2 tracking-widest uppercase">Python & ML <span>90%</span></div>
-                            <div class="h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/10">
-                                <div class="skill-bar h-full bg-purple-500 shadow-[0_0_15px_#a855f7]" data-width="90%"></div>
+                            <div class="flex justify-between text-xs mb-2 tracking-widest uppercase font-semibold sub-title">Python & ML <span>90%</span></div>
+                            <div class="h-2.5 bg-black/10 rounded-full overflow-hidden p-[2px] border border-white/10">
+                                <div class="skill-bar h-full bg-indigo-500 rounded-full" data-width="90%"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass p-8 rounded-3xl text-center">
-                    <div class="text-2xl mb-4">⏱️</div>
-                    <h3 class="font-bold uppercase tracking-widest text-sm mb-2">Ahead of Schedule</h3>
-                    <p class="text-xs opacity-60 font-light leading-relaxed">I pride myself on beating deadlines to ensure quality testing and UI polishing.</p>
+    <!-- Education Roadmap Section -->
+    <section id="education" class="py-20 px-10 max-w-6xl mx-auto">
+        <h2 class="text-4xl font-bold mb-12 text-center main-title uppercase tracking-widest">Education</h2>
+        <div class="space-y-6">
+            <div class="glass p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-l-4 border-blue-500">
+                <div>
+                    <h3 class="text-xl font-bold main-title">B.Tech in Computer Engineering</h3>
+                    <p class="text-blue-500 text-sm font-semibold">Bapurao Deshmukh Engineering College, Sewagram</p>
+                    <p class="text-slate-400 text-xs uppercase tracking-wider mt-1">RTMNU Nagpur | 2021 — 2026</p>
                 </div>
-                <div class="glass p-8 rounded-3xl text-center">
-                    <div class="text-2xl mb-4">✍️</div>
-                    <h3 class="font-bold uppercase tracking-widest text-sm mb-2">Built for Simplicity</h3>
-                    <p class="text-xs opacity-60 font-light leading-relaxed">Clean, well-documented code designed to be "Easy to Learn" for everyone.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass p-8 border-l-4 border-purple-500">
+                    <h3 class="text-lg font-bold main-title">HSC (Science)</h3>
+                    <p class="text-purple-500 text-sm font-medium">Vidya Vikas College, Samudrapur</p>
+                    <p class="text-slate-400 text-xs mt-4 uppercase tracking-wider">Completed March 2021</p>
                 </div>
-                <div class="glass p-8 rounded-3xl text-center">
-                    <div class="text-2xl mb-4">🎨</div>
-                    <h3 class="font-bold uppercase tracking-widest text-sm mb-2">Design-Driven</h3>
-                    <p class="text-xs opacity-60 font-light leading-relaxed">Bridging logic and aesthetics using UI Design and XML.</p>
+                <div class="glass p-8 border-l-4 border-emerald-500">
+                    <h3 class="text-lg font-bold main-title">SSC</h3>
+                    <p class="text-emerald-400 text-sm font-medium">Yashwant High School, Mandgaon</p>
+                    <p class="text-slate-400 text-xs mt-4 uppercase tracking-wider">Completed March 2019</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="education" class="py-20 px-10">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl font-bold mb-12 text-center gradient-text uppercase tracking-widest">Education</h2>
-            <div class="space-y-6">
-                <div class="glass p-8 rounded-[30px] flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-l-4 border-blue-500">
-                    <div>
-                        <h3 class="text-xl font-bold">B.Tech in Computer Engineering</h3>
-                        <p class="text-blue-400 text-sm">Bapurao Deshmukh Engineering College, Sewagram</p>
-                        <p class="opacity-50 text-xs uppercase tracking-tighter mt-1">RTMNU Nagpur | 2021 — 2026</p>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="glass p-8 rounded-[30px] border-l-4 border-purple-500">
-                        <h3 class="text-lg font-bold">HSC (Science)</h3>
-                        <p class="text-purple-400 text-sm">Vidya Vikas College, Samudrapur</p>
-                        <p class="opacity-40 text-xs mt-4 uppercase">Completed March 2021</p>
-                    </div>
-                    <div class="glass p-8 rounded-[30px] border-l-4 border-emerald-500">
-                        <h3 class="text-lg font-bold">SSC</h3>
-                        <p class="text-emerald-400 text-sm">Yashwant High School, Mandgaon</p>
-                        <p class="opacity-40 text-xs mt-4 uppercase">Completed March 2019</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- UPDATED SECTION: DISPLAYING ALL 7 CERTIFICATES & DOCUMENTS -->
-    <section id="documents" class="py-20 px-10">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl font-bold mb-12 text-center gradient-text uppercase tracking-widest">Certifications & Documents</h2>
+    <!-- Credentials Grid Section (All 7 Documents) -->
+    <section id="documents" class="py-20 px-10 max-w-6xl mx-auto">
+        <h2 class="text-4xl font-bold mb-12 text-center main-title uppercase tracking-widest">Certifications</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
-                <!-- Card 1: Business Analytics -->
-                <div class="glass p-8 rounded-[30px] flex flex-col justify-between items-start border-t-4 border-blue-500/50">
-                    <div>
-                        <span class="text-xs font-mono text-blue-400 tracking-widest uppercase">Bootcamp</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">Business Analytics</h3>
-                        <p class="text-xs opacity-60 font-light leading-relaxed mb-6">Official certificate confirming participation and milestone execution during the intense analytics program.</p>
-                    </div>
-                    <a href="My Certificate/Tejas Dhakate_BusinessAnalyticsBootcamp_ParticipationCertificate.pdf" target="_blank" class="w-full text-center py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs uppercase tracking-wider font-bold hover:bg-blue-600 hover:border-blue-500 transition duration-300">View Document</a>
+            <div class="glass p-8 flex flex-col justify-between items-start">
+                <div class="w-full">
+                    <span class="text-[10px] font-mono text-blue-500 tracking-widest uppercase font-bold">Bootcamp</span>
+                    <h3 class="text-xl font-bold mt-2 mb-3 main-title">Business Analytics</h3>
+                    <p class="text-xs sub-title font-light leading-relaxed mb-6">Official validation confirming complete bootcamp trajectory data processing execution specs.</p>
                 </div>
-
-                <!-- Card 2: Microtron -->
-                <div class="glass p-8 rounded-[30px] flex flex-col justify-between items-start border-t-4 border-purple-500/50">
-                    <div>
-                        <span class="text-xs font-mono text-purple-400 tracking-widest uppercase">Technical</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">Microtron Achievement</h3>
-                        <p class="text-xs opacity-60 font-light leading-relaxed mb-6">Verification of engineering milestone project parameters and system implementation metrics.</p>
-                    </div>
-                    <a href="My Certificate/Tejas Dhakate Microtron.pdf" target="_blank" class="w-full text-center py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs uppercase tracking-wider font-bold hover:bg-purple-600 hover:border-purple-500 transition duration-300">View Document</a>
-                </div>
-
-                <!-- Card 3: Presentire 2026 -->
-                <div class="glass p-8 rounded-[30px] flex flex-col justify-between items-start border-t-4 border-emerald-500/50">
-                    <div>
-                        <span class="text-xs font-mono text-emerald-400 tracking-widest uppercase">Presentation</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">Presentire 2026</h3>
-                        <p class="text-xs opacity-60 font-light leading-relaxed mb-6">Full comprehensive interactive slide decks compiled for the technical presentation display forums.</p>
-                    </div>
-                    <a href="My Certificate/Presentire 2026.pdf" target="_blank" class="w-full text-center py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs uppercase tracking-wider font-bold hover:bg-emerald-600 hover:border-emerald-500 transition duration-300">View Document</a>
-                </div>
-
-                <!-- Card 4: forge1 -->
-                <div class="glass p-8 rounded-[30px] flex flex-col justify-between items-start border-t-4 border-blue-500/50">
-                    <div>
-                        <span class="text-xs font-mono text-blue-400 tracking-widest uppercase">Project Docs</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">Forge1 Development</h3>
-                        <p class="text-xs opacity-60 font-light leading-relaxed mb-6">Technical design documentation and architectural notes related to the Forge1 system components.</p>
-                    </div>
-                    <a href="My Certificate/forge1.pdf" target="_blank" class="w-full text-center py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs uppercase tracking-wider font-bold hover:bg-blue-600 hover:border-blue-500 transition duration-300">View Document</a>
-                </div>
-
-                <!-- Card 5: NCISEM 2025 -->
-                <div class="glass p-8 rounded-[30px] flex flex-col justify-between items-start border-t-4 border-purple-500/50">
-                    <div>
-                        <span class="text-xs font-mono text-purple-400 tracking-widest uppercase">Conference</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">NCISEM 2025 Certificate</h3>
-                        <p class="text-xs opacity-60 font-light leading-relaxed mb-6">Official presentation or participation certificate from the NCISEM 2025 national conference track.</p>
-                    </div>
-                    <a href="My Certificate/NCISEM 2025 Certificate (1).pdf" target="_blank" class="w-full text-center py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs uppercase tracking-wider font-bold hover:bg-purple-600 hover:border-purple-500 transition duration-300">View Document</a>
-                </div>
-
-                <!-- Card 6: Presentire 2025 -->
-                <div class="glass p-8 rounded-[30px] flex flex-col justify-between items-start border-t-4 border-emerald-500/50">
-                    <div>
-                        <span class="text-xs font-mono text-emerald-400 tracking-widest uppercase">Archive Presentation</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">Presentire 2025</h3>
-                        <p class="text-xs opacity-60 font-light leading-relaxed mb-6">Research summaries and system layout modules archived from the prior session presentation cycles.</p>
-                    </div>
-                    <a href="My Certificate/Presentire 2025.pdf" target="_blank" class="w-full text-center py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs uppercase tracking-wider font-bold hover:bg-emerald-600 hover:border-emerald-500 transition duration-300">View Document</a>
-                </div>
-
-                <!-- Card 7: Tejas_Dhakate_presentire -->
-                <div class="glass p-8 rounded-[30px] flex flex-col justify-between items-start border-t-4 border-pink-500/50">
-                    <div>
-                        <span class="text-xs font-mono text-pink-400 tracking-widest uppercase">Profile Spotlight</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">Tejas Dhakate Presentire</h3>
-                        <p class="text-xs opacity-60 font-light leading-relaxed mb-6">Core project spotlight sheets and technical profile briefs compiled for corporate review assemblies.</p>
-                    </div>
-                    <a href="My Certificate/Tejas_Dhakate_presentire.pdf" target="_blank" class="w-full text-center py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs uppercase tracking-wider font-bold hover:bg-pink-600 hover:border-pink-500 transition duration-300">View Document</a>
-                </div>
-
+                <a href="My Certificate/Tejas Dhakate_BusinessAnalyticsBootcamp_ParticipationCertificate.pdf" target="_blank" class="w-full text-center py-3 glass-pill text-xs uppercase tracking-widest font-bold transition">View Document</a>
             </div>
+
+            <div class="glass p-8 flex flex-col justify-between items-start">
+                <div class="w-full">
+                    <span class="text-[10px] font-mono text-purple-500 tracking-widest uppercase font-bold">Technical</span>
+                    <h3 class="text-xl font-bold mt-2 mb-3 main-title">Microtron Achievement</h3>
+                    <p class="text-xs sub-title font-light leading-relaxed mb-6">Verification parameters covering systems milestone processing metrics validation sheets.</p>
+                </div>
+                <a href="My Certificate/Tejas Dhakate Microtron.pdf" target="_blank" class="w-full text-center py-3 glass-pill text-xs uppercase tracking-widest font-bold transition">View Document</a>
+            </div>
+
+            <div class="glass p-8 flex flex-col justify-between items-start">
+                <div class="w-full">
+                    <span class="text-[10px] font-mono text-emerald-500 tracking-widest uppercase font-bold">Presentation</span>
+                    <h3 class="text-xl font-bold mt-2 mb-3 main-title">Presentire 2026</h3>
+                    <p class="text-xs sub-title font-light leading-relaxed mb-6">Interactive execution slides designed for technical verification tracks assessment loop.</p>
+                </div>
+                <a href="My Certificate/Presentire 2026.pdf" target="_blank" class="w-full text-center py-3 glass-pill text-xs uppercase tracking-widest font-bold transition">View Document</a>
+            </div>
+
+            <div class="glass p-8 flex flex-col justify-between items-start">
+                <div class="w-full">
+                    <span class="text-[10px] font-mono text-blue-500 tracking-widest uppercase font-bold">Project Docs</span>
+                    <h3 class="text-xl font-bold mt-2 mb-3 main-title">Forge1 System</h3>
+                    <p class="text-xs sub-title font-light leading-relaxed mb-6">Architectural schematics detailing systems processing criteria guidelines.</p>
+                </div>
+                <a href="My Certificate/forge1.pdf" target="_blank" class="w-full text-center py-3 glass-pill text-xs uppercase tracking-widest font-bold transition">View Document</a>
+            </div>
+
+            <div class="glass p-8 flex flex-col justify-between items-start">
+                <div class="w-full">
+                    <span class="text-[10px] font-mono text-purple-500 tracking-widest uppercase font-bold">Conference</span>
+                    <h3 class="text-xl font-bold mt-2 mb-3 main-title">NCISEM 2025 Track</h3>
+                    <p class="text-xs sub-title font-light leading-relaxed mb-6">Validation certification compiled for review tracks assemblies execution.</p>
+                </div>
+                <a href="My Certificate/NCISEM 2025 Certificate (1).pdf" target="_blank" class="w-full text-center py-3 glass-pill text-xs uppercase tracking-widest font-bold transition">View Document</a>
+            </div>
+
+            <div class="glass p-8 flex flex-col justify-between items-start">
+                <div class="w-full">
+                    <span class="text-[10px] font-mono text-emerald-500 tracking-widest uppercase font-bold">Archive Presentation</span>
+                    <h3 class="text-xl font-bold mt-2 mb-3 main-title">Presentire 2025</h3>
+                    <p class="text-xs sub-title font-light leading-relaxed mb-6">Historical engineering track logs cataloging prior design iterations indices.</p>
+                </div>
+                <a href="My Certificate/Presentire 2025.pdf" target="_blank" class="w-full text-center py-3 glass-pill text-xs uppercase tracking-widest font-bold transition">View Document</a>
+            </div>
+
+            <div class="glass p-8 flex flex-col justify-between items-start">
+                <div class="w-full">
+                    <span class="text-[10px] font-mono text-pink-500 tracking-widest uppercase font-bold">Profile Spotlight</span>
+                    <h3 class="text-xl font-bold mt-2 mb-3 main-title">Tejas Dhakate Briefs</h3>
+                    <p class="text-xs sub-title font-light leading-relaxed mb-6">Profile validation metrics compiled exclusively for corporate review pipelines.</p>
+                </div>
+                <a href="My Certificate/Tejas_Dhakate_presentire.pdf" target="_blank" class="w-full text-center py-3 glass-pill text-xs uppercase tracking-widest font-bold transition">View Document</a>
+            </div>
+
         </div>
     </section>
 
-    <section id="projects" class="py-20 px-10">
-        <h2 class="text-4xl font-bold mb-12 text-center">Project Spotlight</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            <div class="glass p-8 rounded-3xl border-t-4 border-blue-500/50 cursor-pointer group" onclick="openModal()">
-                <span class="text-blue-400 text-[10px] font-bold uppercase tracking-widest">Machine Learning</span>
-                <h3 class="text-2xl font-bold my-4">PredictiveRiskAnalyzer</h3>
-                <p class="opacity-60 text-sm mb-6">A Python Flask application for risk metric prediction. Completed ahead of schedule.</p>
-                <button class="text-blue-400 text-sm group-hover:underline font-bold tracking-widest">Details →</button>
+    <!-- Expanded Project Spotlights Section -->
+    <section id="projects" class="py-20 px-10 max-w-6xl mx-auto">
+        <h2 class="text-4xl font-bold mb-12 text-center main-title uppercase tracking-widest">Project Spotlight</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div class="glass p-8 cursor-pointer group flex flex-col justify-between items-start h-80" onclick="openModal()">
+                <div class="w-full">
+                    <span class="text-blue-500 text-[10px] font-bold uppercase tracking-widest font-mono">Machine Learning</span>
+                    <h3 class="text-xl font-bold my-4 main-title">PredictiveRiskAnalyzer</h3>
+                    <p class="sub-title text-xs font-light leading-relaxed">A robust Python Flask web system engineered to calculate systematic performance metrics.</p>
+                </div>
+                <button class="text-blue-500 text-xs group-hover:underline font-bold tracking-widest uppercase font-mono mt-auto">Details &rarr;</button>
             </div>
-            <div class="glass p-8 rounded-3xl border-t-4 border-yellow-500/50">
-                <span class="text-yellow-400 text-[10px] font-bold uppercase tracking-widest">Viral 🔥</span>
-                <h3 class="text-2xl font-bold my-4">trending-Birthday</h3>
-                <p class="opacity-60 text-sm mb-6">Interactive celebration repository featuring fluid web animations.</p>
-                <a href="https://github.com/tejasdhakate62-dev/trending-Birthday" target="_blank" class="text-blue-400 text-sm hover:underline font-bold tracking-widest">Source →</a>
+
+            <div class="glass p-8 flex flex-col justify-between items-start h-80">
+                <div class="w-full">
+                    <span class="text-purple-500 text-[10px] font-bold uppercase tracking-widest font-mono">Automotive Design</span>
+                    <h3 class="text-xl font-bold my-4 main-title">Neo Cycle Architecture</h3>
+                    <p class="sub-title text-xs font-light leading-relaxed">A conceptual technical blueprint highlighting front, top, and cross-section parameters designed for clean-energy motorcycle modeling.</p>
+                </div>
+                <a href="#documents" class="text-green-500 text-xs hover:underline font-bold tracking-widest uppercase font-mono mt-auto">View Blueprint Track &rarr;</a>
             </div>
-            <div class="glass p-8 rounded-3xl border-t-4 border-pink-500/50">
-                <span class="text-pink-400 text-[10px] font-bold uppercase tracking-widest">UI/UX Project</span>
-                <h3 class="text-2xl font-bold my-4">Happy-Birthday</h3>
-                <p class="opacity-60 text-sm mb-6">Specialized greeting site focused on engaging aesthetic design.</p>
-                <a href="https://github.com/tejasdhakate62-dev/Happy-Birthday" target="_blank" class="text-blue-400 text-sm hover:underline font-bold tracking-widest">Source →</a>
+
+            <div class="glass p-8 flex flex-col justify-between items-start h-80">
+                <div class="w-full">
+                    <span class="text-emerald-500 text-[10px] font-bold uppercase tracking-widest font-mono">Security Logic</span>
+                    <h3 class="text-xl font-bold my-4 main-title">MnemonicGen Core</h3>
+                    <p class="sub-title text-xs font-light leading-relaxed">A production-tier Java application specialized in computing rigid 24-word recovery chains backed by local AES standard key encryption.</p>
+                </div>
+                <a href="https://github.com/tejasdhakate62-dev" target="_blank" class="text-green-500 text-xs hover:underline font-bold tracking-widest uppercase font-mono mt-auto">Source &rarr;</a>
             </div>
+
+            <div class="glass p-8 flex flex-col justify-between items-start h-80">
+                <div class="w-full">
+                    <span class="text-yellow-500 text-[10px] font-bold uppercase tracking-widest font-mono">Viral 🔥</span>
+                    <h3 class="text-xl font-bold my-4 main-title">trending-Birthday</h3>
+                    <p class="sub-title text-xs font-light leading-relaxed">Interactive validation greeting directory hosting custom physics particle modules and heavy CSS transformation layers.</p>
+                </div>
+                <a href="https://github.com/tejasdhakate62-dev/trending-Birthday" target="_blank" class="text-green-500 text-xs hover:underline font-bold tracking-widest uppercase font-mono mt-auto">Source &rarr;</a>
+            </div>
+
+            <div class="glass p-8 flex flex-col justify-between items-start h-80">
+                <div class="w-full">
+                    <span class="text-pink-400 text-[10px] font-bold uppercase tracking-widest font-mono">UI/UX Project</span>
+                    <h3 class="text-xl font-bold my-4 main-title">Happy-Birthday</h3>
+                    <p class="sub-title text-xs font-light leading-relaxed">Specialized portfolio segment focusing heavily on precise spatial balancing, grid structural ratios, and clean scrolling markers.</p>
+                </div>
+                <a href="https://github.com/tejasdhakate62-dev/Happy-Birthday" target="_blank" class="text-green-500 text-xs hover:underline font-bold tracking-widest uppercase font-mono mt-auto">Source &rarr;</a>
+            </div>
+
         </div>
     </section>
 
-    <section id="contact" class="py-20 px-10">
-        <div class="max-w-4xl mx-auto glass p-12 rounded-[40px] text-center border-emerald-500/20">
-            <h2 class="text-4xl font-bold mb-10 text-center gradient-text uppercase tracking-widest">Let's Connect</h2>
+    <!-- Contact Communication Section -->
+    <section id="contact" class="py-20 px-10 max-w-4xl mx-auto">
+        <div class="glass p-12 text-center">
+            <h2 class="text-3xl font-bold mb-10 main-title uppercase tracking-widest">Let's Connect</h2>
             <div class="space-y-6">
-                <p class="text-2xl font-bold tracking-widest">9529835875</p>
-                <p class="text-sm opacity-50 mb-10">Wardha, Maharashtra, India</p>
-                <div class="flex flex-col md:flex-row justify-center gap-4">
-                    <a href="mailto:tejasdhakate62@gmail.com" class="px-6 py-4 glass rounded-2xl hover:bg-white/10 transition text-xs font-mono">tejasdhakate62@gmail.com</a>
-                    <a href="https://www.linkedin.com/in/tejas-suresh-dhakate-ab3a22321/" target="_blank" class="px-6 py-4 glass rounded-2xl hover:bg-white/10 transition text-xs font-mono uppercase">LinkedIn</a>
+                <p class="text-3xl font-bold tracking-widest text-blue-500">9529835875</p>
+                <p class="text-sm sub-title mb-10 uppercase tracking-wider">Wardha, Maharashtra, India</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="mailto:tejasdhakate62@gmail.com" class="px-6 py-3.5 glass-pill text-xs font-mono">tejasdhakate62@gmail.com</a>
+                    <a href="https://www.linkedin.com/in/tejas-suresh-dhakate-ab3a22321/" target="_blank" class="px-6 py-3.5 glass-pill text-xs font-mono uppercase">LinkedIn</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <div id="projectModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-6 bg-black/90 backdrop-blur-xl">
-        <div class="glass max-w-2xl w-full p-10 rounded-[40px] border border-blue-500/30 relative">
-            <button onclick="closeModal()" class="absolute top-6 right-8 text-white/50 hover:text-white text-3xl">&times;</button>
-            <h3 class="text-4xl font-bold mb-2 gradient-text">PredictiveRiskAnalyzer</h3>
-            <p class="text-blue-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-8">Status: Delivered Ahead of Schedule</p>
+    <!-- Details Project Modal Layer -->
+    <div id="projectModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-6 bg-black/70 backdrop-blur-xl">
+        <div class="glass max-w-2xl w-full p-10 relative">
+            <button onclick="closeModal()" class="absolute top-6 right-8 text-slate-400 hover:text-slate-600 text-3xl">&times;</button>
+            <h3 class="text-3xl font-bold mb-2 main-title">PredictiveRiskAnalyzer</h3>
+            <p class="text-blue-500 text-[10px] font-bold uppercase tracking-widest mb-8">Status: Delivered Ahead of Schedule</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 text-left">
-                <div class="p-6 bg-white/5 rounded-3xl border border-white/10">
-                    <h4 class="text-blue-400 font-bold uppercase text-[10px] mb-3 tracking-widest">Tech Stack</h4>
-                    <p class="text-xs opacity-80">Python (Flask), Synthetic Data Processing, Clean Documented Code.</p>
+                <div class="p-6 glass">
+                    <h4 class="text-blue-500 font-bold uppercase text-[10px] mb-3 tracking-widest">Tech Stack</h4>
+                    <p class="text-xs sub-title font-light">Python (Flask), Synthetic Data Processing, Clean Documented Code.</p>
                 </div>
-                <div class="p-6 bg-white/5 rounded-3xl border border-white/10">
-                    <h4 class="text-purple-400 font-bold uppercase text-[10px] mb-3 tracking-widest">Quality Assurance</h4>
-                    <p class="text-xs opacity-80">Rigorous testing and UI polishing completed before deadline.</p>
+                <div class="p-6 glass">
+                    <h4 class="text-purple-500 font-bold uppercase text-[10px] mb-3 tracking-widest">Quality Assurance</h4>
+                    <p class="text-xs sub-title font-light">Rigorous testing and UI polishing completed before deadline.</p>
                 </div>
             </div>
-            <a href="https://github.com/tejasdhakate62-dev/PredictiveRiskAnalyzer" target="_blank" class="block w-full text-center py-4 bg-blue-600 rounded-2xl font-bold hover:bg-blue-500 transition shadow-lg">View GitHub Repo</a>
+            <a href="https://github.com/tejasdhakate62-dev/PredictiveRiskAnalyzer" target="_blank" class="block w-full text-center py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-500 transition shadow-lg text-sm tracking-wide">View GitHub Repo</a>
         </div>
     </div>
 
+    <!-- 🌌 CORE RUNTIME INTERACTIVE IMPLEMENTATION MECHANICS -->
     <script>
-        // Modal Logic
         function openModal() {
             document.getElementById('projectModal').classList.remove('hidden');
             document.getElementById('projectModal').classList.add('flex');
@@ -377,28 +405,108 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Three.js 4D Visual
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('canvas-container').appendChild(renderer.domElement);
-
-        const geometry = new THREE.TorusKnotGeometry(12, 2, 150, 20);
-        const material = new THREE.MeshBasicMaterial({ color: 0x6366f1, wireframe: true, transparent: true, opacity: 0.15 });
-        const torusKnot = new THREE.Mesh(geometry, material);
-        scene.add(torusKnot);
-
-        camera.position.z = 40;
-
-        function animate() {
-            requestAnimationFrame(animate);
-            torusKnot.rotation.x += 0.003;
-            torusKnot.rotation.y += 0.003;
-            torusKnot.position.y = Math.sin(Date.now() * 0.0005) * 3;
-            renderer.render(scene, camera);
+        // 🌗 DYNAMIC THEME CONTROLLER
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            
+            // Adjust label indicators
+            document.getElementById('theme-icon').innerText = newTheme === 'dark' ? '☀️' : '🌙';
+            document.getElementById('theme-text').innerText = newTheme === 'dark' ? 'Light' : 'Dark';
+            
+            // Update canvas base constants configuration references
+            if(newTheme === 'light') {
+                themeColors.background = '#f1f5f9';
+                themeColors.chromeBlob = 'rgba(148, 163, 184, 0.25)'; // Pearlescent Silver Chrome
+                themeColors.specularLight = 'rgba(255, 255, 255, 0.7)';
+            } else {
+                themeColors.background = '#0d0d0f';
+                themeColors.chromeBlob = 'rgba(38, 38, 41, 0.4)';      // Dark Metallic Chrome from image_dc751c.jpg
+                themeColors.specularLight = 'rgba(255, 255, 255, 0.15)';
+            }
         }
 
+        // 🛠️ REAL-TIME CHROME REFLECTION BACKGROUND LOGIC (From image_dc751c.jpg)
+        const canvas = document.getElementById('chrome-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let w = canvas.width = window.innerWidth;
+        let h = canvas.height = window.innerHeight;
+
+        const themeColors = {
+            background: '#0d0d0f',
+            chromeBlob: 'rgba(38, 38, 41, 0.5)',
+            specularLight: 'rgba(255, 255, 255, 0.15)'
+        };
+
+        const metallicShapes = [];
+        const shapeCount = 3;
+
+        class MetallicReflector {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.baseRadius = Math.random() * 150 + 250;
+                this.radius = this.baseRadius;
+                this.vx = (Math.random() * 0.6 - 0.3);
+                this.vy = (Math.random() * 0.6 - 0.3);
+                this.pulse = Math.random() * Math.PI;
+            }
+
+            animate() {
+                this.pulse += 0.003;
+                this.radius = this.baseRadius + Math.sin(this.pulse) * 40;
+
+                if (this.x - this.radius < -100 || this.x + this.radius > w + 100) this.vx *= -1;
+                if (this.y - this.radius < -100 || this.y + this.radius > h + 100) this.vy *= -1;
+
+                this.x += this.vx;
+                this.y += this.vy;
+            }
+
+            render() {
+                // Multi-stop gradient calculation mimicking metallic links from image_dc751c.jpg
+                let chromeGrad = ctx.createRadialGradient(this.x - this.radius*0.2, this.y - this.radius*0.2, 10, this.x, this.y, this.radius);
+                chromeGrad.addColorStop(0, themeColors.specularLight);
+                chromeGrad.addColorStop(0.3, themeColors.chromeBlob);
+                chromeGrad.addColorStop(1, 'rgba(0,0,0,0)');
+
+                ctx.fillStyle = chromeGrad;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function buildReflections() {
+            metallicShapes.length = 0;
+            metallicShapes.push(new MetallicReflector(w * 0.3, h * 0.4));
+            metallicShapes.push(new MetallicReflector(w * 0.7, h * 0.3));
+            metallicShapes.push(new MetallicReflector(w * 0.5, h * 0.8));
+        }
+
+        function engineLoop() {
+            ctx.fillStyle = themeColors.background;
+            ctx.fillRect(0, 0, w, h);
+
+            for(let shape of metallicShapes) {
+                shape.animate();
+                shape.render();
+            }
+
+            requestAnimationFrame(engineLoop);
+        }
+
+        window.addEventListener('resize', () => {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+            buildReflections();
+        });
+
+        // Skill Bar Transition Trigger
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -410,13 +518,8 @@
         const skillsTrigger = document.querySelector('#skills-trigger');
         if (skillsTrigger) observer.observe(skillsTrigger);
 
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        animate();
+        buildReflections();
+        engineLoop();
     </script>
 </body>
 </html>
