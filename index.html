@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tejas Dhakate | Portfolio</title>
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
         
         body {
             margin: 0;
@@ -20,13 +23,25 @@
             position: fixed;
             top: 0;
             left: 0;
-            z-index: -1;
+            z-index: -2;
             width: 100vw;
             height: 100vh;
             pointer-events: none;
         }
 
-        /* 🎛️ DYNAMIC THEME DEFINITIONS (Inspired by image_dc751c.jpg) */
+        /* Frosted glass backdrop overlay with dynamic lens */
+        #background-blur-overlay {
+            position: fixed;
+            inset: 0;
+            backdrop-filter: blur(28px) saturate(130%);
+            -webkit-backdrop-filter: blur(28px) saturate(130%);
+            pointer-events: none;
+            z-index: -1;
+            clip-path: url(#blur-overlay-clip);
+            -webkit-clip-path: url(#blur-overlay-clip);
+        }
+
+        /* 🎛️ DYNAMIC THEME DEFINITIONS */
         body[data-theme="dark"] {
             background-color: #0d0d0f;
             color: #f8fafc;
@@ -34,6 +49,19 @@
         body[data-theme="light"] {
             background-color: #f1f5f9;
             color: #0f172a;
+        }
+        body[data-theme="liquid-glass"] {
+            background: #10111a;
+            color: #ffffff;
+        }
+
+        /* 💧 PASS-THROUGH BLUR OVERLAY FOR VISION GLASS THEME (Disabled) */
+        .pass-through-blur {
+            display: none !important;
+        }
+        body[data-theme="liquid-glass"] .blob {
+            opacity: 0.15;
+            mix-blend-mode: screen;
         }
 
         /* 🪟 FROSTED LIQUID GLASS COMPONENT SPEC SHEET */
@@ -44,14 +72,22 @@
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
                         background 0.5s ease, 
                         border-color 0.5s ease, 
-                        box-shadow 0.5s ease;
+                        box-shadow 0.5s ease,
+                        opacity 0.8s ease-out,
+                        margin-top 0.8s ease-out;
+            transform-style: preserve-3d;
+            perspective: 1000px;
         }
         
         body[data-theme="dark"] .glass {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-top: 1.5px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+            background: rgba(30, 30, 45, 0.26);
+            border: none !important;
+            box-shadow: 0 40px 100px -15px rgba(0, 0, 0, 0.55), 
+                        inset 0 1px 2px rgba(255, 255, 255, 0.25), 
+                        inset 0 -1px 1px rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(55px) saturate(130%);
+            -webkit-backdrop-filter: blur(55px) saturate(130%);
+            position: relative;
         }
         
         body[data-theme="light"] .glass {
@@ -61,44 +97,108 @@
             box-shadow: 0 30px 60px -15px rgba(100, 116, 139, 0.12), inset 0 1px 2px rgba(255, 255, 255, 0.4);
         }
 
+        /* Hardware-Accelerated 3D Glossy Border Mask for Liquid Glass Blocks (Removed static outlines as requested) */
+
+        /* Readability and Contrast Overrides for Liquid Glass Blocks */
+        body[data-theme="dark"] .glass h2,
+        body[data-theme="dark"] .glass h3 {
+            color: #ffffff !important;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+        body[data-theme="dark"] .glass p,
+        body[data-theme="dark"] .glass span {
+            color: rgba(255, 255, 255, 0.72) !important;
+        }
+
+        body[data-theme="dark"] .glass .text-slate-400 {
+            color: rgba(255, 255, 255, 0.55) !important;
+        }
+        body[data-theme="dark"] .glass.border-l-4 {
+            border-left: 4px solid rgba(255, 255, 255, 0.45) !important;
+            box-shadow: 0 40px 100px -15px rgba(0, 0, 0, 0.55);
+        }
+
         .glass:hover {
-            transform: translateY(-6px) scale(1.005);
+            transform: translateY(-8px) scale(1.01);
         }
         
         body[data-theme="dark"] .glass:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.08);
-        }
-        body[data-theme="light"] .glass:hover {
-            border-color: rgba(15, 23, 42, 0.15);
-            background: rgba(255, 255, 255, 0.55);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 50px 120px -20px rgba(0, 0, 0, 0.7);
         }
 
-        /* Fully Curved Glass Pills */
-        .glass-pill {
-            border-radius: 9999px;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        /* Moving Sheen Overlay for 3D Cards */
+        .card-sheen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            background: radial-gradient(circle 120px at 0% 0%, rgba(255, 255, 255, 0.15), transparent 80%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
-        body[data-theme="dark"] .glass-pill {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #cbd5e1;
+        .glass:hover .card-sheen {
+            opacity: 1;
+        }
+
+        /* Glass Pills (Updated to Rounded Rectangle style as requested) */
+        .glass-pill {
+            border-radius: 9999px !important;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         body[data-theme="light"] .glass-pill {
             background: rgba(15, 23, 42, 0.03);
             border: 1px solid rgba(15, 23, 42, 0.12);
             color: #334155;
         }
-        .glass-pill:hover {
-            transform: scale(1.03);
+        body[data-theme="dark"] .glass-pill {
+            background: linear-gradient(120deg, rgba(255, 255, 255, 0.0) 20%, rgba(255, 255, 255, 0.08) 45%, rgba(255, 255, 255, 0.0) 70%) !important;
+            background-size: 250% 100% !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            border-top: 1.5px solid rgba(255, 255, 255, 0.28) !important;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.04) !important;
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.4),
+                /* Clear transparent liquid highlights and shadows */
+                inset 0 -4px 8px rgba(255, 255, 255, 0.06),
+                inset 0 4px 8px rgba(0, 0, 0, 0.45),
+                inset 0 1px 3px rgba(255, 255, 255, 0.12) !important;
+            color: #ffffff;
+            backdrop-filter: blur(12px) saturate(100%) !important;
+            -webkit-backdrop-filter: blur(12px) saturate(100%) !important;
+            animation: liquid-sheen-shimmer 4s infinite linear !important;
+            transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s, border-color 0.4s, box-shadow 0.4s !important;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+            border-radius: 9999px !important; /* Force pill shape */
         }
-        body[data-theme="dark"] .glass-pill:hover { background: rgba(255, 255, 255, 0.1); color: white; }
+        .glass-pill:hover {
+            transform: translateY(-4px) scale(1.06); /* Float up to feel movable */
+        }
         body[data-theme="light"] .glass-pill:hover { background: rgba(15, 23, 42, 0.08); color: black; }
+        body[data-theme="dark"] .glass-pill:hover {
+            background: linear-gradient(120deg, rgba(255, 255, 255, 0.0) 20%, rgba(255, 255, 255, 0.15) 45%, rgba(255, 255, 255, 0.0) 70%) !important;
+            background-size: 250% 100% !important;
+            border-color: rgba(255, 255, 255, 0.22) !important;
+            border-top-color: rgba(255, 255, 255, 0.45) !important;
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.55),
+                inset 0 -6px 12px rgba(255, 255, 255, 0.12),
+                inset 0 6px 12px rgba(0, 0, 0, 0.5),
+                inset 0 2px 4px rgba(255, 255, 255, 0.22) !important;
+            color: white;
+            animation-duration: 2s !important; /* speed up liquid shimmer on hover */
+            transform: translateY(-4px) scale(1.06) !important;
+        }
 
         /* Dynamic Text Colors */
         body[data-theme="dark"] .main-title { color: white; }
         body[data-theme="light"] .main-title { color: #0f172a; }
-        body[data-theme="dark"] .sub-title { color: #94a3b8; }
+        
+        body[data-theme="dark"] .sub-title { color: rgba(255, 255, 255, 0.85); }
         body[data-theme="light"] .sub-title { color: #475569; }
 
         .skill-bar {
@@ -122,83 +222,429 @@
             70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
+
+        /* 🚀 ADVANCED RESPONSIVE ANIMATION STATE SYSTEM */
+        .reveal-node {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-node.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .tag-item {
+            border-radius: 9999px !important;
+        }
+
+        /* 💧 LIQUID GLASS FLUID BLOBS */
+        .fluid-blob-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+            display: none;
+        }
+        body[data-theme="liquid-glass"] .fluid-blob-container {
+            display: block;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.65;
+            mix-blend-mode: screen;
+            animation: drift-blob 22s infinite alternate ease-in-out;
+        }
+        .blob-1 {
+            width: 550px;
+            height: 550px;
+            background: #ff2a5f; /* Neon Magenta */
+            top: -5%;
+            left: 15%;
+            animation-duration: 18s;
+        }
+        .blob-2 {
+            width: 650px;
+            height: 650px;
+            background: #00f0ff; /* Electric Cyan */
+            bottom: -10%;
+            right: 10%;
+            animation-duration: 25s;
+            animation-delay: -4s;
+        }
+        .blob-3 {
+            width: 400px;
+            height: 400px;
+            background: #7b2cbf; /* Royal Purple */
+            top: 35%;
+            left: 40%;
+            animation-duration: 20s;
+            animation-delay: -7s;
+        }
+        @keyframes drift-blob {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(80px, 60px) scale(1.15); }
+            100% { transform: translate(-60px, -40px) scale(0.9); }
+        }
+
+        /* 💧 LIQUID NAVIGATION LINK BUBBLE */
+        #nav-active-bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-top: 1.5px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+            border-radius: 9999px !important;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            transition: none;
+            backdrop-filter: blur(12px) saturate(120%);
+            -webkit-backdrop-filter: blur(12px) saturate(120%);
+        }
+        
+        body[data-theme="dark"] #nav-active-bubble {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+        }
+
+        body[data-theme="light"] #nav-active-bubble {
+            background: rgba(15, 23, 42, 0.06);
+            border: 1px solid rgba(15, 23, 42, 0.1);
+            box-shadow: 0 4px 10px rgba(100, 116, 139, 0.15);
+            backdrop-filter: blur(8px);
+        }
+
+        /* 💧 FLOWING ACTIVE WATER BORDERS FOR GLASS BLOCKS */
+        @property --border-angle {
+            syntax: "<angle>";
+            inherits: false;
+            initial-value: 0deg;
+        }
+
+        /* Active scroll sections or hovered state gets flowing border */
+        body[data-theme="dark"] .glass.active-water-border::before,
+        body[data-theme="dark"] .glass:hover::before,
+        body[data-theme="dark"] .glass-pill.active-water-border::before,
+        body[data-theme="dark"] .glass-pill:hover::before,
+        body[data-theme="dark"] #theme-toggle-wrap.active-water-border::before,
+        body[data-theme="dark"] #theme-toggle-wrap:hover::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            padding: 1.4px;
+            background: conic-gradient(from var(--border-angle), rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.15) 25%, rgba(0, 240, 255, 0.38) 50%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.55) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 5;
+            animation: rotate-border-water 5s linear infinite;
+        }
+
+        /* Radius alignment overrides for pseudo-border elements */
+        body[data-theme="dark"] .glass::before { border-radius: 24px; }
+        body[data-theme="dark"] .glass-pill::before { border-radius: 9999px !important; }
+        body[data-theme="dark"] .tab-nav-container::before,
+        body[data-theme="dark"] #theme-toggle-wrap::before { border-radius: 9999px !important; }
+        body[data-theme="dark"] nav .glass::before { border-radius: 9999px !important; }
+
+        @keyframes rotate-border-water {
+            to {
+                --border-angle: 360deg;
+            }
+        }
+
+        @keyframes liquid-sheen-shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Custom water borders react to proximity of normal system cursor */
+        #nav-links-container a {
+            display: inline-block;
+            transform-origin: center center;
+            will-change: transform;
+            transition: color 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+        }
+        body[data-theme="dark"] #nav-links-container a.active-nav-link {
+            color: #ffffff !important;
+        }
+        body[data-theme="light"] #nav-links-container a.active-nav-link {
+            color: #0f172a !important;
+        }
+        #nav-links-container a.active-nav-link {
+            transform: scale(1.12) !important;
+        }
+        body[data-theme="dark"] #nav-links-container a:hover {
+            color: #ffffff !important;
+        }
+        body[data-theme="light"] #nav-links-container a:hover {
+            color: #0f172a !important;
+        }
+
+        /* 💧 PREMIUM 3D GLASS SLIDING TOGGLE SWITCH */
+        #theme-toggle-wrap {
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s, background 0.3s, box-shadow 0.3s;
+            will-change: transform;
+            position: relative; /* Position relative for water border pseudo-element */
+        }
+        #theme-toggle-wrap:hover {
+            transform: scale(1.15); /* Increased macOS Dock zoom intensity */
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+        }
+        .theme-toggle-track {
+            width: 50px;
+            height: 22px;
+            background: rgba(0, 0, 0, 0.38);
+            border-radius: 0px !important;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.55), 0 1px 1px rgba(255, 255, 255, 0.08);
+            border: 0.5px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+        body[data-theme="light"] .theme-toggle-track {
+            background: rgba(0, 0, 0, 0.12);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+            border-color: rgba(0,0,0,0.05);
+        }
+        .theme-toggle-thumb {
+            position: absolute;
+            width: 26px; /* pill width */
+            height: 18px; /* pill height */
+            left: 2px;
+            top: 2px;
+            border-radius: 0px !important; /* rectangular shape */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.1) 40%, rgba(255, 255, 255, 0.0) 60%, rgba(255, 255, 255, 0.25) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-top: 1.5px solid rgba(255, 255, 255, 0.85);
+            border-bottom: 1.2px solid rgba(255, 255, 255, 0.45);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(5px) saturate(130%);
+            -webkit-backdrop-filter: blur(5px) saturate(130%);
+            transition: left 0.35s cubic-bezier(0.25, 1, 0.5, 1), transform 0.2s ease;
+        }
+        body[data-theme="light"] .theme-toggle-thumb {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.65) 100%);
+            border-color: rgba(15, 23, 42, 0.12);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .theme-toggle-track:hover .theme-toggle-thumb {
+            transform: scale(1.04);
+        }
+        
+        /* Two-stop slider positions based on active data-theme */
+        body[data-theme="dark"] #theme-thumb {
+            left: 2px;
+        }
+        body[data-theme="light"] #theme-thumb {
+            left: 22px;
+        }
+
+        /* 💧 PREMIUM 3D GLASS SLIDING TAB SELECTOR */
+        .tab-nav-container {
+            display: inline-flex;
+            gap: 16px; /* slightly wider gap for floating text style */
+            padding: 4px;
+            position: relative;
+            align-items: center;
+            border-radius: 9999px !important;
+        }
+        .tab-link {
+            background: none;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.6);
+            transition: color 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+            border-radius: 9999px !important;
+            position: relative;
+            font-size: 10px;
+            font-weight: 700;
+            display: inline-block;
+            transform-origin: center center;
+        }
+        .tab-link:hover {
+            color: rgba(255, 255, 255, 0.85);
+        }
+        .tab-link.active {
+            color: #ffffff;
+            transform: scale(1.12);
+        }
+        .tab-active-bubble {
+            display: none !important;
+        }
+        .tag-active-bubble {
+            position: absolute;
+            background: linear-gradient(120deg, rgba(255, 255, 255, 0.0) 20%, rgba(255, 255, 255, 0.08) 45%, rgba(255, 255, 255, 0.0) 70%) !important;
+            background-size: 250% 100% !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            border-top: 1.5px solid rgba(255, 255, 255, 0.28) !important;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.04) !important;
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.4),
+                inset 0 -4px 8px rgba(255, 255, 255, 0.06),
+                inset 0 4px 8px rgba(0, 0, 0, 0.45),
+                inset 0 1px 3px rgba(255, 255, 255, 0.12) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 9999px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: 0;
+            animation: liquid-sheen-shimmer 4s infinite linear !important;
+            transition: none;
+        }
     </style>
 </head>
 <body data-theme="dark">
 
-    <!-- Chrome Reflection Canvas Background Container -->
+    <!-- Native system cursor is used throughout the viewport layout -->
+
+    <!-- Background Fluid Blobs for Liquid Glass Theme -->
+    <!-- Pass-through blur backdrop for visionOS theme -->
+    <div class="pass-through-blur" aria-hidden="true"></div>
+
+    <div class="fluid-blob-container" aria-hidden="true">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- 3D WebGL Canvas Container -->
     <div id="canvas-container">
         <canvas id="chrome-canvas"></canvas>
     </div>
 
-    <!-- Top Sticky Bar Navigation Layout -->
-    <nav class="fixed top-0 w-full p-5 z-50 flex justify-between items-center px-10 glass rounded-none border-t-0 border-l-0 border-r-0">
-        <div class="text-xl font-bold tracking-tighter">TD.</div>
-        <div class="flex items-center gap-6">
+    <!-- Frosted glass background blur overlay with dynamic mouse clear lens -->
+    <div id="background-blur-overlay" aria-hidden="true"></div>
+
+    <!-- SVG clipPath definition for capsule-shaped reveal windows -->
+    <svg style="position: absolute; width: 0; height: 0; pointer-events: none;" aria-hidden="true">
+        <defs>
+            <clipPath id="blur-overlay-clip" clipPathUnits="userSpaceOnUse">
+                <path id="blur-overlay-path" fill-rule="evenodd" d="M 0 0 H 10000 V 10000 H 0 Z" />
+            </clipPath>
+        </defs>
+    </svg>
+
+    <!-- Navigation Header -->
+    <nav class="fixed top-0 w-full p-5 z-50 flex justify-between items-center px-6 md:px-10 glass rounded-none border-t-0 border-l-0 border-r-0">
+        <div class="text-xl font-bold tracking-tighter main-title">TD.</div>
+        <div class="flex items-center gap-4 md:gap-6">
             <div class="hidden sm:flex items-center px-4 py-1.5 glass rounded-full text-[10px] uppercase tracking-widest font-semibold sub-title">
                 <span class="status-dot"></span> Student At RTMNU Nagpur
             </div>
-            <div class="space-x-8 text-sm font-medium tracking-wide sub-title hidden md:flex">
-                <a href="#about" class="hover:opacity-100 transition">About</a>
-                <a href="#education" class="hover:opacity-100 transition">Education</a>
-                <a href="#documents" class="hover:opacity-100 transition">Documents</a>
-                <a href="#projects" class="hover:opacity-100 transition">Projects</a>
+            <div id="nav-links-container" class="relative space-x-2 lg:space-x-4 text-sm font-medium tracking-wide sub-title hidden md:flex items-center">
+                <div id="nav-active-bubble"></div>
+                <a href="#about" id="nav-link-about" class="hover:opacity-100 transition z-10 py-1.5 px-3">About</a>
+                <a href="#education" id="nav-link-education" class="hover:opacity-100 transition z-10 py-1.5 px-3">Education</a>
+                <a href="#documents" id="nav-link-documents" class="hover:opacity-100 transition z-10 py-1.5 px-3">Documents</a>
+                <a href="#projects" id="nav-link-projects" class="hover:opacity-100 transition z-10 py-1.5 px-3">Projects</a>
             </div>
-            
-            <!-- 🌗 THEME TOGGLE RADIAL PILL BUTTON -->
-            <button onclick="toggleTheme()" class="px-4 py-2 glass-pill text-xs uppercase tracking-widest font-bold flex items-center gap-2">
-                <span id="theme-icon">☀️</span> <span id="theme-text">Light</span>
-            </button>
+            <!-- Premium 3D Glass Sliding Toggle Switch -->
+            <div class="flex items-center gap-2 px-3 py-1.5 glass rounded-full select-none" id="theme-toggle-wrap">
+                <span id="theme-text" class="text-[10px] md:text-xs uppercase tracking-widest font-bold sub-title pr-1">Dark</span>
+                <div onclick="toggleTheme()" class="theme-toggle-track relative cursor-pointer" id="theme-toggler">
+                    <div class="theme-toggle-thumb" id="theme-thumb"></div>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <!-- Hero Section Matrix Layout -->
-    <section class="relative min-h-screen flex items-center justify-center px-6 text-center">
-        <div class="glass p-12 max-w-4xl w-full relative overflow-hidden">
-            <h1 class="text-6xl md:text-8xl font-bold mb-4 tracking-tight main-title">
-                Tejas Dhakate
-            </h1>
-            <p class="text-lg md:text-xl sub-title mb-8 font-light leading-relaxed">
-                Computer Engineering Student @ RTMNU Nagpur <br> 
-                UI Design & Android Development
-            </p>
-            <div class="flex flex-wrap justify-center gap-4">
-                <a href="https://github.com/tejasdhakate62-dev" target="_blank" class="px-8 py-3 glass-pill text-sm font-semibold transition">View GitHub</a>
-                <a href="#contact" class="px-8 py-3 glass-pill text-sm font-semibold transition">Let's Talk</a>
+    <!-- Hero Matrix Section Layout -->
+    <section class="relative min-h-screen flex items-center justify-center px-4 md:px-6 text-center" id="hero">
+        <div class="p-8 md:p-12 rounded-[24px] reveal-node active relative z-10">
+            <div class="glass-content">
+                <h1 class="text-4xl sm:text-6xl md:text-8xl font-bold mb-4 tracking-tight main-title">
+                    Tejas Dhakate
+                </h1>
+                <p class="text-base md:text-xl sub-title mb-8 font-light leading-relaxed">
+                    Computer Engineering Student @ RTMNU Nagpur <br class="hidden sm:inline"> 
+                    UI Design & Android Development
+                </p>
+                <div class="flex flex-wrap justify-center gap-4 relative" id="hero-tags-wrap">
+                    <div class="tag-active-bubble" id="hero-tags-bubble"></div>
+                    <a href="https://github.com/tejasdhakate62-dev" target="_blank" class="px-6 md:px-8 py-3 text-xs md:text-sm font-semibold z-10 tag-item transition">View GitHub</a>
+                    <a href="#contact" class="px-6 md:px-8 py-3 text-xs md:text-sm font-semibold z-10 tag-item transition">Let's Talk</a>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- About Section Layer -->
-    <section id="about" class="py-20 px-10">
+    <section id="about" class="py-20 px-6 md:px-10">
         <div class="max-w-6xl mx-auto space-y-12">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div class="glass p-10">
-                    <h2 class="text-3xl font-bold mb-6 main-title">The Journey</h2>
-                    <p class="sub-title font-light leading-relaxed mb-6">
-                        I build technology that is powerful, intuitive, and most importantly, delivered ahead of schedule. My focus is bridging the gap between backend logic and beautiful frontend interfaces.
-                    </p>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="p-4 glass text-center uppercase text-[10px] tracking-widest font-bold sub-title">Python</div>
-                        <div class="p-4 glass text-center uppercase text-[10px] tracking-widest font-bold sub-title">Java</div>
-                        <div class="p-4 glass text-center uppercase text-[10px] tracking-widest font-bold sub-title">XML</div>
-                        <div class="p-4 glass text-center uppercase text-[10px] tracking-widest font-bold sub-title">ML</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+                <div class="p-6 md:p-10 rounded-[24px] reveal-node">
+                    <div class="glass-content">
+                        <h2 class="text-2xl md:text-3xl font-bold mb-6 main-title">The Journey</h2>
+                        <p class="sub-title font-light leading-relaxed mb-6 text-sm md:text-base">
+                            I build technology that is powerful, intuitive, and most importantly, delivered ahead of schedule. My focus is bridging the gap between backend logic and beautiful frontend interfaces.
+                        </p>
+                        <div class="relative w-full" id="journey-tags-wrap">
+                            <div class="tag-active-bubble" id="journey-tags-bubble"></div>
+                            <div class="grid grid-cols-2 gap-4 relative z-10">
+                                <div class="p-4 text-center uppercase text-sm md:text-base tracking-wider font-bold main-title cursor-pointer tag-item transition">Python</div>
+                                <div class="p-4 text-center uppercase text-sm md:text-base tracking-wider font-bold main-title cursor-pointer tag-item transition">Java</div>
+                                <div class="p-4 text-center uppercase text-sm md:text-base tracking-wider font-bold main-title cursor-pointer tag-item transition">XML</div>
+                                <div class="p-4 text-center uppercase text-sm md:text-base tracking-wider font-bold main-title cursor-pointer tag-item transition">ML</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="glass p-10" id="skills-trigger">
-                    <h2 class="text-3xl font-bold mb-8 main-title">Proficiency</h2>
-                    <div class="space-y-6">
-                        <div>
-                            <div class="flex justify-between text-xs mb-2 tracking-widest uppercase font-semibold sub-title">Android (Java/XML) <span>95%</span></div>
-                            <div class="h-2.5 bg-black/10 rounded-full overflow-hidden p-[2px] border border-white/10">
-                                <div class="skill-bar h-full bg-blue-500 rounded-full" data-width="95%"></div>
+                <div class="p-6 md:p-10 rounded-[24px] reveal-node" id="skills-trigger">
+                    <div class="glass-content">
+                        <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
+                            <h2 class="text-2xl md:text-3xl font-bold main-title">Proficiency</h2>
+                        </div>
+                        
+                        <!-- Skill Progress Bars -->
+                        <div id="about-skill-bars" class="space-y-6">
+                            <div>
+                                <div class="flex justify-between text-xs mb-2 tracking-widest uppercase font-semibold sub-title">Android (Java/XML) <span>95%</span></div>
+                                <div class="h-2.5 bg-black/10 rounded-full overflow-hidden p-[2px] border border-white/10">
+                                    <div class="skill-bar h-full bg-blue-500 rounded-full" data-width="95%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs mb-2 tracking-widest uppercase font-semibold sub-title">Python & ML <span>90%</span></div>
+                                <div class="h-2.5 bg-black/10 rounded-full overflow-hidden p-[2px] border border-white/10">
+                                    <div class="skill-bar h-full bg-indigo-500 rounded-full" data-width="90%"></div>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <div class="flex justify-between text-xs mb-2 tracking-widest uppercase font-semibold sub-title">Python & ML <span>90%</span></div>
-                            <div class="h-2.5 bg-black/10 rounded-full overflow-hidden p-[2px] border border-white/10">
-                                <div class="skill-bar h-full bg-indigo-500 rounded-full" data-width="90%"></div>
+                        
+                        <h3 class="text-xs uppercase tracking-widest font-bold sub-title mt-8 mb-4">Tools & Technologies</h3>
+                        <div class="relative w-full" id="tools-tags-wrap">
+                            <div class="tag-active-bubble" id="tools-tags-bubble"></div>
+                            <div class="grid grid-cols-2 gap-4 relative z-10">
+                                <div class="p-3 text-center uppercase text-xs md:text-sm tracking-wider font-semibold main-title cursor-pointer tag-item transition">Android Studio</div>
+                                <div class="p-3 text-center uppercase text-xs md:text-sm tracking-wider font-semibold main-title cursor-pointer tag-item transition">VS Code</div>
+                                <div class="p-3 text-center uppercase text-xs md:text-sm tracking-wider font-semibold main-title cursor-pointer tag-item transition">Flask / Python</div>
+                                <div class="p-3 text-center uppercase text-xs md:text-sm tracking-wider font-semibold main-title cursor-pointer tag-item transition">Git & GitHub</div>
+                                <div class="p-3 text-center uppercase text-xs md:text-sm tracking-wider font-semibold main-title cursor-pointer tag-item transition">SQLite / SQL</div>
+                                <div class="p-3 text-center uppercase text-xs md:text-sm tracking-wider font-semibold main-title cursor-pointer tag-item transition">NumPy / Pandas</div>
                             </div>
                         </div>
                     </div>
@@ -208,318 +654,1302 @@
     </section>
 
     <!-- Education Roadmap Section -->
-    <section id="education" class="py-20 px-10 max-w-6xl mx-auto">
-        <h2 class="text-4xl font-bold mb-12 text-center main-title uppercase tracking-widest">Education</h2>
-        <div class="space-y-6">
-            <div class="glass p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-l-4 border-blue-500">
-                <div>
-                    <h3 class="text-xl font-bold main-title">B.Tech in Computer Engineering</h3>
-                    <p class="text-blue-500 text-sm font-semibold">Bapurao Deshmukh Engineering College, Sewagram</p>
-                    <p class="text-slate-400 text-xs uppercase tracking-wider mt-1">RTMNU Nagpur | 2021 — 2026</p>
+    <section id="education" class="py-20 px-6 md:px-10 max-w-6xl mx-auto">
+        <div class="flex flex-col items-center mb-12 gap-4 reveal-node">
+            <h2 class="text-3xl md:text-4xl font-bold main-title uppercase tracking-widest">Education</h2>
+        </div>
+        
+        <div class="relative w-full" id="education-tags-wrap">
+            <div class="tag-active-bubble" id="education-tags-bubble"></div>
+            <div class="space-y-6 relative z-10">
+                <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 rounded-[24px] reveal-node tag-item cursor-pointer transition">
+                    <div class="glass-content">
+                        <h3 class="text-lg md:text-xl font-bold main-title">B.Tech in Computer Engineering</h3>
+                        <p class="text-blue-500 text-sm font-semibold">Bapurao Deshmukh Engineering College, Sewagram</p>
+                        <p class="text-slate-400 text-xs uppercase tracking-wider mt-1">RTMNU Nagpur | 2021 — 2026</p>
+                    </div>
                 </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="glass p-8 border-l-4 border-purple-500">
-                    <h3 class="text-lg font-bold main-title">HSC (Science)</h3>
-                    <p class="text-purple-500 text-sm font-medium">Vidya Vikas College, Samudrapur</p>
-                    <p class="text-slate-400 text-xs mt-4 uppercase tracking-wider">Completed March 2021</p>
-                </div>
-                <div class="glass p-8 border-l-4 border-emerald-500">
-                    <h3 class="text-lg font-bold main-title">SSC</h3>
-                    <p class="text-emerald-400 text-sm font-medium">Yashwant High School, Mandgaon</p>
-                    <p class="text-slate-400 text-xs mt-4 uppercase tracking-wider">Completed March 2019</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="p-6 md:p-8 rounded-[24px] reveal-node tag-item cursor-pointer transition">
+                        <div class="glass-content">
+                            <h3 class="text-base md:text-lg font-bold main-title">HSC (Science)</h3>
+                            <p class="text-purple-500 text-sm font-medium">Vidya Vikas College, Samudrapur</p>
+                            <p class="text-slate-400 text-xs mt-4 uppercase tracking-wider">Completed March 2021</p>
+                        </div>
+                    </div>
+                    <div class="p-6 md:p-8 rounded-[24px] reveal-node tag-item cursor-pointer transition" id="education-ssc-card">
+                        <div class="glass-content">
+                            <h3 class="text-base md:text-lg font-bold main-title">SSC</h3>
+                            <p class="text-emerald-400 text-sm font-medium">Yashwant High School, Mandgaon</p>
+                            <p class="text-slate-400 text-xs mt-4 uppercase tracking-wider">Completed March 2019</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Credentials Grid Section (All 7 Documents) -->
-    <section id="documents" class="py-20 px-10 max-w-6xl mx-auto">
-        <h2 class="text-4xl font-bold mb-12 text-center main-title uppercase tracking-widest">Certifications</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Credentials Grid Section -->
+    <section id="documents" class="py-20 px-6 md:px-10 max-w-6xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center main-title uppercase tracking-widest reveal-node">Certifications</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             
-            <div class="glass p-8 flex flex-col justify-between items-start">
-                <div class="w-full">
-                    <span class="text-[10px] font-mono text-blue-500 tracking-widest uppercase font-bold">Bootcamp</span>
-                    <h3 class="text-xl font-bold mt-2 mb-3 main-title">Business Analytics</h3>
-                    <p class="text-xs sub-title font-light leading-relaxed mb-6">Official validation confirming complete bootcamp trajectory data processing execution specs.</p>
+            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
+                <div class="glass-content w-full flex flex-col justify-between h-full">
+                    <div class="w-full">
+                        <span class="text-[10px] font-mono text-yellow-500 tracking-widest uppercase font-bold">Community Milestone</span>
+                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">CampusCrew 100K Honor[cite: 1]</h3>
+                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Recognized for contributing as an integral community member reaching 100,000+ global students across 15+ countries[cite: 1].</p>
+                    </div>
+                    <div class="relative w-full text-center mt-auto" id="cert-1-wrap">
+                        <div class="tag-active-bubble" id="cert-1-bubble"></div>
+                        <a href="My Certificate/CampusCrew_100K_Milestone.pdf" target="_blank" class="block w-full py-1.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
+                    </div>
                 </div>
-                <a href="My Certificate/Tejas Dhakate_BusinessAnalyticsBootcamp_ParticipationCertificate.pdf" target="_blank" class="w-full text-center py-3 glass-pill text-xs uppercase tracking-widest font-bold transition">View Document</a>
             </div>
 
-            <div class="glass p-8 flex flex-col justify-between items-start">
-                <div class="w-full">
-                    <span class="text-[10px] font-mono text-purple-500 tracking-widest uppercase font-bold">Technical</span>
-                    <h3 class="text-xl font-bold mt-2 mb-3 main-title">Microtron Achievement</h3>
-                    <p class="text-xs sub-title font-light leading-relaxed mb-6">Verification parameters covering systems milestone processing metrics validation sheets.</p>
+            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
+                <div class="glass-content w-full flex flex-col justify-between h-full">
+                    <div class="w-full">
+                        <span class="text-[10px] font-mono text-blue-500 tracking-widest uppercase font-bold">Bootcamp</span>
+                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">Business Analytics</h3>
+                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Official validation confirming complete bootcamp trajectory data processing execution specs.</p>
+                    </div>
+                    <div class="relative w-full text-center mt-auto" id="cert-2-wrap">
+                        <div class="tag-active-bubble" id="cert-2-bubble"></div>
+                        <a href="My Certificate/Tejas Dhakate_BusinessAnalyticsBootcamp_ParticipationCertificate.pdf" target="_blank" class="block w-full py-2.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
+                    </div>
                 </div>
-                <a href="My Certificate/Tejas Dhakate Microtron.pdf" target="_blank" class="w-full text-center py-3 glass-pill text-xs uppercase tracking-widest font-bold transition">View Document</a>
             </div>
 
-            <div class="glass p-8 flex flex-col justify-between items-start">
-                <div class="w-full">
-                    <span class="text-[10px] font-mono text-emerald-500 tracking-widest uppercase font-bold">Presentation</span>
-                    <h3 class="text-xl font-bold mt-2 mb-3 main-title">Presentire 2026</h3>
-                    <p class="text-xs sub-title font-light leading-relaxed mb-6">Interactive execution slides designed for technical verification tracks assessment loop.</p>
+            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
+                <div class="glass-content w-full flex flex-col justify-between h-full">
+                    <div class="w-full">
+                        <span class="text-[10px] font-mono text-purple-500 tracking-widest uppercase font-bold">Technical</span>
+                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">Microtron Achievement</h3>
+                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Verification parameters covering systems milestone processing metrics validation sheets.</p>
+                    </div>
+                    <div class="relative w-full text-center mt-auto" id="cert-3-wrap">
+                        <div class="tag-active-bubble" id="cert-3-bubble"></div>
+                        <a href="My Certificate/Tejas Dhakate Microtron.pdf" target="_blank" class="block w-full py-2.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
+                    </div>
                 </div>
-                <a href="My Certificate/Presentire 2026.pdf" target="_blank" class="w-full text-center py-3 glass-pill text-xs uppercase tracking-widest font-bold transition">View Document</a>
             </div>
 
-            <div class="glass p-8 flex flex-col justify-between items-start">
-                <div class="w-full">
-                    <span class="text-[10px] font-mono text-blue-500 tracking-widest uppercase font-bold">Project Docs</span>
-                    <h3 class="text-xl font-bold mt-2 mb-3 main-title">Forge1 System</h3>
-                    <p class="text-xs sub-title font-light leading-relaxed mb-6">Architectural schematics detailing systems processing criteria guidelines.</p>
+            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
+                <div class="glass-content w-full flex flex-col justify-between h-full">
+                    <div class="w-full">
+                        <span class="text-[10px] font-mono text-emerald-500 tracking-widest uppercase font-bold">Presentation</span>
+                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">Presentire 2026</h3>
+                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Interactive execution slides designed for technical verification tracks assessment loop.</p>
+                    </div>
+                    <div class="relative w-full text-center mt-auto" id="cert-4-wrap">
+                        <div class="tag-active-bubble" id="cert-4-bubble"></div>
+                        <a href="My Certificate/Presentire 2026.pdf" target="_blank" class="block w-full py-2.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
+                    </div>
                 </div>
-                <a href="My Certificate/forge1.pdf" target="_blank" class="w-full text-center py-3 glass-pill text-xs uppercase tracking-widest font-bold transition">View Document</a>
             </div>
 
-            <div class="glass p-8 flex flex-col justify-between items-start">
-                <div class="w-full">
-                    <span class="text-[10px] font-mono text-purple-500 tracking-widest uppercase font-bold">Conference</span>
-                    <h3 class="text-xl font-bold mt-2 mb-3 main-title">NCISEM 2025 Track</h3>
-                    <p class="text-xs sub-title font-light leading-relaxed mb-6">Validation certification compiled for review tracks assemblies execution.</p>
+            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
+                <div class="glass-content w-full flex flex-col justify-between h-full">
+                    <div class="w-full">
+                        <span class="text-[10px] font-mono text-blue-500 tracking-widest uppercase font-bold">Project Docs</span>
+                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">Forge1 System</h3>
+                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Architectural schematics detailing systems processing criteria guidelines.</p>
+                    </div>
+                    <div class="relative w-full text-center mt-auto" id="cert-5-wrap">
+                        <div class="tag-active-bubble" id="cert-5-bubble"></div>
+                        <a href="My Certificate/forge1.pdf" target="_blank" class="block w-full py-2.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
+                    </div>
                 </div>
-                <a href="My Certificate/NCISEM 2025 Certificate (1).pdf" target="_blank" class="w-full text-center py-3 glass-pill text-xs uppercase tracking-widest font-bold transition">View Document</a>
             </div>
 
-            <div class="glass p-8 flex flex-col justify-between items-start">
-                <div class="w-full">
-                    <span class="text-[10px] font-mono text-emerald-500 tracking-widest uppercase font-bold">Archive Presentation</span>
-                    <h3 class="text-xl font-bold mt-2 mb-3 main-title">Presentire 2025</h3>
-                    <p class="text-xs sub-title font-light leading-relaxed mb-6">Historical engineering track logs cataloging prior design iterations indices.</p>
+            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
+                <div class="glass-content w-full flex flex-col justify-between h-full">
+                    <div class="w-full">
+                        <span class="text-[10px] font-mono text-purple-500 tracking-widest uppercase font-bold">Conference</span>
+                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">NCISEM 2025 Track</h3>
+                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Validation certification compiled for review tracks assemblies execution.</p>
+                    </div>
+                    <div class="relative w-full text-center" id="cert-6-wrap">
+                        <div class="tag-active-bubble" id="cert-6-bubble"></div>
+                        <a href="My Certificate/NCISEM 2025 Certificate (1).pdf" target="_blank" class="block w-full py-2.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
+                    </div>
                 </div>
-                <a href="My Certificate/Presentire 2025.pdf" target="_blank" class="w-full text-center py-3 glass-pill text-xs uppercase tracking-widest font-bold transition">View Document</a>
             </div>
 
-            <div class="glass p-8 flex flex-col justify-between items-start">
-                <div class="w-full">
-                    <span class="text-[10px] font-mono text-pink-500 tracking-widest uppercase font-bold">Profile Spotlight</span>
-                    <h3 class="text-xl font-bold mt-2 mb-3 main-title">Tejas Dhakate Briefs</h3>
-                    <p class="text-xs sub-title font-light leading-relaxed mb-6">Profile validation metrics compiled exclusively for corporate review pipelines.</p>
+            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
+                <div class="glass-content w-full flex flex-col justify-between h-full">
+                    <div class="w-full">
+                        <span class="text-[10px] font-mono text-slate-400 tracking-widest uppercase font-bold">Archive Presentation</span>
+                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">Presentire 2025</h3>
+                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Historical engineering track logs cataloging prior design iterations indices.</p>
+                    </div>
+                    <div class="relative w-full text-center mt-auto" id="cert-7-wrap">
+                        <div class="tag-active-bubble" id="cert-7-bubble"></div>
+                        <a href="My Certificate/Presentire 2025.pdf" target="_blank" class="block w-full py-2.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
+                    </div>
                 </div>
-                <a href="My Certificate/Tejas_Dhakate_presentire.pdf" target="_blank" class="w-full text-center py-3 glass-pill text-xs uppercase tracking-widest font-bold transition">View Document</a>
+            </div>
+
+            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
+                <div class="glass-content w-full flex flex-col justify-between h-full">
+                    <div class="w-full">
+                        <span class="text-[10px] font-mono text-slate-400 tracking-widest uppercase font-bold">Profile Spotlight</span>
+                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">Tejas Dhakate Briefs</h3>
+                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Profile validation metrics compiled exclusively for corporate review pipelines.</p>
+                    </div>
+                    <div class="relative w-full text-center mt-auto" id="cert-8-wrap">
+                        <div class="tag-active-bubble" id="cert-8-bubble"></div>
+                        <a href="My Certificate/Tejas_Dhakate_presentire.pdf" target="_blank" class="block w-full py-2.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
+                    </div>
+                </div>
             </div>
 
         </div>
     </section>
 
     <!-- Expanded Project Spotlights Section -->
-    <section id="projects" class="py-20 px-10 max-w-6xl mx-auto">
-        <h2 class="text-4xl font-bold mb-12 text-center main-title uppercase tracking-widest">Project Spotlight</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <section id="projects" class="py-20 px-6 md:px-10 max-w-6xl mx-auto">
+        <div class="flex flex-col items-center mb-12 gap-4 reveal-node">
+            <h2 class="text-3xl md:text-4xl font-bold main-title uppercase tracking-widest">Project Spotlight</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             
-            <div class="glass p-8 cursor-pointer group flex flex-col justify-between items-start h-80" onclick="openModal()">
-                <div class="w-full">
-                    <span class="text-blue-500 text-[10px] font-bold uppercase tracking-widest font-mono">Machine Learning</span>
-                    <h3 class="text-xl font-bold my-4 main-title">PredictiveRiskAnalyzer</h3>
-                    <p class="sub-title text-xs font-light leading-relaxed">A robust Python Flask web system engineered to calculate systematic performance metrics.</p>
+            <div class="p-6 md:p-8 flex flex-col justify-between items-start h-80 rounded-[24px] reveal-node transition">
+                <div class="glass-content w-full flex flex-col justify-between h-full">
+                    <div class="w-full">
+                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono">Android & UI/UX</span>
+                        <h3 class="text-lg md:text-xl font-bold my-4 main-title">Diet Plan App</h3>
+                        <p class="sub-title text-xs font-light leading-relaxed">A modern Android application engineered to help users track, organize, and manage tailored health metrics and dietary goals smoothly.</p>
+                    </div>
+                    <div class="relative mt-auto" id="project-1-wrap">
+                        <div class="tag-active-bubble" id="project-1-bubble"></div>
+                        <a href="https://github.com/tejasdhakate62-dev/Diet_Plan_App.git" target="_blank" class="inline-block py-2.5 px-4 text-xs font-mono uppercase tracking-widest z-10 tag-item transition">Source &rarr;</a>
+                    </div>
                 </div>
-                <button class="text-blue-500 text-xs group-hover:underline font-bold tracking-widest uppercase font-mono mt-auto">Details &rarr;</button>
             </div>
 
-            <div class="glass p-8 flex flex-col justify-between items-start h-80">
-                <div class="w-full">
-                    <span class="text-purple-500 text-[10px] font-bold uppercase tracking-widest font-mono">Automotive Design</span>
-                    <h3 class="text-xl font-bold my-4 main-title">Neo Cycle Architecture</h3>
-                    <p class="sub-title text-xs font-light leading-relaxed">A conceptual technical blueprint highlighting front, top, and cross-section parameters designed for clean-energy motorcycle modeling.</p>
+            <div class="p-6 md:p-8 flex flex-col justify-between items-start h-80 rounded-[24px] reveal-node transition" onclick="openModal()">
+                <div class="glass-content w-full flex flex-col justify-between h-full">
+                    <div class="w-full">
+                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono">Machine Learning</span>
+                        <h3 class="text-lg md:text-xl font-bold my-4 main-title">PredictiveRiskAnalyzer</h3>
+                        <p class="sub-title text-xs font-light leading-relaxed">A robust Python Flask web system engineered to calculate systematic performance metrics.</p>
+                    </div>
+                    <div class="relative mt-auto" id="project-2-wrap">
+                        <div class="tag-active-bubble" id="project-2-bubble"></div>
+                        <button class="inline-block py-2.5 px-4 text-xs font-mono uppercase tracking-widest z-10 tag-item transition">Details &rarr;</button>
+                    </div>
                 </div>
-                <a href="#documents" class="text-green-500 text-xs hover:underline font-bold tracking-widest uppercase font-mono mt-auto">View Blueprint Track &rarr;</a>
             </div>
 
-            <div class="glass p-8 flex flex-col justify-between items-start h-80">
-                <div class="w-full">
-                    <span class="text-emerald-500 text-[10px] font-bold uppercase tracking-widest font-mono">Security Logic</span>
-                    <h3 class="text-xl font-bold my-4 main-title">MnemonicGen Core</h3>
-                    <p class="sub-title text-xs font-light leading-relaxed">A production-tier Java application specialized in computing rigid 24-word recovery chains backed by local AES standard key encryption.</p>
+            <div class="p-6 md:p-8 flex flex-col justify-between items-start h-80 rounded-[24px] reveal-node transition">
+                <div class="glass-content w-full flex flex-col justify-between h-full">
+                    <div class="w-full">
+                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono">Automotive Design</span>
+                        <h3 class="text-lg md:text-xl font-bold my-4 main-title">Neo Cycle Architecture</h3>
+                        <p class="sub-title text-xs font-light leading-relaxed">A conceptual technical blueprint highlighting front, top, and cross-section parameters designed for clean-energy motorcycle modeling.</p>
+                    </div>
+                    <div class="relative mt-auto" id="project-3-wrap">
+                        <div class="tag-active-bubble" id="project-3-bubble"></div>
+                        <a href="#documents" class="inline-block py-2.5 px-4 text-xs font-mono uppercase tracking-widest z-10 tag-item transition">View Blueprint Track &rarr;</a>
+                    </div>
                 </div>
-                <a href="https://github.com/tejasdhakate62-dev" target="_blank" class="text-green-500 text-xs hover:underline font-bold tracking-widest uppercase font-mono mt-auto">Source &rarr;</a>
             </div>
 
-            <div class="glass p-8 flex flex-col justify-between items-start h-80">
-                <div class="w-full">
-                    <span class="text-yellow-500 text-[10px] font-bold uppercase tracking-widest font-mono">Viral 🔥</span>
-                    <h3 class="text-xl font-bold my-4 main-title">trending-Birthday</h3>
-                    <p class="sub-title text-xs font-light leading-relaxed">Interactive validation greeting directory hosting custom physics particle modules and heavy CSS transformation layers.</p>
+            <div class="p-6 md:p-8 flex flex-col justify-between items-start h-80 rounded-[24px] reveal-node transition">
+                <div class="glass-content w-full flex flex-col justify-between h-full">
+                    <div class="w-full">
+                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono">Security Logic</span>
+                        <h3 class="text-lg md:text-xl font-bold my-4 main-title">MnemonicGen Core</h3>
+                        <p class="sub-title text-xs font-light leading-relaxed">A production-tier Java application specialized in computing rigid 24-word recovery chains backed by local AES standard key encryption.</p>
+                    </div>
+                    <div class="relative mt-auto" id="project-4-wrap">
+                        <div class="tag-active-bubble" id="project-4-bubble"></div>
+                        <a href="https://github.com/tejasdhakate62-dev" target="_blank" class="inline-block py-2.5 px-4 text-xs font-mono uppercase tracking-widest z-10 tag-item transition">Source &rarr;</a>
+                    </div>
                 </div>
-                <a href="https://github.com/tejasdhakate62-dev/trending-Birthday" target="_blank" class="text-green-500 text-xs hover:underline font-bold tracking-widest uppercase font-mono mt-auto">Source &rarr;</a>
             </div>
 
-            <div class="glass p-8 flex flex-col justify-between items-start h-80">
-                <div class="w-full">
-                    <span class="text-pink-400 text-[10px] font-bold uppercase tracking-widest font-mono">UI/UX Project</span>
-                    <h3 class="text-xl font-bold my-4 main-title">Happy-Birthday</h3>
-                    <p class="sub-title text-xs font-light leading-relaxed">Specialized portfolio segment focusing heavily on precise spatial balancing, grid structural ratios, and clean scrolling markers.</p>
+            <div class="p-6 md:p-8 flex flex-col justify-between items-start h-80 rounded-[24px] reveal-node transition" id="project-trending-birthday">
+                <div class="glass-content w-full flex flex-col justify-between h-full">
+                    <div class="w-full">
+                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono">Viral 🔥</span>
+                        <h3 class="text-lg md:text-xl font-bold my-4 main-title">trending-Birthday</h3>
+                        <p class="sub-title text-xs font-light leading-relaxed">Interactive validation greeting directory hosting custom physics particle modules and heavy CSS transformation layers.</p>
+                    </div>
+                    <div class="relative mt-auto" id="project-5-wrap">
+                        <div class="tag-active-bubble" id="project-5-bubble"></div>
+                        <a href="https://github.com/tejasdhakate62-dev/trending-Birthday" target="_blank" class="inline-block py-2.5 px-4 text-xs font-mono uppercase tracking-widest z-10 tag-item transition">Source &rarr;</a>
+                    </div>
                 </div>
-                <a href="https://github.com/tejasdhakate62-dev/Happy-Birthday" target="_blank" class="text-green-500 text-xs hover:underline font-bold tracking-widest uppercase font-mono mt-auto">Source &rarr;</a>
+            </div>
+
+            <div class="p-6 md:p-8 flex flex-col justify-between items-start h-80 rounded-[24px] reveal-node transition" id="project-happy-birthday">
+                <div class="glass-content w-full flex flex-col justify-between h-full">
+                    <div class="w-full">
+                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono">UI/UX Project</span>
+                        <h3 class="text-lg md:text-xl font-bold my-4 main-title">Happy-Birthday</h3>
+                        <p class="sub-title text-xs font-light leading-relaxed">Specialized portfolio segment focusing heavily on precise spatial balancing, grid structural ratios, and clean scrolling markers.</p>
+                    </div>
+                    <div class="relative mt-auto" id="project-6-wrap">
+                        <div class="tag-active-bubble" id="project-6-bubble"></div>
+                        <a href="https://github.com/tejasdhakate62-dev/Happy-Birthday" target="_blank" class="inline-block py-2.5 px-4 text-xs font-mono uppercase tracking-widest z-10 tag-item transition">Source &rarr;</a>
+                    </div>
+                </div>
             </div>
 
         </div>
     </section>
 
     <!-- Contact Communication Section -->
-    <section id="contact" class="py-20 px-10 max-w-4xl mx-auto">
-        <div class="glass p-12 text-center">
-            <h2 class="text-3xl font-bold mb-10 main-title uppercase tracking-widest">Let's Connect</h2>
-            <div class="space-y-6">
-                <p class="text-3xl font-bold tracking-widest text-blue-500">9529835875</p>
-                <p class="text-sm sub-title mb-10 uppercase tracking-wider">Wardha, Maharashtra, India</p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4">
-                    <a href="mailto:tejasdhakate62@gmail.com" class="px-6 py-3.5 glass-pill text-xs font-mono">tejasdhakate62@gmail.com</a>
-                    <a href="https://www.linkedin.com/in/tejas-suresh-dhakate-ab3a22321/" target="_blank" class="px-6 py-3.5 glass-pill text-xs font-mono uppercase">LinkedIn</a>
+    <section id="contact" class="py-20 px-6 max-w-4xl mx-auto">
+        <div class="p-8 md:p-12 text-center rounded-[24px] reveal-node relative z-10">
+            <div class="glass-content">
+                <h2 class="text-2xl md:text-3xl font-bold mb-10 main-title uppercase tracking-widest">Let's Connect</h2>
+                <div class="space-y-6">
+                    <p class="text-2xl md:text-3xl font-bold tracking-widest main-title">9529835875</p>
+                    <p class="text-xs md:text-sm sub-title mb-10 uppercase tracking-wider">Wardha, Maharashtra, India</p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4 relative" id="contact-tags-wrap">
+                        <div class="tag-active-bubble" id="contact-tags-bubble"></div>
+                        <a href="mailto:tejasdhakate62@gmail.com" class="px-6 py-3.5 text-xs font-mono break-all sm:break-normal z-10 tag-item transition">tejasdhakate62@gmail.com</a>
+                        <a href="https://www.linkedin.com/in/tejas-suresh-dhakate-ab3a22321/" target="_blank" class="px-6 py-3.5 text-xs font-mono uppercase z-10 tag-item transition">LinkedIn</a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Details Project Modal Layer -->
-    <div id="projectModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-6 bg-black/70 backdrop-blur-xl">
-        <div class="glass max-w-2xl w-full p-10 relative">
-            <button onclick="closeModal()" class="absolute top-6 right-8 text-slate-400 hover:text-slate-600 text-3xl">&times;</button>
-            <h3 class="text-3xl font-bold mb-2 main-title">PredictiveRiskAnalyzer</h3>
-            <p class="text-blue-500 text-[10px] font-bold uppercase tracking-widest mb-8">Status: Delivered Ahead of Schedule</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 text-left">
+    <!-- Project Modal Layer -->
+    <div id="projectModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 md:p-6 bg-black/70 backdrop-blur-xl transition-all duration-300 opacity-0">
+        <div class="glass max-w-2xl w-full p-6 md:p-10 relative transform scale-95 transition-all duration-300">
+            <button onclick="closeModal()" class="absolute top-4 right-6 text-slate-400 hover:text-slate-600 text-3xl">&times;</button>
+            <h3 class="text-2xl md:text-3xl font-bold mb-2 main-title">PredictiveRiskAnalyzer</h3>
+            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-8">Status: Delivered Ahead of Schedule</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 text-left">
                 <div class="p-6 glass">
-                    <h4 class="text-blue-500 font-bold uppercase text-[10px] mb-3 tracking-widest">Tech Stack</h4>
+                    <h4 class="text-slate-400 font-bold uppercase text-[10px] mb-3 tracking-widest">Tech Stack</h4>
                     <p class="text-xs sub-title font-light">Python (Flask), Synthetic Data Processing, Clean Documented Code.</p>
                 </div>
                 <div class="p-6 glass">
-                    <h4 class="text-purple-500 font-bold uppercase text-[10px] mb-3 tracking-widest">Quality Assurance</h4>
+                    <h4 class="text-slate-400 font-bold uppercase text-[10px] mb-3 tracking-widest">Quality Assurance</h4>
                     <p class="text-xs sub-title font-light">Rigorous testing and UI polishing completed before deadline.</p>
                 </div>
             </div>
-            <a href="https://github.com/tejasdhakate62-dev/PredictiveRiskAnalyzer" target="_blank" class="block w-full text-center py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-500 transition shadow-lg text-sm tracking-wide">View GitHub Repo</a>
+            <div class="relative w-full text-center" id="modal-tags-wrap">
+                <div class="tag-active-bubble" id="modal-tags-bubble"></div>
+                <a href="https://github.com/tejasdhakate62-dev/PredictiveRiskAnalyzer" target="_blank" class="block w-full py-4 text-xs uppercase tracking-widest font-bold z-10 tag-item transition">View GitHub Repo</a>
+            </div>
         </div>
     </div>
 
-    <!-- 🌌 CORE RUNTIME INTERACTIVE IMPLEMENTATION MECHANICS -->
+    <!-- CDNs: stable, version-locked libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- 🌌 RUNTIME INTERACTIVE MECHANICS -->
     <script>
         function openModal() {
-            document.getElementById('projectModal').classList.remove('hidden');
-            document.getElementById('projectModal').classList.add('flex');
+            const modal = document.getElementById('projectModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('.glass').classList.remove('scale-95');
+            }, 10);
             document.body.style.overflow = 'hidden';
         }
+        
         function closeModal() {
-            document.getElementById('projectModal').classList.add('hidden');
-            document.getElementById('projectModal').classList.remove('flex');
+            const modal = document.getElementById('projectModal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('.glass').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
             document.body.style.overflow = 'auto';
         }
 
-        // 🌗 DYNAMIC THEME CONTROLLER
-        function toggleTheme() {
-            const body = document.body;
-            const currentTheme = body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            body.setAttribute('data-theme', newTheme);
-            
-            // Adjust label indicators
-            document.getElementById('theme-icon').innerText = newTheme === 'dark' ? '☀️' : '🌙';
-            document.getElementById('theme-text').innerText = newTheme === 'dark' ? 'Light' : 'Dark';
-            
-            // Update canvas base constants configuration references
-            if(newTheme === 'light') {
-                themeColors.background = '#f1f5f9';
-                themeColors.chromeBlob = 'rgba(148, 163, 184, 0.25)'; // Pearlescent Silver Chrome
-                themeColors.specularLight = 'rgba(255, 255, 255, 0.7)';
-            } else {
-                themeColors.background = '#0d0d0f';
-                themeColors.chromeBlob = 'rgba(38, 38, 41, 0.4)';      // Dark Metallic Chrome from image_dc751c.jpg
-                themeColors.specularLight = 'rgba(255, 255, 255, 0.15)';
+        // Global state variables
+        let scene, camera, renderer, clock;
+        let heroGroup, coreMesh, particleSystem;
+        let originalPositions;
+        const satelliteBlobs = [];
+        let ambientLight, dirLight, pointLight;
+        let noMotion = false;
+
+        // Mouse coordinates
+        const mouse = { x: 0, y: 0, targetX: 0, targetY: 0, lerpX: 0, lerpY: 0 };
+
+        // Theme Colors configuration
+        const themes = {
+            dark: {
+                background: '#10111a',
+                torusColor: 0xffffff,
+                particleColor: 0x94a3b8,
+                lightColor: 0x00f0ff,
+                roughness: 0.0,
+                transmission: 1.0
+            },
+            light: {
+                background: '#f1f5f9',
+                torusColor: 0x2563eb,
+                particleColor: 0x64748b,
+                lightColor: 0x2563eb,
+                roughness: 0.3,
+                transmission: 0.7
             }
-        }
-
-        // 🛠️ REAL-TIME CHROME REFLECTION BACKGROUND LOGIC (From image_dc751c.jpg)
-        const canvas = document.getElementById('chrome-canvas');
-        const ctx = canvas.getContext('2d');
-
-        let w = canvas.width = window.innerWidth;
-        let h = canvas.height = window.innerHeight;
-
-        const themeColors = {
-            background: '#0d0d0f',
-            chromeBlob: 'rgba(38, 38, 41, 0.5)',
-            specularLight: 'rgba(255, 255, 255, 0.15)'
         };
 
-        const metallicShapes = [];
-        const shapeCount = 3;
+        // 🌗 DYNAMIC THEME CONTROLLER (Cycles through Dark and Light)
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme') || 'dark';
+            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            updateThemeUI(newTheme);
+            
+            const tValues = themes[newTheme];
+            
+            // Interpolate Three.js background, fog, and light properties
+            const targetBg = new THREE.Color(tValues.background);
+            gsap.to(scene.fog.color, {
+                r: targetBg.r,
+                g: targetBg.g,
+                b: targetBg.b,
+                duration: 0.6
+            });
+            
+            const targetTorusColor = new THREE.Color(tValues.torusColor);
+            gsap.to(coreMesh.material.color, {
+                r: targetTorusColor.r,
+                g: targetTorusColor.g,
+                b: targetTorusColor.b,
+                duration: 0.6
+            });
+            
+            gsap.to(coreMesh.material, { 
+                roughness: tValues.roughness,
+                transmission: tValues.transmission,
+                duration: 0.6 
+            });
+            
+            const targetLightColor = new THREE.Color(tValues.lightColor);
+            gsap.to(pointLight.color, {
+                r: targetLightColor.r,
+                g: targetLightColor.g,
+                b: targetLightColor.b,
+                duration: 0.6
+            });
+        }
 
-        class MetallicReflector {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.baseRadius = Math.random() * 150 + 250;
-                this.radius = this.baseRadius;
-                this.vx = (Math.random() * 0.6 - 0.3);
-                this.vy = (Math.random() * 0.6 - 0.3);
-                this.pulse = Math.random() * Math.PI;
+        function updateThemeUI(theme) {
+            let text = theme === 'dark' ? 'Dark' : 'Light';
+            const txtEl = document.getElementById('theme-text');
+            if (txtEl) txtEl.innerText = text;
+        }
+
+        function getCurrentThemeValues() {
+            const currentTheme = document.body.getAttribute('data-theme') || 'dark';
+            return themes[currentTheme];
+        }
+
+        /**
+         * ==========================================
+         * THREE.JS ENGINE SETUP
+         * ==========================================
+         */
+        function initThree() {
+            const container = document.getElementById('canvas-container');
+            const canvas = document.getElementById('chrome-canvas');
+            clock = new THREE.Clock();
+
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(getCurrentThemeValues().background, 0.08);
+
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100);
+            camera.position.set(0, 0, 5);
+
+            renderer = new THREE.WebGLRenderer({
+                canvas: canvas,
+                antialias: true,
+                alpha: true,
+                powerPreference: "high-performance"
+            });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+            canvas.setAttribute('role', 'img');
+            canvas.setAttribute('aria-label', 'Interactive 3D shape and floating particle background.');
+
+            setupLights();
+            setupHeroGeometry();
+            setupParticles();
+
+            renderer.setAnimationLoop(renderLoop);
+        }
+
+        function setupLights() {
+            ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+
+            dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+            dirLight.position.set(5, 10, 7);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 1024;
+            dirLight.shadow.mapSize.height = 1024;
+            dirLight.shadow.bias = -0.001;
+            scene.add(dirLight);
+
+            const activeColor = getCurrentThemeValues().lightColor;
+            pointLight = new THREE.PointLight(activeColor, 3, 10);
+            pointLight.position.set(0, 0, 2);
+            scene.add(pointLight);
+        }
+
+        function setupHeroGeometry() {
+            heroGroup = new THREE.Group();
+            const tValues = getCurrentThemeValues();
+
+            // 1. Primary Liquid Glass Blob
+            const coreGeo = new THREE.SphereGeometry(1.0, 48, 48);
+            originalPositions = coreGeo.attributes.position.array.slice();
+
+            const coreMat = new THREE.MeshPhysicalMaterial({
+                color: tValues.torusColor,
+                roughness: tValues.roughness,
+                metalness: 0.05,
+                transmission: tValues.transmission,
+                ior: 1.65, // high refractive index
+                thickness: 2.0, // thick glass
+                depthWrite: true,
+                transparent: true,
+                opacity: 1.0,
+                clearcoat: 1.0,
+                clearcoatRoughness: 0.0
+            });
+
+            coreMesh = new THREE.Mesh(coreGeo, coreMat);
+            coreMesh.castShadow = true;
+            coreMesh.receiveShadow = true;
+            heroGroup.add(coreMesh);
+
+            // 2. Smaller Satellite Liquid Glass Droplets
+            const satCount = 3;
+            const satGeo = new THREE.SphereGeometry(0.35, 24, 24);
+            for (let i = 0; i < satCount; i++) {
+                const satMesh = new THREE.Mesh(satGeo, coreMat);
+                satMesh.castShadow = true;
+                
+                const angle = (i / satCount) * Math.PI * 2;
+                satMesh.position.set(Math.cos(angle) * 1.8, Math.sin(angle) * 1.8, (Math.random() - 0.5) * 0.5);
+                satMesh.userData = {
+                    angle: angle,
+                    speed: 0.4 + Math.random() * 0.4,
+                    distance: 1.7 + Math.random() * 0.3,
+                    offsetY: (Math.random() - 0.5) * 0.4,
+                    pulseSpeed: 1 + Math.random() * 1.5,
+                    phase: Math.random() * Math.PI
+                };
+                
+                satelliteBlobs.push(satMesh);
+                heroGroup.add(satMesh);
             }
 
-            animate() {
-                this.pulse += 0.003;
-                this.radius = this.baseRadius + Math.sin(this.pulse) * 40;
+            const initialCoords = getSectionCoordinates('hero');
+            heroGroup.position.set(initialCoords.x, initialCoords.y, initialCoords.z);
+            heroGroup.scale.setScalar(initialCoords.scale);
 
-                if (this.x - this.radius < -100 || this.x + this.radius > w + 100) this.vx *= -1;
-                if (this.y - this.radius < -100 || this.y + this.radius > h + 100) this.vy *= -1;
+            scene.add(heroGroup);
+        }
 
-                this.x += this.vx;
-                this.y += this.vy;
+        function setupParticles() {
+            const particleCount = 0; // Set to 0 to remove background stars/dots completely as requested
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(0);
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const tValues = getCurrentThemeValues();
+            const material = new THREE.PointsMaterial({
+                color: tValues.particleColor,
+                size: 0.035,
+                transparent: true,
+                opacity: 0.65,
+                depthWrite: false,
+                blending: THREE.AdditiveBlending
+            });
+
+            particleSystem = new THREE.Points(geometry, material);
+            scene.add(particleSystem);
+        }
+
+        /**
+         * ==========================================
+         * LAYOUT RESPONSIVE LOGIC
+         * ==========================================
+         */
+        function getSectionCoordinates(section) {
+            const isMobile = window.innerWidth < 768;
+            const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
+
+            const coords = {
+                hero: {
+                    desktop: { x: 0, y: 0, z: 0, scale: 1.1 },
+                    tablet: { x: 0, y: 1.0, z: -0.5, scale: 0.95 },
+                    mobile: { x: 0, y: 1.3, z: -0.8, scale: 0.8 }
+                },
+                about: {
+                    desktop: { x: 1.8, y: 0, z: -0.5, scale: 0.9 },
+                    tablet: { x: 1.2, y: 0, z: -0.5, scale: 0.8 },
+                    mobile: { x: 0, y: 1.5, z: -1.0, scale: 0.7 }
+                },
+                education: {
+                    desktop: { x: -1.8, y: 0, z: -0.5, scale: 0.9 },
+                    tablet: { x: -1.2, y: 0, z: -0.5, scale: 0.8 },
+                    mobile: { x: 0, y: 1.6, z: -1.2, scale: 0.65 }
+                },
+                documents: {
+                    desktop: { x: 0, y: 0, z: -3.5, scale: 0.7 },
+                    tablet: { x: 0, y: 0, z: -3.0, scale: 0.65 },
+                    mobile: { x: 0, y: 0, z: -2.8, scale: 0.55 }
+                },
+                projects: {
+                    desktop: { x: 2.0, y: -0.5, z: -1.5, scale: 0.85 },
+                    tablet: { x: 1.5, y: -0.3, z: -1.2, scale: 0.75 },
+                    mobile: { x: 0, y: 1.8, z: -1.5, scale: 0.6 }
+                },
+                contact: {
+                    desktop: { x: 0, y: -0.2, z: 0, scale: 1.2 },
+                    tablet: { x: 0, y: 0.5, z: -0.5, scale: 1.0 },
+                    mobile: { x: 0, y: 1.2, z: -0.8, scale: 0.8 }
+                }
+            };
+
+            const sectionCoords = coords[section];
+            if (isMobile) return sectionCoords.mobile;
+            if (isTablet) return sectionCoords.tablet;
+            return sectionCoords.desktop;
+        }
+
+        /**
+         * ==========================================
+         * GSAP SCROLL-LINKED CHOREOGRAPHY
+         * ==========================================
+         */
+        function initScrollChoreography() {
+            gsap.registerPlugin(ScrollTrigger);
+            const sections = ['hero', 'about', 'education', 'documents', 'projects', 'contact'];
+
+            sections.forEach((sectionId, idx) => {
+                const el = document.getElementById(sectionId);
+                if (!el) return;
+
+                if (idx > 0) {
+                    const currentCoords = getSectionCoordinates(sectionId);
+
+                    gsap.to(heroGroup.position, {
+                        x: currentCoords.x,
+                        y: currentCoords.y,
+                        z: currentCoords.z,
+                        scrollTrigger: {
+                            trigger: el,
+                            start: "top bottom",
+                            end: "top center",
+                            scrub: 1.5,
+                            invalidateOnRefresh: true
+                        }
+                    });
+
+                    gsap.to(heroGroup.scale, {
+                        x: currentCoords.scale,
+                        y: currentCoords.scale,
+                        z: currentCoords.scale,
+                        scrollTrigger: {
+                            trigger: el,
+                            start: "top bottom",
+                            end: "top center",
+                            scrub: 1.5,
+                            invalidateOnRefresh: true
+                        }
+                    });
+                }
+
+                const revealElements = el.querySelectorAll('.reveal-node');
+                revealElements.forEach((node) => {
+                    gsap.fromTo(node, 
+                        { opacity: 0, y: 40 },
+                        {
+                            opacity: 1,
+                            y: 0,
+                            duration: 1.0,
+                            ease: "power3.out",
+                            scrollTrigger: {
+                                trigger: node,
+                                start: "top 85%",
+                                toggleActions: "play none none none"
+                            },
+                            onComplete: () => {
+                                if (node.id === 'skills-trigger') {
+                                    animateSkillBars();
+                                }
+                            }
+                        }
+                    );
+                });
+            });
+        }
+
+        function animateSkillBars() {
+            const bars = document.querySelectorAll('.skill-bar');
+            bars.forEach(bar => {
+                const width = bar.getAttribute('data-width');
+                bar.style.width = width;
+            });
+        }
+
+        /**
+         * ==========================================
+         * RENDER LOOP & MOUSE TRACKING
+         * ==========================================
+         */
+        function renderLoop() {
+            const dt = clock.getDelta();
+            const time = clock.getElapsedTime();
+
+            if (!noMotion && heroGroup && particleSystem) {
+                // Morph the primary glass core mesh vertices (Liquid Wobble)
+                if (coreMesh && originalPositions) {
+                    const posAttr = coreMesh.geometry.attributes.position;
+                    const posArray = posAttr.array;
+                    
+                    for (let i = 0; i < posAttr.count; i++) {
+                        const idx = i * 3;
+                        const ox = originalPositions[idx];
+                        const oy = originalPositions[idx + 1];
+                        const oz = originalPositions[idx + 2];
+                        
+                        // Noise perturbation using sines and cosines based on vertex and time
+                        const wave = Math.sin(ox * 2.0 + time * 1.2) * 
+                                     Math.cos(oy * 2.0 + time * 1.0) * 
+                                     Math.sin(oz * 2.0 + time * 1.4);
+                                     
+                        // 14% max displacement amplitude
+                        const scale = 1.0 + wave * 0.14;
+                        
+                        posArray[idx] = ox * scale;
+                        posArray[idx + 1] = oy * scale;
+                        posArray[idx + 2] = oz * scale;
+                    }
+                    posAttr.needsUpdate = true;
+                    coreMesh.geometry.computeVertexNormals();
+                }
+
+                // Orbit and animate satellite glass droplets
+                satelliteBlobs.forEach(sat => {
+                    sat.userData.angle += dt * sat.userData.speed;
+                    
+                    const angle = sat.userData.angle;
+                    const dist = sat.userData.distance;
+                    const bounce = Math.sin(time * sat.userData.pulseSpeed + sat.userData.phase) * 0.15;
+                    
+                    sat.position.x = Math.cos(angle) * dist;
+                    sat.position.y = Math.sin(angle) * dist + sat.userData.offsetY;
+                    sat.position.z = bounce;
+                    
+                    // Rotate individual satellites
+                    sat.rotation.x += dt * 0.15;
+                    sat.rotation.y += dt * 0.2;
+                });
+
+                // Slow overall group rotation
+                heroGroup.rotation.y += dt * 0.04;
+                particleSystem.rotation.y += dt * 0.01;
             }
 
-            render() {
-                // Multi-stop gradient calculation mimicking metallic links from image_dc751c.jpg
-                let chromeGrad = ctx.createRadialGradient(this.x - this.radius*0.2, this.y - this.radius*0.2, 10, this.x, this.y, this.radius);
-                chromeGrad.addColorStop(0, themeColors.specularLight);
-                chromeGrad.addColorStop(0.3, themeColors.chromeBlob);
-                chromeGrad.addColorStop(1, 'rgba(0,0,0,0)');
+            mouse.lerpX += (mouse.targetX - mouse.lerpX) * 0.05;
+            mouse.lerpY += (mouse.targetY - mouse.lerpY) * 0.05;
 
-                ctx.fillStyle = chromeGrad;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fill();
+            if (heroGroup && !noMotion) {
+                heroGroup.rotation.y += mouse.lerpX * 0.003;
+                heroGroup.rotation.x += mouse.lerpY * 0.003;
+                
+                pointLight.position.x = mouse.lerpX * 3;
+                pointLight.position.y = -mouse.lerpY * 3;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        /**
+         * ==========================================
+         * TACTILE CARD HOVER (3D TILT)
+         * ==========================================
+         */
+        function initCardTiltEffect() {
+            const cards = document.querySelectorAll('.glass');
+
+            cards.forEach(card => {
+                if (card.id === 'projectModal' || card.parentNode.tagName === 'NAV') return;
+
+                const content = card.querySelector('.glass-content');
+                const sheen = card.querySelector('.card-sheen');
+
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const normX = (x / rect.width) - 0.5;
+                    const normY = (y / rect.height) - 0.5;
+                    
+                    const maxTilt = 8;
+                    const tiltX = -normY * maxTilt;
+                    const tiltY = normX * maxTilt;
+
+                    card.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02)`;
+                    
+                    if (content) {
+                        content.style.transform = `translateZ(20px)`;
+                    }
+
+                    if (sheen) {
+                        sheen.style.background = `radial-gradient(circle 120px at ${x}px ${y}px, rgba(255, 255, 255, 0.12), transparent 80%)`;
+                    }
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`;
+                    if (content) content.style.transform = `translateZ(0px)`;
+                });
+            });
+        }
+
+        // Initialize event handlers
+        function initEventHandlers() {
+            window.addEventListener('mousemove', e => {
+                mouse.targetX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouse.targetY = -(e.clientY / window.innerHeight) * 2 + 1;
+                
+                // Update global mouse coordinates for background frosted glass lens effect
+                document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+                document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+            });
+
+            window.addEventListener('touchmove', e => {
+                if (e.touches.length > 0) {
+                    const t = e.touches[0];
+                    mouse.targetX = (t.clientX / window.innerWidth) * 2 - 1;
+                    mouse.targetY = -(t.clientY / window.innerHeight) * 2 + 1;
+                    
+                    document.documentElement.style.setProperty('--mouse-x', `${t.clientX}px`);
+                    document.documentElement.style.setProperty('--mouse-y', `${t.clientY}px`);
+                }
+            }, { passive: true });
+
+            window.addEventListener('resize', () => {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                if (camera && renderer) {
+                    camera.aspect = width / height;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(width, height);
+                    
+                    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+                    initScrollChoreography();
+                }
+            });
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    renderer.setAnimationLoop(null);
+                } else {
+                    renderer.setAnimationLoop(renderLoop);
+                }
+            });
+        }
+
+        // 💧 SLIDING LIQUID NAV LINK BUBBLE
+        function initNavBubble() {
+            const container = document.getElementById('nav-links-container');
+            const bubble = document.getElementById('nav-active-bubble');
+            const links = container.querySelectorAll('a');
+            
+            let activeLink = null;
+            
+            function moveBubble(target) {
+                if (!target) {
+                    gsap.to(bubble, { opacity: 0, duration: 0.35, ease: "power2.out", overwrite: "auto" });
+                    return;
+                }
+                
+                // Use offset properties for pixel-perfect position calculations unaffected by hover scaling shifts
+                const left = target.offsetLeft;
+                const top = target.offsetTop;
+                const width = target.offsetWidth;
+                const height = target.offsetHeight;
+                
+                gsap.to(bubble, {
+                    left: left,
+                    top: top,
+                    width: width,
+                    height: height,
+                    opacity: 1,
+                    duration: 0.4,
+                    ease: "power3.out",
+                    overwrite: "auto"
+                });
+                
+                // Add wobbly liquid elastic drop bounce effect on click
+                gsap.fromTo(bubble, 
+                    { scaleX: 1.25, scaleY: 0.75 }, 
+                    { scaleX: 1, scaleY: 1, duration: 0.65, ease: "elastic.out(1.2, 0.45)", overwrite: "auto" }
+                );
+            }
+            
+            links.forEach(link => {
+                link.addEventListener('mouseenter', () => {
+                    moveBubble(link);
+                });
+                
+                link.addEventListener('click', () => {
+                    links.forEach(l => l.classList.remove('active-nav-link'));
+                    link.classList.add('active-nav-link');
+                    activeLink = link;
+                    moveBubble(link);
+                });
+            });
+            
+            container.addEventListener('mouseleave', () => {
+                if (activeLink) {
+                    moveBubble(activeLink);
+                } else {
+                    bubble.style.opacity = '0';
+                }
+            });
+
+            // Sync with ScrollTrigger for scroll-based active state
+            const sections = ['about', 'education', 'documents', 'projects'];
+            sections.forEach(secId => {
+                const el = document.getElementById(secId);
+                if (el) {
+                    ScrollTrigger.create({
+                        trigger: el,
+                        start: "top center",
+                        end: "bottom center",
+                        onEnter: () => updateActiveNav(secId),
+                        onEnterBack: () => updateActiveNav(secId),
+                        invalidateOnRefresh: true
+                    });
+                }
+            });
+
+            function updateActiveNav(sectionId) {
+                const activeNav = document.getElementById(`nav-link-${sectionId}`);
+                if (activeNav) {
+                    links.forEach(l => l.classList.remove('active-nav-link'));
+                    activeNav.classList.add('active-nav-link');
+                    activeLink = activeNav;
+                    
+                    const isHoveringNav = container.matches(':hover');
+                    if (!isHoveringNav) {
+                        moveBubble(activeNav);
+                    }
+                }
             }
         }
 
-        function buildReflections() {
-            metallicShapes.length = 0;
-            metallicShapes.push(new MetallicReflector(w * 0.3, h * 0.4));
-            metallicShapes.push(new MetallicReflector(w * 0.7, h * 0.3));
-            metallicShapes.push(new MetallicReflector(w * 0.5, h * 0.8));
+        // 💧 ACTIVE ROTATING WATER BORDERS FOR GLASS BLOCKS
+        function initActiveSectionBorders() {
+            const sections = ['about', 'education', 'documents', 'projects', 'contact'];
+            
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (!section) return;
+                
+                // Exclude inner tech tags from auto-scroll triggers to keep layouts clean
+                const cards = Array.from(section.querySelectorAll('.glass')).filter(c => !c.classList.contains('tech-tag'));
+                cards.forEach(card => {
+                    if (card.id === 'projectModal' || card.parentNode.tagName === 'NAV') return;
+                    
+                    ScrollTrigger.create({
+                        trigger: card,
+                        start: "top 65%",
+                        end: "bottom 35%",
+                        onEnter: () => card.classList.add('active-water-border'),
+                        onEnterBack: () => card.classList.add('active-water-border'),
+                        onLeave: () => card.classList.remove('active-water-border'),
+                        onLeaveBack: () => card.classList.remove('active-water-border'),
+                        invalidateOnRefresh: true
+                    });
+                });
+            });
         }
 
-        function engineLoop() {
-            ctx.fillStyle = themeColors.background;
-            ctx.fillRect(0, 0, w, h);
+        // 💧 PROXIMITY-ACTIVATED ACTIVE WATER BORDERS (NATIVE CURSOR MODE)
+        function initProximityBorders() {
+            // Query all types of glass blocks on the page
+            const allGlass = document.querySelectorAll('.glass');
+            const mainCards = Array.from(allGlass).filter(c => !c.classList.contains('tech-tag') && c.id !== 'projectModal' && c.parentNode.tagName !== 'NAV');
+            const techTags = Array.from(allGlass).filter(c => c.classList.contains('tech-tag'));
+            const buttons = Array.from(document.querySelectorAll('.glass-pill'));
+            const toggles = Array.from(document.querySelectorAll('#theme-toggle-wrap'));
+            const navbar = document.querySelector('nav .glass'); // navbar card container
+            
+            // Combine sub-blocks (tech tags, buttons, toggles) for compact tracking
+            const subBlocks = [...techTags, ...buttons, ...toggles];
+            
+            let mouseX = 0, mouseY = 0;
 
-            for(let shape of metallicShapes) {
-                shape.animate();
-                shape.render();
-            }
+            window.addEventListener('mousemove', e => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                // 1. Main container cards & navbar proximity (radius: 280px)
+                let closestMain = null;
+                let minMainDist = Infinity;
+                
+                // Check cards
+                mainCards.forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    const cx = rect.left + rect.width / 2;
+                    const cy = rect.top + rect.height / 2;
+                    const dist = Math.hypot(cx - mouseX, cy - mouseY);
+                    if (dist < minMainDist) {
+                        minMainDist = dist;
+                        closestMain = card;
+                    }
+                });
+                
+                // Check navbar
+                if (navbar) {
+                    const rect = navbar.getBoundingClientRect();
+                    const cx = rect.left + rect.width / 2;
+                    const cy = rect.top + rect.height / 2;
+                    const dist = Math.hypot(cx - mouseX, cy - mouseY);
+                    if (dist < minMainDist) {
+                        minMainDist = dist;
+                        closestMain = navbar;
+                    }
+                }
 
-            requestAnimationFrame(engineLoop);
+                // Reset main active borders
+                mainCards.forEach(card => {
+                    if (!card.classList.contains('scroll-active-border')) {
+                        card.classList.remove('active-water-border');
+                    }
+                });
+                if (navbar) navbar.classList.remove('active-water-border');
+
+                // Activate closest main card or navbar
+                if (closestMain && minMainDist < 280) {
+                    closestMain.classList.add('active-water-border');
+                }
+
+                // 2. Inner sub-blocks (tags, buttons, toggles) proximity (radius: 120px)
+                let closestSub = null;
+                let minSubDist = Infinity;
+                
+                subBlocks.forEach(sub => {
+                    if (sub.offsetWidth === 0 && sub.offsetHeight === 0) return;
+                    const rect = sub.getBoundingClientRect();
+                    const cx = rect.left + rect.width / 2;
+                    const cy = rect.top + rect.height / 2;
+                    const dist = Math.hypot(cx - mouseX, cy - mouseY);
+                    if (dist < minSubDist) {
+                        minSubDist = dist;
+                        closestSub = sub;
+                    }
+                });
+
+                subBlocks.forEach(sub => {
+                    sub.classList.remove('active-water-border');
+                });
+
+                if (closestSub && minSubDist < 120) {
+                    closestSub.classList.add('active-water-border');
+                }
+            });
         }
 
-        window.addEventListener('resize', () => {
-            w = canvas.width = window.innerWidth;
-            h = canvas.height = window.innerHeight;
-            buildReflections();
-        });
+        // 💧 TOGGLE HANDLERS FOR SECTION FILTERS
+        function animateSkillBars() {
+            const bars = document.querySelectorAll('.skill-bar');
+            bars.forEach(bar => {
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = bar.getAttribute('data-width');
+                }, 50);
+            });
+        }
 
-        // Skill Bar Transition Trigger
-        const observer = new IntersectionObserver((entries) => {
+        // Obsolete tab navigation functions removed, content now displayed directly.
+
+        function initTagFollowers() {
+            const wraps = document.querySelectorAll('[id$="-wrap"]');
+            wraps.forEach(wrap => {
+                const bubble = wrap.querySelector('.tag-active-bubble');
+                const items = wrap.querySelectorAll('.tag-item');
+                let lastActiveIndex = -1;
+                
+                wrap.addEventListener('mousemove', e => {
+                    const mouseX = e.clientX;
+                    const mouseY = e.clientY;
+                    
+                    let closestItem = null;
+                    let minDistance = Infinity;
+                    let closestIdx = -1;
+                    
+                    // Find the closest tag-item based on mouse coordinates relative to item centers
+                    items.forEach((item, idx) => {
+                        const rect = item.getBoundingClientRect();
+                        const cx = rect.left + rect.width / 2;
+                        const cy = rect.top + rect.height / 2;
+                        const dist = Math.hypot(mouseX - cx, mouseY - cy);
+                        
+                        if (dist < minDistance) {
+                            minDistance = dist;
+                            closestItem = item;
+                            closestIdx = idx;
+                        }
+                    });
+                    
+                    if (closestItem && bubble) {
+                        const left = closestItem.offsetLeft;
+                        const top = closestItem.offsetTop;
+                        const width = closestItem.offsetWidth;
+                        const height = closestItem.offsetHeight;
+                        
+                        const borderRadius = window.getComputedStyle(closestItem).borderRadius;
+                        gsap.to(bubble, {
+                            left: left,
+                            top: top,
+                            width: width,
+                            height: height,
+                            borderRadius: borderRadius,
+                            opacity: 1,
+                            duration: 0.35,
+                            ease: "power3.out",
+                            overwrite: "auto"
+                        });
+                        
+                        // Wobble the bubble when active target changes
+                        if (closestIdx !== lastActiveIndex) {
+                            lastActiveIndex = closestIdx;
+                            gsap.fromTo(bubble, 
+                                { scaleX: 1.25, scaleY: 0.75 }, 
+                                { scaleX: 1, scaleY: 1, duration: 0.6, ease: "elastic.out(1.2, 0.45)", overwrite: "auto" }
+                            );
+                        }
+
+                        // Exclude the hovered card block from the global frosted background blur overlay (Capsule shape)
+                        const rect = closestItem.getBoundingClientRect();
+                        const path = document.getElementById('blur-overlay-path');
+                        if (path) {
+                            const W = window.innerWidth;
+                            const H = window.innerHeight;
+                            const r = Math.min(rect.width / 2, rect.height / 2, parseFloat(window.getComputedStyle(closestItem).borderRadius) || 24);
+                            
+                            const outer = `M 0 0 H ${W} V ${H} H 0 Z`;
+                            const inner = `M ${rect.left + r} ${rect.top} H ${rect.left + rect.width - r} A ${r} ${r} 0 0 1 ${rect.left + rect.width} ${rect.top + r} V ${rect.top + rect.height - r} A ${r} ${r} 0 0 1 ${rect.left + rect.width - r} ${rect.top + rect.height} H ${rect.left + r} A ${r} ${r} 0 0 1 ${rect.left} ${rect.top + rect.height - r} V ${rect.top + r} A ${r} ${r} 0 0 1 ${rect.left + r} ${rect.top} Z`;
+                            
+                            path.setAttribute('d', `${outer} ${inner}`);
+                        }
+                    }
+                    
+                    const currentTheme = document.body.getAttribute('data-theme') || 'dark';
+                    const activeColor = currentTheme === 'dark' ? '#ffffff' : '#0f172a';
+                    const defaultColor = currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : '#475569';
+                    
+                    // Apply continuous macOS Dock magnification waves based on cursor proximity
+                    items.forEach(item => {
+                        const rect = item.getBoundingClientRect();
+                        const cx = rect.left + rect.width / 2;
+                        const cy = rect.top + rect.height / 2;
+                        const dist = Math.hypot(mouseX - cx, mouseY - cy);
+                        
+                        const maxDist = 120; // range of proximity magnification (pixels)
+                        const maxScale = 1.15; // zoom peak
+                        
+                        if (dist < maxDist) {
+                            const ratio = 1 - dist / maxDist;
+                            const scale = 1 + (maxScale - 1) * Math.sin(ratio * Math.PI / 2);
+                            const opacity = 0.55 + 0.45 * Math.sin(ratio * Math.PI / 2);
+                            
+                            gsap.to(item, {
+                                scale: scale,
+                                color: activeColor,
+                                opacity: opacity,
+                                duration: 0.25,
+                                ease: "power2.out",
+                                overwrite: "auto"
+                            });
+                        } else {
+                            gsap.to(item, {
+                                scale: 1.0,
+                                color: defaultColor,
+                                opacity: 0.55,
+                                duration: 0.25,
+                                ease: "power2.out",
+                                overwrite: "auto"
+                            });
+                        }
+                    });
+                });
+                
+                wrap.addEventListener('mouseleave', () => {
+                    lastActiveIndex = -1;
+                    if (bubble) {
+                        gsap.to(bubble, {
+                            opacity: 0,
+                            duration: 0.3,
+                            ease: "power2.out",
+                            overwrite: "auto"
+                        });
+                    }
+                    const path = document.getElementById('blur-overlay-path');
+                    if (path) {
+                        const W = window.innerWidth;
+                        const H = window.innerHeight;
+                        path.setAttribute('d', `M 0 0 H ${W} V ${H} H 0 Z`);
+                    }
+                    items.forEach(item => {
+                        const currentTheme = document.body.getAttribute('data-theme') || 'dark';
+                        const defaultColor = currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : '#0f172a';
+                        gsap.to(item, {
+                            scale: 1.0,
+                            color: defaultColor,
+                            opacity: 1.0,
+                            duration: 0.3,
+                            overwrite: "auto"
+                        });
+                    });
+                });
+            });
+        }
+
+        // 🍎 macOS DOCK MAGNIFICATION EFFECT ON NAVIGATION LINKS
+        function initNavDockEffect() {
+            const container = document.getElementById('nav-links-container');
+            if (!container) return;
+
+            const links = container.querySelectorAll('a');
+            const maxDistance = 120; // range of magnification (pixels)
+            const maxScale = 1.38; // Increased zoom intensity
+
+            container.addEventListener('mousemove', e => {
+                const mouseX = e.clientX;
+                
+                links.forEach(link => {
+                    const rect = link.getBoundingClientRect();
+                    const center = rect.left + rect.width / 2;
+                    const dist = Math.abs(mouseX - center);
+                    
+                    if (dist < maxDistance) {
+                        // Smooth magnification sine-curve peaking at maxScale
+                        const ratio = 1 - dist / maxDistance; 
+                        const scale = 1 + (maxScale - 1) * Math.sin(ratio * Math.PI / 2);
+                        
+                        // Push neighboring items outward to prevent overlapping text (increased to 12)
+                        const pushDirection = mouseX > center ? -1 : 1;
+                        const pushVal = pushDirection * 12 * Math.sin(ratio * Math.PI / 2) * (1 - ratio);
+                        
+                        gsap.to(link, {
+                            scale: scale,
+                            x: pushVal,
+                            duration: 0.25,
+                            overwrite: "auto",
+                            ease: "power2.out"
+                        });
+                    } else {
+                        // Beyond range: ease back to scale 1
+                        gsap.to(link, {
+                            scale: 1,
+                            x: 0,
+                            duration: 0.3,
+                            overwrite: "auto",
+                            ease: "power2.out"
+                        });
+                    }
+                });
+            });
+
+            container.addEventListener('mouseleave', () => {
+                // Spring back smoothly on mouseleave
+                links.forEach(link => {
+                    gsap.to(link, {
+                        scale: 1,
+                        x: 0,
+                        duration: 0.45,
+                        overwrite: "auto",
+                        ease: "elastic.out(1, 0.65)"
+                    });
+                });
+            });
+        }
+
+        // Setup IntersectionObserver for skill bars fallback reveal
+        const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('active');
                     const bars = entry.target.querySelectorAll('.skill-bar');
                     bars.forEach(bar => { bar.style.width = bar.getAttribute('data-width'); });
                 }
             });
-        }, { threshold: 0.5 });
-        const skillsTrigger = document.querySelector('#skills-trigger');
-        if (skillsTrigger) observer.observe(skillsTrigger);
+        }, { threshold: 0.15 });
 
-        buildReflections();
-        engineLoop();
+        // Run bootstrap operations on load
+        window.addEventListener('DOMContentLoaded', () => {
+            initThree();
+            initScrollChoreography();
+            initCardTiltEffect();
+            initNavBubble();
+            initActiveSectionBorders();
+            initProximityBorders();
+            initNavDockEffect();
+            initTagFollowers();
+            initEventHandlers();
+            
+            // Re-align nav bubble once fonts are fully loaded to prevent accuracy layout offsets
+            if (document.fonts) {
+                document.fonts.ready.then(() => {
+                    const activeLink = document.querySelector('#nav-links-container a.active-nav-link');
+                    if (activeLink) {
+                        moveBubble(activeLink);
+                    }
+                });
+            }
+            
+            const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+            noMotion = mq.matches;
+            mq.addEventListener('change', e => { noMotion = e.matches; });
+
+            // Attach scroll observers for layout containers fallback
+            document.querySelectorAll('.reveal-node, #skills-trigger').forEach(node => {
+                if(node) revealObserver.observe(node);
+            });
+
+            document.querySelectorAll('.glass').forEach((el) => {
+                if(!el.parentNode.classList.contains('relative') && el.id !== 'projectModal' && el.parentNode.tagName !== 'NAV') {
+                    el.classList.add('reveal-node');
+                    revealObserver.observe(el);
+                }
+            });
+        });
     </script>
 </body>
 </html>
