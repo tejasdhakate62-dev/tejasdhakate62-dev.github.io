@@ -48,6 +48,7 @@ tejasdhakate62-dev.github.io/
     ├── Tejas Dhakate Microtron.pdf
     ├── Tejas Dhakate_BusinessAnalyticsBootcamp_ParticipationCertificate.pdf
     └── Tejas_Dhakate_presentire.pdf
+```
 💻 Key Project Spotlights
 🛠️ PredictiveRiskAnalyzer
 Core Tech: Python, Flask, Machine Learning
