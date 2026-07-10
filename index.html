@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,963 +8,940 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Inter Google Font -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         
+        :root {
+            --color-bg: #000000;
+            --color-card: #0d0d0f;
+            --color-border: rgba(255, 255, 255, 0.05);
+        }
+
         body {
-            margin: 0;
+            background-color: var(--color-bg);
+            color: #86868b;
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            scroll-behavior: smooth;
-            transition: background-color 0.5s ease, color 0.5s ease;
+            -webkit-font-smoothing: antialiased;
         }
 
-        #canvas-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: -2;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-        }
-
-        /* Frosted glass backdrop overlay with dynamic lens */
-        #background-blur-overlay {
-            position: fixed;
-            inset: 0;
-            backdrop-filter: blur(28px) saturate(130%);
-            -webkit-backdrop-filter: blur(28px) saturate(130%);
-            pointer-events: none;
-            z-index: -1;
-            clip-path: url(#blur-overlay-clip);
-            -webkit-clip-path: url(#blur-overlay-clip);
-        }
-
-        /* 🎛️ DYNAMIC THEME DEFINITIONS */
-        body[data-theme="dark"] {
-            background-color: #0d0d0f;
-            color: #f8fafc;
-        }
-        body[data-theme="light"] {
-            background-color: #f1f5f9;
-            color: #0f172a;
-        }
-        body[data-theme="liquid-glass"] {
-            background: #10111a;
-            color: #ffffff;
-        }
-
-        /* 💧 PASS-THROUGH BLUR OVERLAY FOR VISION GLASS THEME (Disabled) */
-        .pass-through-blur {
-            display: none !important;
-        }
-        body[data-theme="liquid-glass"] .blob {
-            opacity: 0.15;
-            mix-blend-mode: screen;
-        }
-
-        /* 🪟 FROSTED LIQUID GLASS COMPONENT SPEC SHEET */
-        .glass {
-            backdrop-filter: blur(30px) saturate(160%);
-            -webkit-backdrop-filter: blur(30px) saturate(160%);
-            border-radius: 24px;
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
-                        background 0.5s ease, 
-                        border-color 0.5s ease, 
-                        box-shadow 0.5s ease,
-                        opacity 0.8s ease-out,
-                        margin-top 0.8s ease-out;
-            transform-style: preserve-3d;
+        /* 3D Perspective Parent */
+        .depth-wrapper {
             perspective: 1000px;
         }
-        
-        body[data-theme="dark"] .glass {
-            background: rgba(30, 30, 45, 0.26);
-            border: none !important;
-            box-shadow: 0 40px 100px -15px rgba(0, 0, 0, 0.55), 
-                        inset 0 1px 2px rgba(255, 255, 255, 0.25), 
-                        inset 0 -1px 1px rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(55px) saturate(130%);
-            -webkit-backdrop-filter: blur(55px) saturate(130%);
-            position: relative;
-        }
-        
-        body[data-theme="light"] .glass {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
-            border: 1px solid rgba(15, 23, 42, 0.05);
-            border-top: 1.5px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 30px 60px -15px rgba(100, 116, 139, 0.12), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+
+        /* Apple Spec Sheet Grid Card with 3D Support */
+        .spec-card {
+            background: var(--color-card);
+            border: 1px solid var(--color-border);
+            border-radius: 28px;
+            transform-style: preserve-3d;
+            transition: border-color 0.5s, box-shadow 0.5s;
         }
 
-        /* Hardware-Accelerated 3D Glossy Border Mask for Liquid Glass Blocks (Removed static outlines as requested) */
-
-        /* Readability and Contrast Overrides for Liquid Glass Blocks */
-        body[data-theme="dark"] .glass h2,
-        body[data-theme="dark"] .glass h3 {
-            color: #ffffff !important;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-        }
-        body[data-theme="dark"] .glass p,
-        body[data-theme="dark"] .glass span {
-            color: rgba(255, 255, 255, 0.72) !important;
+        .spec-card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
         }
 
-        body[data-theme="dark"] .glass .text-slate-400 {
-            color: rgba(255, 255, 255, 0.55) !important;
-        }
-        body[data-theme="dark"] .glass.border-l-4 {
-            border-left: 4px solid rgba(255, 255, 255, 0.45) !important;
-            box-shadow: 0 40px 100px -15px rgba(0, 0, 0, 0.55);
+        /* Floating elements inside cards */
+        .float-depth {
+            transform: translateZ(25px);
+            transform-style: preserve-3d;
         }
 
-        .glass:hover {
-            transform: translateY(-8px) scale(1.01);
-        }
-        
-        body[data-theme="dark"] .glass:hover {
-            background: rgba(255, 255, 255, 0.04);
-            box-shadow: 0 50px 120px -20px rgba(0, 0, 0, 0.7);
+        /* Metallic text gradients */
+        .titanium-text {
+            background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* Moving Sheen Overlay for 3D Cards */
-        .card-sheen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5;
-            background: radial-gradient(circle 120px at 0% 0%, rgba(255, 255, 255, 0.15), transparent 80%);
-            opacity: 0;
-            transition: opacity 0.5s ease;
+        /* Hide Scrollbar for Horizontal Gallery */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
         }
-        .glass:hover .card-sheen {
-            opacity: 1;
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
-        /* Glass Pills (Updated to Rounded Rectangle style as requested) */
-        .glass-pill {
-            border-radius: 9999px !important;
-            position: relative;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        body[data-theme="light"] .glass-pill {
-            background: rgba(15, 23, 42, 0.03);
-            border: 1px solid rgba(15, 23, 42, 0.12);
-            color: #334155;
-        }
-        body[data-theme="dark"] .glass-pill {
-            background: linear-gradient(120deg, rgba(255, 255, 255, 0.0) 20%, rgba(255, 255, 255, 0.08) 45%, rgba(255, 255, 255, 0.0) 70%) !important;
-            background-size: 250% 100% !important;
-            border: 1px solid rgba(255, 255, 255, 0.12) !important;
-            border-top: 1.5px solid rgba(255, 255, 255, 0.28) !important;
-            border-bottom: 0.5px solid rgba(255, 255, 255, 0.04) !important;
-            box-shadow: 
-                0 4px 12px rgba(0, 0, 0, 0.4),
-                /* Clear transparent liquid highlights and shadows */
-                inset 0 -4px 8px rgba(255, 255, 255, 0.06),
-                inset 0 4px 8px rgba(0, 0, 0, 0.45),
-                inset 0 1px 3px rgba(255, 255, 255, 0.12) !important;
-            color: #ffffff;
-            backdrop-filter: blur(12px) saturate(100%) !important;
-            -webkit-backdrop-filter: blur(12px) saturate(100%) !important;
-            animation: liquid-sheen-shimmer 4s infinite linear !important;
-            transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s, border-color 0.4s, box-shadow 0.4s !important;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-            border-radius: 9999px !important; /* Force pill shape */
-        }
-        .glass-pill:hover {
-            transform: translateY(-4px) scale(1.06); /* Float up to feel movable */
-        }
-        body[data-theme="light"] .glass-pill:hover { background: rgba(15, 23, 42, 0.08); color: black; }
-        body[data-theme="dark"] .glass-pill:hover {
-            background: linear-gradient(120deg, rgba(255, 255, 255, 0.0) 20%, rgba(255, 255, 255, 0.15) 45%, rgba(255, 255, 255, 0.0) 70%) !important;
-            background-size: 250% 100% !important;
-            border-color: rgba(255, 255, 255, 0.22) !important;
-            border-top-color: rgba(255, 255, 255, 0.45) !important;
-            box-shadow: 
-                0 8px 20px rgba(0, 0, 0, 0.55),
-                inset 0 -6px 12px rgba(255, 255, 255, 0.12),
-                inset 0 6px 12px rgba(0, 0, 0, 0.5),
-                inset 0 2px 4px rgba(255, 255, 255, 0.22) !important;
-            color: white;
-            animation-duration: 2s !important; /* speed up liquid shimmer on hover */
-            transform: translateY(-4px) scale(1.06) !important;
-        }
-
-        /* Dynamic Text Colors */
-        body[data-theme="dark"] .main-title { color: white; }
-        body[data-theme="light"] .main-title { color: #0f172a; }
-        
-        body[data-theme="dark"] .sub-title { color: rgba(255, 255, 255, 0.85); }
-        body[data-theme="light"] .sub-title { color: #475569; }
-
-        .skill-bar {
-            width: 0%;
-            transition: width 2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .status-dot {
-            height: 8px;
-            width: 8px;
-            background-color: #10b981;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            box-shadow: 0 0 10px #10b981;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        /* 🚀 ADVANCED RESPONSIVE ANIMATION STATE SYSTEM */
-        .reveal-node {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .reveal-node.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .tag-item {
-            border-radius: 9999px !important;
-        }
-
-        /* 💧 LIQUID GLASS FLUID BLOBS */
-        .fluid-blob-container {
+        /* Parallax Background Grid */
+        #bg-grid {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
-            z-index: -2;
+            height: 120vh;
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
+            pointer-events: none;
+            z-index: -10;
+        }
+
+        /* Apple-Style FAQ Accordion Panel */
+        .accordion-content {
+            max-height: 0;
             overflow: hidden;
-            pointer-events: none;
-            display: none;
-        }
-        body[data-theme="liquid-glass"] .fluid-blob-container {
-            display: block;
-        }
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.65;
-            mix-blend-mode: screen;
-            animation: drift-blob 22s infinite alternate ease-in-out;
-        }
-        .blob-1 {
-            width: 550px;
-            height: 550px;
-            background: #ff2a5f; /* Neon Magenta */
-            top: -5%;
-            left: 15%;
-            animation-duration: 18s;
-        }
-        .blob-2 {
-            width: 650px;
-            height: 650px;
-            background: #00f0ff; /* Electric Cyan */
-            bottom: -10%;
-            right: 10%;
-            animation-duration: 25s;
-            animation-delay: -4s;
-        }
-        .blob-3 {
-            width: 400px;
-            height: 400px;
-            background: #7b2cbf; /* Royal Purple */
-            top: 35%;
-            left: 40%;
-            animation-duration: 20s;
-            animation-delay: -7s;
-        }
-        @keyframes drift-blob {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(80px, 60px) scale(1.15); }
-            100% { transform: translate(-60px, -40px) scale(0.9); }
-        }
-
-        /* 💧 LIQUID NAVIGATION LINK BUBBLE */
-        #nav-active-bubble {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-top: 1.5px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.25);
-            border-radius: 9999px !important;
-            pointer-events: none;
-            z-index: 0;
+            transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
             opacity: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            transition: none;
-            backdrop-filter: blur(12px) saturate(120%);
-            -webkit-backdrop-filter: blur(12px) saturate(120%);
         }
-        
-        body[data-theme="dark"] #nav-active-bubble {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            backdrop-filter: blur(8px);
-        }
-
-        body[data-theme="light"] #nav-active-bubble {
-            background: rgba(15, 23, 42, 0.06);
-            border: 1px solid rgba(15, 23, 42, 0.1);
-            box-shadow: 0 4px 10px rgba(100, 116, 139, 0.15);
-            backdrop-filter: blur(8px);
-        }
-
-        /* 💧 FLOWING ACTIVE WATER BORDERS FOR GLASS BLOCKS */
-        @property --border-angle {
-            syntax: "<angle>";
-            inherits: false;
-            initial-value: 0deg;
-        }
-
-        /* Active scroll sections or hovered state gets flowing border */
-        body[data-theme="dark"] .glass.active-water-border::before,
-        body[data-theme="dark"] .glass:hover::before,
-        body[data-theme="dark"] .glass-pill.active-water-border::before,
-        body[data-theme="dark"] .glass-pill:hover::before,
-        body[data-theme="dark"] #theme-toggle-wrap.active-water-border::before,
-        body[data-theme="dark"] #theme-toggle-wrap:hover::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            padding: 1.4px;
-            background: conic-gradient(from var(--border-angle), rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.15) 25%, rgba(0, 240, 255, 0.38) 50%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.55) 100%);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-            z-index: 5;
-            animation: rotate-border-water 5s linear infinite;
-        }
-
-        /* Radius alignment overrides for pseudo-border elements */
-        body[data-theme="dark"] .glass::before { border-radius: 24px; }
-        body[data-theme="dark"] .glass-pill::before { border-radius: 9999px !important; }
-        body[data-theme="dark"] .tab-nav-container::before,
-        body[data-theme="dark"] #theme-toggle-wrap::before { border-radius: 9999px !important; }
-        body[data-theme="dark"] nav .glass::before { border-radius: 9999px !important; }
-
-        @keyframes rotate-border-water {
-            to {
-                --border-angle: 360deg;
-            }
-        }
-
-        @keyframes liquid-sheen-shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
-        /* Custom water borders react to proximity of normal system cursor */
-        #nav-links-container a {
-            display: inline-block;
-            transform-origin: center center;
-            will-change: transform;
-            transition: color 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
-        }
-        body[data-theme="dark"] #nav-links-container a.active-nav-link {
-            color: #ffffff !important;
-        }
-        body[data-theme="light"] #nav-links-container a.active-nav-link {
-            color: #0f172a !important;
-        }
-        #nav-links-container a.active-nav-link {
-            transform: scale(1.12) !important;
-        }
-        body[data-theme="dark"] #nav-links-container a:hover {
-            color: #ffffff !important;
-        }
-        body[data-theme="light"] #nav-links-container a:hover {
-            color: #0f172a !important;
-        }
-
-        /* 💧 PREMIUM 3D GLASS SLIDING TOGGLE SWITCH */
-        #theme-toggle-wrap {
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(15px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.18);
-            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s, background 0.3s, box-shadow 0.3s;
-            will-change: transform;
-            position: relative; /* Position relative for water border pseudo-element */
-        }
-        #theme-toggle-wrap:hover {
-            transform: scale(1.15); /* Increased macOS Dock zoom intensity */
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
-        }
-        .theme-toggle-track {
-            width: 50px;
-            height: 22px;
-            background: rgba(0, 0, 0, 0.38);
-            border-radius: 0px !important;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.55), 0 1px 1px rgba(255, 255, 255, 0.08);
-            border: 0.5px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            align-items: center;
-            position: relative;
-            cursor: pointer;
-        }
-        body[data-theme="light"] .theme-toggle-track {
-            background: rgba(0, 0, 0, 0.12);
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
-            border-color: rgba(0,0,0,0.05);
-        }
-        .theme-toggle-thumb {
-            position: absolute;
-            width: 26px; /* pill width */
-            height: 18px; /* pill height */
-            left: 2px;
-            top: 2px;
-            border-radius: 0px !important; /* rectangular shape */
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.1) 40%, rgba(255, 255, 255, 0.0) 60%, rgba(255, 255, 255, 0.25) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            border-top: 1.5px solid rgba(255, 255, 255, 0.85);
-            border-bottom: 1.2px solid rgba(255, 255, 255, 0.45);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(5px) saturate(130%);
-            -webkit-backdrop-filter: blur(5px) saturate(130%);
-            transition: left 0.35s cubic-bezier(0.25, 1, 0.5, 1), transform 0.2s ease;
-        }
-        body[data-theme="light"] .theme-toggle-thumb {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.65) 100%);
-            border-color: rgba(15, 23, 42, 0.12);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .theme-toggle-track:hover .theme-toggle-thumb {
-            transform: scale(1.04);
-        }
-        
-        /* Two-stop slider positions based on active data-theme */
-        body[data-theme="dark"] #theme-thumb {
-            left: 2px;
-        }
-        body[data-theme="light"] #theme-thumb {
-            left: 22px;
-        }
-
-        /* 💧 PREMIUM 3D GLASS SLIDING TAB SELECTOR */
-        .tab-nav-container {
-            display: inline-flex;
-            gap: 16px; /* slightly wider gap for floating text style */
-            padding: 4px;
-            position: relative;
-            align-items: center;
-            border-radius: 9999px !important;
-        }
-        .tab-link {
-            background: none;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            color: rgba(255, 255, 255, 0.6);
-            transition: color 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
-            border-radius: 9999px !important;
-            position: relative;
-            font-size: 10px;
-            font-weight: 700;
-            display: inline-block;
-            transform-origin: center center;
-        }
-        .tab-link:hover {
-            color: rgba(255, 255, 255, 0.85);
-        }
-        .tab-link.active {
-            color: #ffffff;
-            transform: scale(1.12);
-        }
-        .tab-active-bubble {
-            display: none !important;
-        }
-        .tag-active-bubble {
-            position: absolute;
-            background: linear-gradient(120deg, rgba(255, 255, 255, 0.0) 20%, rgba(255, 255, 255, 0.08) 45%, rgba(255, 255, 255, 0.0) 70%) !important;
-            background-size: 250% 100% !important;
-            border: 1px solid rgba(255, 255, 255, 0.12) !important;
-            border-top: 1.5px solid rgba(255, 255, 255, 0.28) !important;
-            border-bottom: 0.5px solid rgba(255, 255, 255, 0.04) !important;
-            box-shadow: 
-                0 4px 12px rgba(0, 0, 0, 0.4),
-                inset 0 -4px 8px rgba(255, 255, 255, 0.06),
-                inset 0 4px 8px rgba(0, 0, 0, 0.45),
-                inset 0 1px 3px rgba(255, 255, 255, 0.12) !important;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 9999px;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0;
-            left: 0;
-            top: 0;
-            width: 0;
-            height: 0;
-            animation: liquid-sheen-shimmer 4s infinite linear !important;
-            transition: none;
+        .accordion-content.open {
+            max-height: 200px;
+            opacity: 1;
         }
     </style>
 </head>
-<body data-theme="dark">
+<body class="selection:bg-white selection:text-black pt-16">
 
-    <!-- Native system cursor is used throughout the viewport layout -->
+    <!-- Fixed Parallax Background Grid (Visible in Hero & About zone) -->
+    <div id="bg-grid"></div>
 
-    <!-- Background Fluid Blobs for Liquid Glass Theme -->
-    <!-- Pass-through blur backdrop for visionOS theme -->
-    <div class="pass-through-blur" aria-hidden="true"></div>
+    <!-- Apple-Style Floating Product Sub-Navbar (Frosted Glassmorphism) -->
+    <div class="floating-nav fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-[1200px] h-12 bg-[#161617]/40 backdrop-blur-3xl border border-white/10 rounded-full px-6 flex items-center justify-between z-30 shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden transition duration-500 hover:border-white/15">
 
-    <div class="fluid-blob-container" aria-hidden="true">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
+        <!-- Left: Product Brand Label -->
+        <a href="#hero" class="relative z-10 text-white text-xs font-bold tracking-tight hover:opacity-80 transition duration-200">Tejas Dhakate</a>
+        
+        <!-- Center Links (Desktop Only with Glass Capsule Highlight Slider) -->
+        <div class="relative z-10 hidden md:flex items-center gap-1 text-[11.5px] font-normal text-[#f5f5f7]/80 tracking-tight py-1 px-1.5 rounded-full nav-links-container">
+            <!-- Sliding Glass Highlight Indicator (Matches reference image style) -->
+            <div class="nav-highlight absolute left-0 top-1/2 -translate-y-1/2 h-[26px] bg-white/[0.08] backdrop-blur-md rounded-full border border-white/10 border-b-white/40 shadow-[0_4px_12px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.2)] transition-all duration-300 ease-out opacity-0 z-[-1]"></div>
 
-    <!-- 3D WebGL Canvas Container -->
-    <div id="canvas-container">
-        <canvas id="chrome-canvas"></canvas>
-    </div>
-
-    <!-- Frosted glass background blur overlay with dynamic mouse clear lens -->
-    <div id="background-blur-overlay" aria-hidden="true"></div>
-
-    <!-- SVG clipPath definition for capsule-shaped reveal windows -->
-    <svg style="position: absolute; width: 0; height: 0; pointer-events: none;" aria-hidden="true">
-        <defs>
-            <clipPath id="blur-overlay-clip" clipPathUnits="userSpaceOnUse">
-                <path id="blur-overlay-path" fill-rule="evenodd" d="M 0 0 H 10000 V 10000 H 0 Z" />
-            </clipPath>
-        </defs>
-    </svg>
-
-    <!-- Navigation Header -->
-    <nav class="fixed top-0 w-full p-5 z-50 flex justify-between items-center px-6 md:px-10 glass rounded-none border-t-0 border-l-0 border-r-0">
-        <div class="text-xl font-bold tracking-tighter main-title">TD.</div>
-        <div class="flex items-center gap-4 md:gap-6">
-            <div class="hidden sm:flex items-center px-4 py-1.5 glass rounded-full text-[10px] uppercase tracking-widest font-semibold sub-title">
-                <span class="status-dot"></span> Student At RTMNU Nagpur
-            </div>
-            <div id="nav-links-container" class="relative space-x-2 lg:space-x-4 text-sm font-medium tracking-wide sub-title hidden md:flex items-center">
-                <div id="nav-active-bubble"></div>
-                <a href="#about" id="nav-link-about" class="hover:opacity-100 transition z-10 py-1.5 px-3">About</a>
-                <a href="#education" id="nav-link-education" class="hover:opacity-100 transition z-10 py-1.5 px-3">Education</a>
-                <a href="#documents" id="nav-link-documents" class="hover:opacity-100 transition z-10 py-1.5 px-3">Documents</a>
-                <a href="#projects" id="nav-link-projects" class="hover:opacity-100 transition z-10 py-1.5 px-3">Projects</a>
-            </div>
-            <!-- Premium 3D Glass Sliding Toggle Switch -->
-            <div class="flex items-center gap-2 px-3 py-1.5 glass rounded-full select-none" id="theme-toggle-wrap">
-                <span id="theme-text" class="text-[10px] md:text-xs uppercase tracking-widest font-bold sub-title pr-1">Dark</span>
-                <div onclick="toggleTheme()" class="theme-toggle-track relative cursor-pointer" id="theme-toggler">
-                    <div class="theme-toggle-thumb" id="theme-thumb"></div>
-                </div>
-            </div>
+            <a href="#about" class="nav-link px-4 py-1.5 rounded-full transition duration-300 hover:text-white relative">About</a>
+            <a href="#experience" class="nav-link px-4 py-1.5 rounded-full transition duration-300 hover:text-white relative">Experience</a>
+            <a href="#projects" class="nav-link px-4 py-1.5 rounded-full transition duration-300 hover:text-white relative">Projects</a>
+            <a href="#documents" class="nav-link px-4 py-1.5 rounded-full transition duration-300 hover:text-white relative">Certifications</a>
+            <a href="#faq" class="nav-link px-4 py-1.5 rounded-full transition duration-300 hover:text-white relative">FAQ</a>
         </div>
-    </nav>
 
-    <!-- Hero Matrix Section Layout -->
-    <section class="relative min-h-screen flex items-center justify-center px-4 md:px-6 text-center" id="hero">
-        <div class="p-8 md:p-12 rounded-[24px] reveal-node active relative z-10">
-            <div class="glass-content">
-                <h1 class="text-4xl sm:text-6xl md:text-8xl font-bold mb-4 tracking-tight main-title">
+        <!-- Right Side: Action Buttons -->
+        <div class="relative z-10 flex items-center gap-3">
+            <!-- Connect Button -->
+            <a href="#contact" class="bg-[#0071e3] hover:bg-[#147ce5] text-white text-[11px] font-semibold px-4 py-1.5 rounded-full transition duration-200">Connect</a>
+        </div>
+    </div>
+
+    <!-- ZONE 1: Hero & About (Scrolls behind/underneath the nav bar: z-10 relative) -->
+    <div class="relative z-10">
+        
+        <!-- Hero Section -->
+        <section class="relative min-h-screen flex items-center justify-center px-6 text-center" id="hero">
+            <div class="max-w-4xl space-y-6 flex flex-col items-center">
+                <!-- User Profile Avatar -->
+                <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-white/10 shadow-[0_0_30px_rgba(255,255,255,0.05)] mb-2">
+                    <img src="assets/avatar.png" class="w-full h-full object-cover" alt="Tejas Dhakate Profile Avatar">
+                </div>
+                <div class="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800 text-zinc-300 text-xs px-4 py-1.5 rounded-full font-semibold uppercase tracking-wider">
+                    Computer Engineering
+                </div>
+                <h1 class="text-6xl sm:text-8xl md:text-9xl font-black tracking-tighter titanium-text leading-none">
                     Tejas Dhakate
                 </h1>
-                <p class="text-base md:text-xl sub-title mb-8 font-light leading-relaxed">
-                    Computer Engineering Student @ RTMNU Nagpur <br class="hidden sm:inline"> 
-                    UI Design & Android Development
+                <p class="text-xl sm:text-2xl text-zinc-400 font-medium max-w-2xl mx-auto leading-normal">
+                    Android Developer & UI Engineer. Specializing in high-performance mobile applications and clean developer layouts.
                 </p>
-                <div class="flex flex-wrap justify-center gap-4 relative" id="hero-tags-wrap">
-                    <div class="tag-active-bubble" id="hero-tags-bubble"></div>
-                    <a href="https://github.com/tejasdhakate62-dev" target="_blank" class="px-6 md:px-8 py-3 text-xs md:text-sm font-semibold z-10 tag-item transition">View GitHub</a>
-                    <a href="#contact" class="px-6 md:px-8 py-3 text-xs md:text-sm font-semibold z-10 tag-item transition">Let's Talk</a>
+                <div class="flex justify-center gap-4 pt-4">
+                    <a href="#about" class="bg-white text-black hover:bg-zinc-200 text-sm font-semibold px-6 py-2.5 rounded-full transition duration-200">
+                        Learn more
+                    </a>
+                    <a href="https://github.com/tejasdhakate62-dev" target="_blank" class="text-zinc-400 hover:text-white text-sm font-semibold flex items-center gap-1">
+                        View GitHub &rarr;
+                    </a>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- About Section Layer -->
-    <section id="about" class="py-20 px-6 md:px-10">
-        <div class="max-w-6xl mx-auto space-y-12">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
-                <div class="p-6 md:p-10 rounded-[24px] reveal-node">
-                    <div class="glass-content">
-                        <h2 class="text-2xl md:text-3xl font-bold mb-6 main-title">The Journey</h2>
-                        <p class="sub-title font-light leading-relaxed mb-6 text-sm md:text-base">
-                            I build technology that is powerful, intuitive, and most importantly, delivered ahead of schedule. My focus is bridging the gap between backend logic and beautiful frontend interfaces.
+        <!-- About & Scroll-Text Highlight Section -->
+        <section id="about" class="py-44 px-6 md:px-16 max-w-7xl mx-auto space-y-32">
+            <!-- Scroll-highlighted text block -->
+            <div class="space-y-6">
+                <span class="text-xs font-semibold text-zinc-500 uppercase tracking-widest">[ About Me ]</span>
+                <p class="text-3xl sm:text-5xl font-bold tracking-tighter leading-tight text-zinc-700">
+                    <span class="scroll-text-span block mb-4 transition-colors duration-300" style="opacity: 0.15">I build technology that is powerful, intuitive, and most importantly, delivered ahead of schedule.</span>
+                    <span class="scroll-text-span block mb-4 transition-colors duration-300" style="opacity: 0.15">My focus is bridging the gap between backend logic and beautiful frontend interfaces.</span>
+                    <span class="scroll-text-span block transition-colors duration-300" style="opacity: 0.15">Let's make things that look premium and work flawlessly.</span>
+                </p>
+            </div>
+
+            <!-- Specs Sheet Bento Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12 depth-wrapper">
+                <!-- Cell A: The Core (col-span-2) -->
+                <div class="spec-card p-8 md:col-span-2 flex flex-col justify-between min-h-[300px]">
+                    <div class="space-y-4 float-depth">
+                        <span class="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest">Engineering Specs</span>
+                        <h3 class="text-3xl font-extrabold text-white tracking-tighter">B.Tech in Computer Engineering</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed font-light mt-2">
+                            Pursuing degree at Bapurao Deshmukh Engineering College, Sewagram | RTMNU Nagpur (2021 — 2026). Focused on writing production-tier standard code.
                         </p>
-                        <div class="relative w-full" id="journey-tags-wrap">
-                            <div class="tag-active-bubble" id="journey-tags-bubble"></div>
-                            <div class="grid grid-cols-2 gap-4 relative z-10">
-                                <div class="p-4 text-center uppercase text-sm md:text-base tracking-wider font-bold main-title cursor-pointer tag-item transition">Python</div>
-                                <div class="p-4 text-center uppercase text-sm md:text-base tracking-wider font-bold main-title cursor-pointer tag-item transition">Java</div>
-                                <div class="p-4 text-center uppercase text-sm md:text-base tracking-wider font-bold main-title cursor-pointer tag-item transition">XML</div>
-                                <div class="p-4 text-center uppercase text-sm md:text-base tracking-wider font-bold main-title cursor-pointer tag-item transition">ML</div>
-                            </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-white/5 mt-8 float-depth">
+                        <div>
+                            <div class="text-2xl font-bold text-white">Java</div>
+                            <div class="text-[9px] text-zinc-500 uppercase tracking-widest mt-1">Core Lang</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-white">Python</div>
+                            <div class="text-[9px] text-zinc-500 uppercase tracking-widest mt-1">AI & Scripts</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-white">XML</div>
+                            <div class="text-[9px] text-zinc-500 uppercase tracking-widest mt-1">Layouts</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-white">ML</div>
+                            <div class="text-[9px] text-zinc-500 uppercase tracking-widest mt-1">Modeling</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="p-6 md:p-10 rounded-[24px] reveal-node" id="skills-trigger">
-                    <div class="glass-content">
-                        <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
-                            <h2 class="text-2xl md:text-3xl font-bold main-title">Proficiency</h2>
+                <!-- Cell B: Tech Toolkit -->
+                <div class="spec-card p-8 flex flex-col justify-between min-h-[300px]">
+                    <div class="float-depth">
+                        <span class="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest block mb-2">Systems Stack</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">Toolkit</h3>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 py-4 float-depth">
+                        <span class="px-3 py-1 bg-zinc-900 border border-zinc-800 rounded-full text-xs text-zinc-300 font-medium">Android Studio</span>
+                        <span class="px-3 py-1 bg-zinc-900 border border-zinc-800 rounded-full text-xs text-zinc-300 font-medium">VS Code</span>
+                        <span class="px-3 py-1 bg-zinc-900 border border-zinc-800 rounded-full text-xs text-zinc-300 font-medium">Flask</span>
+                        <span class="px-3 py-1 bg-zinc-900 border border-zinc-800 rounded-full text-xs text-zinc-300 font-medium">Git & GitHub</span>
+                        <span class="px-3 py-1 bg-zinc-900 border border-zinc-800 rounded-full text-xs text-zinc-300 font-medium">SQLite</span>
+                        <span class="px-3 py-1 bg-zinc-900 border border-zinc-800 rounded-full text-xs text-zinc-300 font-medium">Pandas</span>
+                    </div>
+
+                    <div class="text-[10px] text-zinc-500 font-mono pt-4 border-t border-white/5 flex justify-between items-center float-depth">
+                        <span>STATUS: OPERATIONAL</span>
+                        <span class="text-emerald-500 w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    </div>
+                </div>
+
+                <!-- Cell C: Experience Timeline -->
+                <div class="spec-card p-8 md:col-span-2 flex flex-col justify-between min-h-[250px]">
+                    <div class="float-depth">
+                        <span class="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest block mb-2">Milestones</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">Education Details</h3>
+                    </div>
+                    
+                    <div class="space-y-4 pt-4 border-t border-white/5 mt-4 float-depth">
+                        <div class="flex justify-between text-xs text-zinc-400">
+                            <span>HSC (Science) @ Vidya Vikas College, Samudrapur</span>
+                            <span class="text-white">Completed March 2021</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-zinc-400">
+                            <span>SSC @ Yashwant High School, Mandgaon</span>
+                            <span class="text-white">Completed March 2019</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cell D: Local Clock widget -->
+                <div class="spec-card p-8 flex flex-col justify-center items-center text-center min-h-[250px]">
+                    <div class="float-depth">
+                        <span class="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest block mb-2">Local Coordinate</span>
+                        <div id="ist-clock" class="text-4xl font-black text-white tracking-tight">00:00:00</div>
+                        <div class="text-[10px] text-zinc-500 uppercase tracking-widest mt-1">Wardha, IN (IST)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bento Row: Core Capabilities -->
+            <div class="space-y-6 pt-12 pb-20">
+                <span class="text-xs font-semibold text-zinc-500 uppercase tracking-widest">[ Engineering Focus ]</span>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 depth-wrapper">
+                    
+                    <!-- Pillar 1: Architecture -->
+                    <div class="spec-card p-8 flex flex-col justify-between min-h-[260px]">
+                        <div class="space-y-3 float-depth">
+                            <span class="text-[9px] font-bold text-blue-500 uppercase tracking-wider block">Mobile Focus</span>
+                            <h4 class="text-lg font-bold text-white tracking-tight">Standard Architecture</h4>
+                            <p class="text-xs text-zinc-400 leading-relaxed font-light">
+                                Committed to MVVM patterns, decoupling layout code from operations, and structural class decoupling to keep projects scale-ready and clean.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Pillar 2: System Analytics -->
+                    <div class="spec-card p-8 flex flex-col justify-between min-h-[260px]">
+                        <div class="space-y-3 float-depth">
+                            <span class="text-[9px] font-bold text-cyan-400 uppercase tracking-wider block">Data Modeling</span>
+                            <h4 class="text-lg font-bold text-white tracking-tight">Analytical Accuracy</h4>
+                            <p class="text-xs text-zinc-400 leading-relaxed font-light">
+                                Structured data modeling in Python using NumPy and Pandas to compute metrics and execute forecasting scripts accurately.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Pillar 3: Security standards -->
+                    <div class="spec-card p-8 flex flex-col justify-between min-h-[260px]">
+                        <div class="space-y-3 float-depth">
+                            <span class="text-[9px] font-bold text-purple-400 uppercase tracking-wider block">Data Security</span>
+                            <h4 class="text-lg font-bold text-white tracking-tight">Cryptographic Logic</h4>
+                            <p class="text-xs text-zinc-400 leading-relaxed font-light">
+                                Writing rigorous local encryption handlers (AES algorithms) to secure application settings and recovery parameters.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Impact Stats Grid -->
+            <div class="pt-16 border-t border-white/5 grid grid-cols-2 md:grid-cols-4 gap-8 text-center depth-wrapper">
+                <div class="space-y-2 float-depth">
+                    <div class="text-5xl md:text-6xl font-black text-white tracking-tighter titanium-text">100K+</div>
+                    <div class="text-[9px] font-semibold text-zinc-500 uppercase tracking-widest">Community Reach</div>
+                </div>
+                <div class="space-y-2 float-depth">
+                    <div class="text-5xl md:text-6xl font-black text-white tracking-tighter titanium-text">7+</div>
+                    <div class="text-[9px] font-semibold text-zinc-500 uppercase tracking-widest">Core Projects</div>
+                </div>
+                <div class="space-y-2 float-depth">
+                    <div class="text-5xl md:text-6xl font-black text-white tracking-tighter titanium-text">6 Mo</div>
+                    <div class="text-[9px] font-semibold text-zinc-500 uppercase tracking-widest">ML Internship</div>
+                </div>
+                <div class="space-y-2 float-depth">
+                    <div class="text-5xl md:text-6xl font-black text-white tracking-tighter titanium-text">100%</div>
+                    <div class="text-[9px] font-semibold text-zinc-500 uppercase tracking-widest">MVVM Layouts</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ZONE 2: Projects, Credentials, FAQ & Contact (Scrolls OVER the sub-navbar: z-35 relative bg-black) -->
+    <div class="relative z-35 bg-black shadow-[0_-20px_40px_rgba(0,0,0,0.8)]">
+        
+        <!-- Experience / Career Journey Section -->
+        <section id="experience" class="py-44 px-6 md:px-16 max-w-6xl mx-auto space-y-20">
+            <div class="flex flex-col items-center text-center space-y-3">
+                <span class="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Journey</span>
+                <h2 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight titanium-text">Career Milestones</h2>
+                <div class="h-[2px] w-12 bg-white rounded-full"></div>
+            </div>
+
+            <div class="relative border-l border-white/10 ml-4 md:ml-32 space-y-12 py-4">
+                <!-- Item 1: YBI Foundation -->
+                <div class="relative pl-8 group">
+                    <!-- Timeline Bullet -->
+                    <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-blue-500 border border-black group-hover:scale-125 transition duration-300"></div>
+                    
+                    <div class="space-y-2">
+                        <span class="text-[9px] font-bold text-blue-500 uppercase tracking-widest">June 2024 — Nov 2024</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">Python Developer Intern</h3>
+                        <h4 class="text-xs text-zinc-400 font-medium">Ybi Foundation | Remote</h4>
+                        <p class="text-xs text-zinc-500 leading-relaxed font-light max-w-2xl pt-2">
+                            Spearheaded data manipulation scripts to structure and compile predictive machine learning metrics. Leveraged NumPy and Pandas algorithms to optimize model response parameters and analyze large-scale tabular inputs.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 2: CampusCrew -->
+                <div class="relative pl-8 group">
+                    <!-- Timeline Bullet -->
+                    <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-cyan-400 border border-black group-hover:scale-125 transition duration-300"></div>
+                    
+                    <div class="space-y-2">
+                        <span class="text-[9px] font-bold text-cyan-400 uppercase tracking-widest">Jan 2024 — Present</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">Community Ambassador</h3>
+                        <h4 class="text-xs text-zinc-400 font-medium">CampusCrew Community | India</h4>
+                        <p class="text-xs text-zinc-500 leading-relaxed font-light max-w-2xl pt-2">
+                            Fostered peer developer growth by coordinating tech seminars and coding bootcamps. Actively helped scale platform engagement to reach 100,000+ students globally, collaborating with student coordinators on open-source workshops.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 3: Android Dev -->
+                <div class="relative pl-8 group">
+                    <!-- Timeline Bullet -->
+                    <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-purple-400 border border-black group-hover:scale-125 transition duration-300"></div>
+                    
+                    <div class="space-y-2">
+                        <span class="text-[9px] font-bold text-purple-400 uppercase tracking-widest">2021 — Present</span>
+                        <h3 class="text-xl font-bold text-white tracking-tight">Open Source Android Engineer</h3>
+                        <h4 class="text-xs text-zinc-400 font-medium">GitHub Projects | Independent</h4>
+                        <p class="text-xs text-zinc-500 leading-relaxed font-light max-w-2xl pt-2">
+                            Architected and deployed standard native Android software codebases (Java/Kotlin, XML). Implemented structural MVVM decoupling layers, local database architectures (SQLite), and cryptographic key handlers.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section (Fully Visible, Standard Apple-Style) -->
+        <section id="projects" class="py-44 px-6 md:px-16 max-w-7xl mx-auto space-y-24">
+            <div class="flex flex-col items-center text-center space-y-3">
+                <span class="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Showcase</span>
+                <h2 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight titanium-text">Designed for Android.</h2>
+                <div class="h-[2px] w-12 bg-white rounded-full"></div>
+            </div>
+
+            <!-- Featured Project: Invoix with CSS Phone Frame Showcase -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center bg-[#0d0d0f] border border-white/5 rounded-[32px] p-8 md:p-12 depth-wrapper">
+                <!-- Google Pixel Mockup -->
+                <div class="flex justify-center items-center spec-card rounded-[44px] overflow-hidden p-3 bg-zinc-950">
+                    <div class="relative w-[240px] h-[480px] border-[5px] border-zinc-800 rounded-[36px] bg-black shadow-[0_0_40px_rgba(255,255,255,0.03)] overflow-hidden flex flex-col justify-between shrink-0 float-depth">
+                        <!-- Google Pixel Camera Punch-Hole -->
+                        <div class="absolute top-3 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-[#121214] rounded-full z-20 border border-zinc-900 shadow-inner"></div>
+                        <!-- Real App Screenshot Image -->
+                        <img src="assets/projects/invoix_screen1.png" class="absolute inset-0 w-full h-full object-cover z-10" alt="Invoix App UI Screenshot">
+                    </div>
+                </div>
+
+                <!-- Featured App Details -->
+                <div class="lg:col-span-2 space-y-6 text-left">
+                    <span class="text-[10px] font-bold text-blue-500 uppercase tracking-widest bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full inline-block">Featured Android Project</span>
+                    <h3 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Invoix App</h3>
+                    <p class="text-sm text-zinc-400 leading-relaxed font-light">
+                        A modern, production-grade Android invoice management application built for freelancers and startups. Engineered using Android Studio, Java, and XML layouts, with Firebase database services executing storage and payment tracking workflows.
+                    </p>
+                    <ul class="text-xs text-zinc-400 space-y-2 list-disc pl-5 font-light">
+                        <li><strong class="text-white">State Management:</strong> Clean implementation of standard Android ViewModel architectures.</li>
+                        <li><strong class="text-white">Storage Backend:</strong> Real-time Firebase database configurations for immediate updates.</li>
+                        <li><strong class="text-white">Modern UI:</strong> Highly polished XML templates optimized for multiple device display ratios.</li>
+                    </ul>
+                    <div class="flex flex-wrap gap-2 pt-2">
+                        <span class="px-3 py-1 bg-white/5 border border-white/5 rounded-full text-xs text-zinc-300 font-medium">Java</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/5 rounded-full text-xs text-zinc-300 font-medium">Android Studio</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/5 rounded-full text-xs text-zinc-300 font-medium">Firebase DB</span>
+                    </div>
+                    <div class="pt-4 border-t border-white/5 flex gap-4">
+                        <a href="https://github.com/tejasdhakate62-dev/Invoix.git" target="_blank" class="px-5 py-2.5 bg-white text-black hover:bg-zinc-200 font-semibold rounded-xl text-xs transition duration-200">
+                            View Repository
+                    </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Project: Diet Plan App with CSS Phone Showcase -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center bg-[#0d0d0f] border border-white/5 rounded-[32px] p-8 md:p-12 depth-wrapper mt-12">
+                <!-- Featured App Details (Left Side on Desktop) -->
+                <div class="lg:col-span-2 space-y-6 text-left order-2 lg:order-1">
+                    <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full inline-block">Featured Android Project</span>
+                    <h3 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Diet Plan App</h3>
+                    <p class="text-sm text-zinc-400 leading-relaxed font-light">
+                        An interactive, custom Android application engineered to help users log food intake, track caloric budgets, and monitor daily macro goals. Built with Java and native XML layouts, using a SQLite architecture to handle robust local data caching and offline synchronization.
+                    </p>
+                    <ul class="text-xs text-zinc-400 space-y-2 list-disc pl-5 font-light">
+                        <li><strong class="text-white">Offline Synchronization:</strong> Implemented local SQLite databases with automated transaction schemas.</li>
+                        <li><strong class="text-white">Visual Analytics:</strong> Built custom progress components to highlight caloric budget usage.</li>
+                        <li><strong class="text-white">Custom Validations:</strong> Engineered mathematical input fields to validate dietary metrics.</li>
+                    </ul>
+                    <div class="flex flex-wrap gap-2 pt-2">
+                        <span class="px-3 py-1 bg-white/5 border border-white/5 rounded-full text-xs text-zinc-300 font-medium">Java</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/5 rounded-full text-xs text-zinc-300 font-medium">SQLite</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/5 rounded-full text-xs text-zinc-300 font-medium">Android SDK</span>
+                    </div>
+                    <div class="pt-4 border-t border-white/5 flex gap-4">
+                        <a href="https://github.com/tejasdhakate62-dev/Diet_Plan_App.git" target="_blank" class="px-5 py-2.5 bg-white text-black hover:bg-zinc-200 font-semibold rounded-xl text-xs transition duration-200">
+                            View Repository
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Google Pixel Mockup (Right Side on Desktop with Real Screenshot) -->
+                <div class="flex justify-center items-center spec-card rounded-[44px] overflow-hidden p-3 bg-zinc-950 order-1 lg:order-2">
+                    <div class="relative w-[240px] h-[480px] border-[5px] border-zinc-800 rounded-[36px] bg-black shadow-[0_0_40px_rgba(255,255,255,0.03)] overflow-hidden flex flex-col justify-between shrink-0 float-depth">
+                        <!-- Google Pixel Camera Punch-Hole -->
+                        <div class="absolute top-3 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-[#121214] rounded-full z-20 border border-zinc-900 shadow-inner"></div>
+                        <!-- Real App Screenshot Image -->
+                        <img src="assets/projects/diet_plan_screen1.png" class="absolute inset-0 w-full h-full object-cover z-10" alt="Diet Plan App UI Screenshot">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="flex flex-wrap justify-center gap-2 pt-6">
+                <button onclick="filterProjects('all')" id="tab-all" class="filter-tab px-5 py-2 bg-white text-black font-semibold rounded-full text-xs uppercase tracking-wider transition-all duration-300">All Projects</button>
+                <button onclick="filterProjects('android')" id="tab-android" class="filter-tab px-5 py-2 bg-[#121215] hover:bg-zinc-800 text-zinc-400 hover:text-white border border-white/5 rounded-full text-xs uppercase tracking-wider transition-all duration-300">Android</button>
+                <button onclick="filterProjects('ml')" id="tab-ml" class="filter-tab px-5 py-2 bg-[#121215] hover:bg-zinc-800 text-zinc-400 hover:text-white border border-white/5 rounded-full text-xs uppercase tracking-wider transition-all duration-300">Machine Learning</button>
+                <button onclick="filterProjects('design')" id="tab-design" class="filter-tab px-5 py-2 bg-[#121215] hover:bg-zinc-800 text-zinc-400 hover:text-white border border-white/5 rounded-full text-xs uppercase tracking-wider transition-all duration-300">Design</button>
+            </div>
+
+            <!-- Projects Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 depth-wrapper" id="projects-grid">
+                
+                <!-- Project 8: Card Detector -->
+                <div class="project-card cat-ml spec-card overflow-hidden flex flex-col justify-between min-h-[380px]">
+                    <div class="w-full h-40 overflow-hidden border-b border-white/5 bg-zinc-950">
+                        <img src="assets/projects/card_detector.png" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" alt="Card Detector Preview">
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col justify-between">
+                        <div class="space-y-4 float-depth">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[9px] font-semibold text-cyan-400 tracking-wider uppercase bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-1 rounded-full">Python Flask</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white tracking-tight">Card Detector</h3>
+                            <p class="text-xs text-zinc-400 font-light leading-relaxed">Flask validation engine detecting networks (Visa, Mastercard, Amex) and validating checksums.</p>
+                            <ul class="text-[10px] text-zinc-400 space-y-1 list-disc pl-4 font-light mt-2">
+                                <li>Luhn Algorithm checksum verification loops.</li>
+                                <li>Real-time JSON validation REST API.</li>
+                            </ul>
+                        </div>
+                        <div class="pt-4 border-t border-white/5 mt-6 float-depth">
+                            <a href="https://github.com/tejasdhakate62-dev/Card-Detector" target="_blank" class="text-xs font-semibold text-blue-500 hover:underline">GitHub Repo &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3: PredictiveRiskAnalyzer -->
+                <div class="project-card cat-ml spec-card overflow-hidden flex flex-col justify-between min-h-[380px] cursor-pointer" onclick="openModal()">
+                    <div class="w-full h-40 overflow-hidden border-b border-white/5 bg-zinc-950">
+                        <img src="assets/projects/risk_analyzer.png" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" alt="PredictiveRiskAnalyzer Preview">
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col justify-between">
+                        <div class="space-y-4 float-depth">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[9px] font-semibold text-cyan-400 tracking-wider uppercase bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-1 rounded-full">Machine Learning</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white tracking-tight">PredictiveRiskAnalyzer</h3>
+                            <p class="text-xs text-zinc-400 font-light leading-relaxed">Robust Python Flask web system engineered to calculate performance metrics.</p>
+                            <ul class="text-[10px] text-zinc-400 space-y-1 list-disc pl-4 font-light mt-2">
+                                <li>Data manipulation with NumPy and Pandas.</li>
+                                <li>Lightweight Flask micro-service pipeline.</li>
+                            </ul>
+                        </div>
+                        <div class="pt-4 border-t border-white/5 mt-6 float-depth">
+                            <button class="text-xs font-semibold text-blue-500 hover:underline">View Details &rarr;</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 4: Neo Cycle Architecture -->
+                <div class="project-card cat-design spec-card overflow-hidden flex flex-col justify-between min-h-[380px]">
+                    <div class="w-full h-40 overflow-hidden border-b border-white/5 bg-zinc-950">
+                        <img src="assets/projects/neo_cycle.png" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" alt="Neo Cycle Preview">
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col justify-between">
+                        <div class="space-y-4 float-depth">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[9px] font-semibold text-zinc-400 tracking-wider uppercase bg-white/5 border border-white/5 px-2.5 py-1 rounded-full">Automotive Design</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white tracking-tight">Neo Cycle</h3>
+                            <p class="text-xs text-zinc-400 font-light leading-relaxed">Conceptual technical blueprint highlighting cross-section parameters for motorcycle modeling.</p>
+                            <ul class="text-[10px] text-zinc-400 space-y-1 list-disc pl-4 font-light mt-2">
+                                <li>Clean-energy model structural drawings.</li>
+                                <li>Aerodynamic chassis parameters mapping.</li>
+                            </ul>
+                        </div>
+                        <div class="pt-4 border-t border-white/5 mt-6 float-depth">
+                            <a href="#documents" class="text-xs font-semibold text-blue-500 hover:underline">View Blueprint &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 5: MnemonicGen Core -->
+                <div class="project-card cat-android spec-card overflow-hidden flex flex-col justify-between min-h-[380px]">
+                    <div class="w-full h-40 overflow-hidden border-b border-white/5 bg-zinc-950">
+                        <img src="assets/projects/mnemonic.png" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" alt="MnemonicGen Preview">
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col justify-between">
+                        <div class="space-y-4 float-depth">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[9px] font-semibold text-zinc-400 tracking-wider uppercase bg-white/5 border border-white/5 px-2.5 py-1 rounded-full">Security Logic</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white tracking-tight">MnemonicGen</h3>
+                            <p class="text-xs text-zinc-400 font-light leading-relaxed">Java application specialized in computing rigid 24-word recovery chains backed by AES encryption.</p>
+                            <ul class="text-[10px] text-zinc-400 space-y-1 list-disc pl-4 font-light mt-2">
+                                <li>BIP39 standard word sequence calculations.</li>
+                                <li>High-security key-generation local pipelines.</li>
+                            </ul>
+                        </div>
+                        <div class="pt-4 border-t border-white/5 mt-6 float-depth">
+                            <a href="https://github.com/tejasdhakate62-dev/MnemonicGen" target="_blank" class="text-xs font-semibold text-blue-500 hover:underline">GitHub Repo &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 6: trending-Birthday -->
+                <div class="project-card cat-design spec-card overflow-hidden flex flex-col justify-between min-h-[380px]">
+                    <div class="w-full h-40 overflow-hidden border-b border-white/5 bg-zinc-950">
+                        <img src="assets/projects/trending_birthday.png" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" alt="trending-Birthday Preview">
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col justify-between">
+                        <div class="space-y-4 float-depth">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[9px] font-semibold text-zinc-400 tracking-wider uppercase bg-white/5 border border-white/5 px-2.5 py-1 rounded-full">Viral Interactive</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white tracking-tight">trending-Birthday</h3>
+                            <p class="text-xs text-zinc-400 font-light leading-relaxed">Interactive validation greeting directory hosting custom physics particle modules.</p>
+                            <ul class="text-[10px] text-zinc-400 space-y-1 list-disc pl-4 font-light mt-2">
+                                <li>Dynamic CSS keyframe animation modules.</li>
+                                <li>Advanced viewport responsive configurations.</li>
+                            </ul>
+                        </div>
+                        <div class="pt-4 border-t border-white/5 mt-6 float-depth">
+                            <a href="https://github.com/tejasdhakate62-dev/trending-Birthday" target="_blank" class="text-xs font-semibold text-blue-500 hover:underline">GitHub Repo &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 7: Happy-Birthday -->
+                <div class="project-card cat-design spec-card overflow-hidden flex flex-col justify-between min-h-[380px]">
+                    <div class="w-full h-40 overflow-hidden border-b border-white/5 bg-zinc-950">
+                        <img src="assets/projects/happy_birthday.png" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" alt="Happy-Birthday Preview">
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col justify-between">
+                        <div class="space-y-4 float-depth">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[9px] font-semibold text-zinc-400 tracking-wider uppercase bg-white/5 border border-white/5 px-2.5 py-1 rounded-full">UI/UX Layout</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white tracking-tight">Happy-Birthday</h3>
+                            <p class="text-xs text-zinc-400 font-light leading-relaxed">Specialized portfolio segment focusing heavily on precise spatial balancing and ratios.</p>
+                            <ul class="text-[10px] text-zinc-400 space-y-1 list-disc pl-4 font-light mt-2">
+                                <li>Strict grid layout structures and ratios.</li>
+                                <li>Pure Javascript scrolling event listeners.</li>
+                            </ul>
+                        </div>
+                        <div class="pt-4 border-t border-white/5 mt-6 float-depth">
+                            <a href="https://github.com/tejasdhakate62-dev/Happy-Birthday" target="_blank" class="text-xs font-semibold text-blue-500 hover:underline">GitHub Repo &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Apple-Style Certificate Horizontal Scroll Gallery Section -->
+        <section id="documents" class="py-44 overflow-hidden space-y-16">
+            <div class="max-w-7xl mx-auto px-6 md:px-16 flex flex-col items-center text-center space-y-3">
+                <span class="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Credentials</span>
+                <h2 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight titanium-text">Certifications</h2>
+                <div class="h-[2px] w-12 bg-white rounded-full"></div>
+            </div>
+
+            <!-- Horizontal Scrollable Gallery Container -->
+            <div class="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-12 px-6 md:px-16 max-w-[1400px] mx-auto scroll-smooth depth-wrapper">
+                
+                <!-- Card 9: YBI Foundation -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Ybi_Foundation_Python_Programming.pdf', 'Python Programming')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Ybi_Foundation_Python_Programming.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Python Programming Certificate Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Python Programming.</span> 6-month internship at Ybi Foundation validating Python programmatic execution.
+                    </p>
+                </div>
+
+                <!-- Card 1: CampusCrew -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/CampusCrew_100K_Milestone.pdf', 'CampusCrew 100K Milestone')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/CampusCrew_100K_Milestone.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="CampusCrew 100K Milestone Certificate Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">CampusCrew 100K.</span> Contributing as an active community member reaching 100,000+ global students.
+                    </p>
+                </div>
+
+                <!-- Card 2: Business Analytics -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Tejas Dhakate_BusinessAnalyticsBootcamp_ParticipationCertificate.pdf', 'Business Analytics')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Tejas Dhakate_BusinessAnalyticsBootcamp_ParticipationCertificate.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Business Analytics Certificate Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Business Analytics.</span> Validation of complete bootcamp data processing and analytics.
+                    </p>
+                </div>
+
+                <!-- Card 3: Microtron -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Tejas Dhakate Microtron.pdf', 'Microtron Achievement')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Tejas Dhakate Microtron.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Microtron System Achievement Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Microtron.</span> Systems milestone validation parameters and hardware processing.
+                    </p>
+                </div>
+
+                <!-- Card 4: Presentire 2026 -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Presentire 2026.pdf', 'Presentire 2026')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Presentire 2026.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Presentire 2026 Milestone Certificate Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Presentire 2026.</span> Technical presentation slides designed for assessment loop.
+                    </p>
+                </div>
+
+                <!-- Card 5: Forge1 System -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/forge1.pdf', 'Forge1 System Architecture')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/forge1.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Forge1 Architecture Blueprint Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Forge1.</span> Architectural diagrams and processing criteria guidelines.
+                    </p>
+                </div>
+
+                <!-- Card 6: NCISEM 2025 -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/NCISEM 2025 Certificate (1).pdf', 'NCISEM 2025')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/NCISEM 2025 Certificate (1).png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="NCISEM 2025 Conference Certificate Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">NCISEM 2025.</span> Participation and track validation certificate compiled for research review.
+                    </p>
+                </div>
+
+                <!-- Card 7: Presentire 2025 -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Presentire 2025.pdf', 'Presentire 2025')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Presentire 2025.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Presentire 2025 Certificate Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Presentire 2025.</span> Historical slides and technical logs index cataloging prior design iterations.
+                    </p>
+                </div>
+
+                <!-- Card 8: Tejas Dhakate Briefs -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Tejas_Dhakate_presentire.pdf', 'Project Briefs')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Tejas_Dhakate_presentire.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Tejas Dhakate Project Briefs Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Project Briefs.</span> Profile validation materials and documents compiled for reviews.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Apple-Style FAQ Accordion Section -->
+        <section id="faq" class="py-40 px-6 md:px-16 max-w-6xl mx-auto space-y-16">
+            <div class="flex flex-col items-center text-center space-y-3">
+                <span class="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Questions</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight titanium-text">Frequently Asked</h2>
+                <div class="h-[2px] w-12 bg-white rounded-full"></div>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ 1 -->
+                <div class="border-b border-white/10 pb-4">
+                    <button onclick="toggleAccordion('faq-1')" class="w-full flex justify-between items-center py-4 text-left text-white hover:text-zinc-300 font-semibold text-base md:text-lg transition duration-200">
+                        <span>What is your standard development stack?</span>
+                        <span id="faq-1-icon" class="text-zinc-500 text-xl font-light transition-transform duration-300">&plus;</span>
+                    </button>
+                    <div id="faq-1" class="accordion-content">
+                        <p class="text-sm text-zinc-400 leading-relaxed font-light pb-2">
+                            I specialize in Android mobile applications (Java, Kotlin, XML layout structures) and lightweight backend scripts (Python, Flask, SQLite). I focus on using native libraries to maximize rendering speed and responsiveness.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="border-b border-white/10 pb-4">
+                    <button onclick="toggleAccordion('faq-2')" class="w-full flex justify-between items-center py-4 text-left text-white hover:text-zinc-300 font-semibold text-base md:text-lg transition duration-200">
+                        <span>How do you manage project deadlines?</span>
+                        <span id="faq-2-icon" class="text-zinc-500 text-xl font-light transition-transform duration-300">&plus;</span>
+                    </button>
+                    <div id="faq-2" class="accordion-content">
+                        <p class="text-sm text-zinc-400 leading-relaxed font-light pb-2">
+                            I plan my work into weekly milestones using standard software engineering metrics. I deliver progress updates ahead of deadlines, ensuring ample time for review, verification, and updates.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="border-b border-white/10 pb-4">
+                    <button onclick="toggleAccordion('faq-3')" class="w-full flex justify-between items-center py-4 text-left text-white hover:text-zinc-300 font-semibold text-base md:text-lg transition duration-200">
+                        <span>Are you open to remote contracts or internship roles?</span>
+                        <span id="faq-3-icon" class="text-zinc-500 text-xl font-light transition-transform duration-300">&plus;</span>
+                    </button>
+                    <div id="faq-3" class="accordion-content">
+                        <p class="text-sm text-zinc-400 leading-relaxed font-light pb-2">
+                            Yes! I am open to remote contract opportunities, collaboration roles, and formal software development internships. I operate on Indian Standard Time (IST) but can adapt to client time zones as required.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-40 px-6 md:px-16 max-w-6xl mx-auto space-y-16">
+            <div class="flex flex-col items-center text-center space-y-3">
+                <span class="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Connect</span>
+                <h2 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight titanium-text">Let's Connect</h2>
+                <div class="h-[2px] w-12 bg-white rounded-full"></div>
+            </div>
+
+            <div class="spec-card p-8 md:p-12">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold text-white tracking-tight">Contact Details</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed font-light">
+                            Feel free to reach out to discuss development contracts, internship roles, or project collaborations. I typically respond within 24 hours.
+                        </p>
+                        
+                        <div class="space-y-3.5 text-sm">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                <span class="text-zinc-300">Wardha, Maharashtra, India</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                                <span class="text-zinc-300">9529835875</span>
+                                <button onclick="copyToClipboard('9529835875', this)" class="text-xs text-blue-500 hover:underline">Copy</button>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                <span class="text-zinc-300 break-all">tejasdhakate62@gmail.com</span>
+                                <button onclick="copyToClipboard('tejasdhakate62@gmail.com', this)" class="text-xs text-blue-500 hover:underline">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col justify-between gap-6 pt-6 md:pt-0 md:border-l md:border-white/5 md:pl-8">
+                        <div class="space-y-4">
+                            <h4 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Professional Networks</h4>
+                            <a href="https://www.linkedin.com/in/tejas-suresh-dhakate-ab3a22321/" target="_blank" class="w-full py-3.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-white/5 rounded-xl text-xs font-semibold uppercase tracking-wider flex justify-center items-center gap-2 transition duration-200">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                                LinkedIn Profile
+                            </a>
                         </div>
                         
-                        <!-- Skill Progress Bars -->
-                        <div id="about-skill-bars" class="space-y-6">
-                            <div>
-                                <div class="flex justify-between text-xs mb-2 tracking-widest uppercase font-semibold sub-title">Android (Java/XML) <span>95%</span></div>
-                                <div class="h-2.5 bg-black/10 rounded-full overflow-hidden p-[2px] border border-white/10">
-                                    <div class="skill-bar h-full bg-blue-500 rounded-full" data-width="95%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-xs mb-2 tracking-widest uppercase font-semibold sub-title">Python & ML <span>90%</span></div>
-                                <div class="h-2.5 bg-black/10 rounded-full overflow-hidden p-[2px] border border-white/10">
-                                    <div class="skill-bar h-full bg-indigo-500 rounded-full" data-width="90%"></div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h3 class="text-xs uppercase tracking-widest font-bold sub-title mt-8 mb-4">Tools & Technologies</h3>
-                        <div class="relative w-full" id="tools-tags-wrap">
-                            <div class="tag-active-bubble" id="tools-tags-bubble"></div>
-                            <div class="grid grid-cols-2 gap-4 relative z-10">
-                                <div class="p-3 text-center uppercase text-xs md:text-sm tracking-wider font-semibold main-title cursor-pointer tag-item transition">Android Studio</div>
-                                <div class="p-3 text-center uppercase text-xs md:text-sm tracking-wider font-semibold main-title cursor-pointer tag-item transition">VS Code</div>
-                                <div class="p-3 text-center uppercase text-xs md:text-sm tracking-wider font-semibold main-title cursor-pointer tag-item transition">Flask / Python</div>
-                                <div class="p-3 text-center uppercase text-xs md:text-sm tracking-wider font-semibold main-title cursor-pointer tag-item transition">Git & GitHub</div>
-                                <div class="p-3 text-center uppercase text-xs md:text-sm tracking-wider font-semibold main-title cursor-pointer tag-item transition">SQLite / SQL</div>
-                                <div class="p-3 text-center uppercase text-xs md:text-sm tracking-wider font-semibold main-title cursor-pointer tag-item transition">NumPy / Pandas</div>
-                            </div>
-                        </div>
+                        <a href="mailto:tejasdhakate62@gmail.com" class="w-full py-3.5 bg-white text-black hover:bg-zinc-200 font-semibold rounded-xl text-xs font-semibold uppercase tracking-wider text-center transition duration-200">
+                            Send Direct Email
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Education Roadmap Section -->
-    <section id="education" class="py-20 px-6 md:px-10 max-w-6xl mx-auto">
-        <div class="flex flex-col items-center mb-12 gap-4 reveal-node">
-            <h2 class="text-3xl md:text-4xl font-bold main-title uppercase tracking-widest">Education</h2>
-        </div>
-        
-        <div class="relative w-full" id="education-tags-wrap">
-            <div class="tag-active-bubble" id="education-tags-bubble"></div>
-            <div class="space-y-6 relative z-10">
-                <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 rounded-[24px] reveal-node tag-item cursor-pointer transition">
-                    <div class="glass-content">
-                        <h3 class="text-lg md:text-xl font-bold main-title">B.Tech in Computer Engineering</h3>
-                        <p class="text-blue-500 text-sm font-semibold">Bapurao Deshmukh Engineering College, Sewagram</p>
-                        <p class="text-slate-400 text-xs uppercase tracking-wider mt-1">RTMNU Nagpur | 2021 — 2026</p>
-                    </div>
+        <!-- Apple-Style Footer Section -->
+        <footer class="max-w-6xl mx-auto px-6 md:px-16 pt-24 pb-12 text-[11px] text-zinc-500 space-y-8 border-t border-white/10 mt-20">
+            <!-- Footnotes / Disclaimer -->
+            <div class="space-y-3 leading-relaxed border-b border-white/5 pb-8 font-light">
+                <p>* All technical projects, repositories, and credentials listed on this site represent verified academic and personal projects engineered by the author. Source code is open and hosted on GitHub under standard MIT licensing guidelines.</p>
+                <p>1. Local clock coordinates indicate Indian Standard Time (IST) tracking. Mobile mockups are compiled using purely procedural CSS and custom layout engines to ensure instant rendering across desktop and mobile devices.</p>
+            </div>
+
+            <!-- Directory Columns (Apple Store Style) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 py-4">
+                <div class="space-y-3">
+                    <h4 class="font-semibold text-zinc-300">Explore Portfolio</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#about" class="hover:underline hover:text-white transition">About Me</a></li>
+                        <li><a href="#experience" class="hover:underline hover:text-white transition">Career Journey</a></li>
+                        <li><a href="#projects" class="hover:underline hover:text-white transition">Android Projects</a></li>
+                        <li><a href="#documents" class="hover:underline hover:text-white transition">Credentials</a></li>
+                    </ul>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div class="p-6 md:p-8 rounded-[24px] reveal-node tag-item cursor-pointer transition">
-                        <div class="glass-content">
-                            <h3 class="text-base md:text-lg font-bold main-title">HSC (Science)</h3>
-                            <p class="text-purple-500 text-sm font-medium">Vidya Vikas College, Samudrapur</p>
-                            <p class="text-slate-400 text-xs mt-4 uppercase tracking-wider">Completed March 2021</p>
-                        </div>
+                <div class="space-y-3">
+                    <h4 class="font-semibold text-zinc-300">Developer Stack</h4>
+                    <ul class="space-y-2">
+                        <li class="text-zinc-500">Android Studio</li>
+                        <li class="text-zinc-500">Java & Kotlin</li>
+                        <li class="text-zinc-500">Flask & Python</li>
+                        <li class="text-zinc-500">SQLite & Firebase</li>
+                    </ul>
+                </div>
+                <div class="space-y-3">
+                    <h4 class="font-semibold text-zinc-300">Quick Resources</h4>
+                    <ul class="space-y-2">
+                        <li><a href="My Certificate/Tejas_Dhakate_presentire.pdf" target="_blank" class="hover:underline hover:text-white transition">Project Briefs</a></li>
+                        <li><a href="https://github.com/tejasdhakate62-dev" target="_blank" class="hover:underline hover:text-white transition">GitHub Profile</a></li>
+                        <li><a href="https://www.linkedin.com/in/tejas-suresh-dhakate-ab3a22321/" target="_blank" class="hover:underline hover:text-white transition">LinkedIn</a></li>
+                        <li><a href="#contact" class="hover:underline hover:text-white transition">Direct Mail</a></li>
+                    </ul>
+                </div>
+                <div class="space-y-3">
+                    <h4 class="font-semibold text-zinc-300">Developer Values</h4>
+                    <ul class="space-y-2">
+                        <li class="text-zinc-500">Clean Architecture</li>
+                        <li class="text-zinc-500">MVVM Separation</li>
+                        <li class="text-zinc-500">Standard Encryption</li>
+                        <li class="text-zinc-500">High Accessibility</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Copyright and Legal bottom section -->
+            <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row md:justify-between gap-4 font-light text-zinc-500">
+                <div class="space-y-1">
+                    <p>Copyright &copy; 2026 Tejas Dhakate. All rights reserved.</p>
+                    <p class="text-zinc-600">Designed and engineered by Tejas Suresh Dhakate. Codebase licensed under MIT. Built with clean HTML, Tailwind, and GSAP.</p>
+                </div>
+                <div class="flex flex-wrap gap-x-3 gap-y-1 text-zinc-400">
+                    <span class="hover:underline hover:text-white transition cursor-pointer">Privacy Policy</span>
+                    <span class="text-zinc-700">|</span>
+                    <span class="hover:underline hover:text-white transition cursor-pointer">Terms of Use</span>
+                    <span class="text-zinc-700">|</span>
+                    <span class="hover:underline hover:text-white transition cursor-pointer">License Agreement</span>
+                    <span class="text-zinc-700">|</span>
+                    <span class="hover:underline hover:text-white transition cursor-pointer">Site Map</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Project Details Modal (PredictiveRiskAnalyzer) -->
+    <div id="projectModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 md:p-6 bg-black/85 backdrop-blur-xl transition-all duration-300 opacity-0">
+        <div class="spec-card max-w-2xl w-full p-6 md:p-10 relative transform scale-95 transition-all duration-300 flex flex-col justify-between">
+            <div>
+                <button onclick="closeModal()" class="absolute top-4 right-6 text-zinc-400 hover:text-white text-3xl font-light">&times;</button>
+                <span class="text-blue-500 text-[10px] font-bold uppercase tracking-wider">Flask & Python System</span>
+                <h3 class="text-2xl font-bold my-3 text-white tracking-tight">PredictiveRiskAnalyzer</h3>
+                <p class="text-xs text-zinc-400 font-light leading-relaxed mb-6">
+                    A robust Python Flask web system engineered to calculate systematic performance metrics and evaluate risk models from synthesized data inputs.
+                </p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 text-left">
+                    <div class="p-5 bg-white/5 border border-white/5 rounded-xl">
+                        <h4 class="text-blue-500 font-bold uppercase text-[10px] mb-2 tracking-wider">Tech Stack</h4>
+                        <p class="text-xs text-zinc-300 font-light">Python (Flask), NumPy, Pandas, Data Processing pipelines.</p>
                     </div>
-                    <div class="p-6 md:p-8 rounded-[24px] reveal-node tag-item cursor-pointer transition" id="education-ssc-card">
-                        <div class="glass-content">
-                            <h3 class="text-base md:text-lg font-bold main-title">SSC</h3>
-                            <p class="text-emerald-400 text-sm font-medium">Yashwant High School, Mandgaon</p>
-                            <p class="text-slate-400 text-xs mt-4 uppercase tracking-wider">Completed March 2019</p>
-                        </div>
+                    <div class="p-5 bg-white/5 border border-white/5 rounded-xl">
+                        <h4 class="text-blue-500 font-bold uppercase text-[10px] mb-2 tracking-wider">Deployment</h4>
+                        <p class="text-xs text-zinc-300 font-light">Rigorous backend testing models, clean structure, fully documented.</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Credentials Grid Section -->
-    <section id="documents" class="py-20 px-6 md:px-10 max-w-6xl mx-auto">
-        <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center main-title uppercase tracking-widest reveal-node">Certifications</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-[10px] font-mono text-yellow-500 tracking-widest uppercase font-bold">Community Milestone</span>
-                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">CampusCrew 100K Honor</h3>
-                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Recognized for contributing as an integral community member reaching 100,000+ global students across 15+ countries[cite: 1].</p>
-                    </div>
-                    <div class="relative w-full text-center mt-auto" id="cert-1-wrap">
-                        <div class="tag-active-bubble" id="cert-1-bubble"></div>
-                        <a href="My Certificate/CampusCrew_100K_Milestone.pdf" target="_blank" class="block w-full py-1.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-[10px] font-mono text-blue-500 tracking-widest uppercase font-bold">Bootcamp</span>
-                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">Business Analytics</h3>
-                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Official validation confirming complete bootcamp trajectory data processing execution specs.</p>
-                    </div>
-                    <div class="relative w-full text-center mt-auto" id="cert-2-wrap">
-                        <div class="tag-active-bubble" id="cert-2-bubble"></div>
-                        <a href="My Certificate/Tejas Dhakate_BusinessAnalyticsBootcamp_ParticipationCertificate.pdf" target="_blank" class="block w-full py-2.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-[10px] font-mono text-purple-500 tracking-widest uppercase font-bold">Technical</span>
-                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">Microtron Achievement</h3>
-                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Verification parameters covering systems milestone processing metrics validation sheets.</p>
-                    </div>
-                    <div class="relative w-full text-center mt-auto" id="cert-3-wrap">
-                        <div class="tag-active-bubble" id="cert-3-bubble"></div>
-                        <a href="My Certificate/Tejas Dhakate Microtron.pdf" target="_blank" class="block w-full py-2.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-[10px] font-mono text-emerald-500 tracking-widest uppercase font-bold">Presentation</span>
-                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">Presentire 2026</h3>
-                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Interactive execution slides designed for technical verification tracks assessment loop.</p>
-                    </div>
-                    <div class="relative w-full text-center mt-auto" id="cert-4-wrap">
-                        <div class="tag-active-bubble" id="cert-4-bubble"></div>
-                        <a href="My Certificate/Presentire 2026.pdf" target="_blank" class="block w-full py-2.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-[10px] font-mono text-blue-500 tracking-widest uppercase font-bold">Project Docs</span>
-                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">Forge System</h3>
-                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Architectural schematics detailing systems processing criteria guidelines.</p>
-                    </div>
-                    <div class="relative w-full text-center mt-auto" id="cert-5-wrap">
-                        <div class="tag-active-bubble" id="cert-5-bubble"></div>
-                        <a href="My Certificate/forge1.pdf" target="_blank" class="block w-full py-2.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-[10px] font-mono text-purple-500 tracking-widest uppercase font-bold">Conference</span>
-                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">NCISEM 2025 Track</h3>
-                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Validation certification compiled for review tracks assemblies execution.</p>
-                    </div>
-                    <div class="relative w-full text-center" id="cert-6-wrap">
-                        <div class="tag-active-bubble" id="cert-6-bubble"></div>
-                        <a href="My Certificate/NCISEM 2025 Certificate (1).pdf" target="_blank" class="block w-full py-2.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-[10px] font-mono text-slate-400 tracking-widest uppercase font-bold">Archive Presentation</span>
-                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">Presentire 2025</h3>
-                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Historical engineering track logs cataloging prior design iterations indices.</p>
-                    </div>
-                    <div class="relative w-full text-center mt-auto" id="cert-7-wrap">
-                        <div class="tag-active-bubble" id="cert-7-bubble"></div>
-                        <a href="My Certificate/Presentire 2025.pdf" target="_blank" class="block w-full py-2.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start rounded-[24px] reveal-node transition">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-[10px] font-mono text-slate-400 tracking-widest uppercase font-bold">Profile Spotlight</span>
-                        <h3 class="text-lg md:text-xl font-bold mt-2 mb-3 main-title">Tejas Dhakate Briefs</h3>
-                        <p class="text-xs sub-title font-light leading-relaxed mb-6">Profile validation metrics compiled exclusively for corporate review pipelines.</p>
-                    </div>
-                    <div class="relative w-full text-center mt-auto" id="cert-8-wrap">
-                        <div class="tag-active-bubble" id="cert-8-bubble"></div>
-                        <a href="My Certificate/Tejas_Dhakate_presentire.pdf" target="_blank" class="block w-full py-2.5 px-4 text-xs font-mono uppercase tracking-widest font-bold z-10 tag-item transition">View Document &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- Expanded Project Spotlights Section -->
-    <section id="projects" class="py-20 px-6 md:px-10 max-w-6xl mx-auto">
-        <div class="flex flex-col items-center mb-12 gap-4 reveal-node">
-            <h2 class="text-3xl md:text-4xl font-bold main-title uppercase tracking-widest">Project Spotlight</h2>
-        </div>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start h-80 rounded-[24px] reveal-node transition">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono">Android & Firebase</span>
-                        <h3 class="text-lg md:text-xl font-bold my-4 main-title">Invoix</h3>
-                        <p class="sub-title text-xs font-light leading-relaxed">A modern Android invoice management application built for freelancers, startups, and small businesses to track payments, manage clients, and monitor business analytics.</p>
-                    </div>
-                    <div class="relative mt-auto" id="project-7-wrap">
-                        <div class="tag-active-bubble" id="project-7-bubble"></div>
-                        <a href="https://github.com/tejasdhakate62-dev/Invoix.git" target="_blank" class="inline-block py-2.5 px-4 text-xs font-mono uppercase tracking-widest z-10 tag-item transition">Source &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start h-80 rounded-[24px] reveal-node transition">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono">Android & UI/UX</span>
-                        <h3 class="text-lg md:text-xl font-bold my-4 main-title">Diet Plan App</h3>
-                        <p class="sub-title text-xs font-light leading-relaxed">A modern Android application engineered to help users track, organize, and manage tailored health metrics and dietary goals smoothly.</p>
-                    </div>
-                    <div class="relative mt-auto" id="project-1-wrap">
-                        <div class="tag-active-bubble" id="project-1-bubble"></div>
-                        <a href="https://github.com/tejasdhakate62-dev/Diet_Plan_App.git" target="_blank" class="inline-block py-2.5 px-4 text-xs font-mono uppercase tracking-widest z-10 tag-item transition">Source &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start h-80 rounded-[24px] reveal-node transition" onclick="openModal()">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono">Machine Learning</span>
-                        <h3 class="text-lg md:text-xl font-bold my-4 main-title">PredictiveRiskAnalyzer</h3>
-                        <p class="sub-title text-xs font-light leading-relaxed">A robust Python Flask web system engineered to calculate systematic performance metrics.</p>
-                    </div>
-                    <div class="relative mt-auto" id="project-2-wrap">
-                        <div class="tag-active-bubble" id="project-2-bubble"></div>
-                        <button class="inline-block py-2.5 px-4 text-xs font-mono uppercase tracking-widest z-10 tag-item transition">Details &rarr;</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start h-80 rounded-[24px] reveal-node transition">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono">Automotive Design</span>
-                        <h3 class="text-lg md:text-xl font-bold my-4 main-title">Neo Cycle Architecture</h3>
-                        <p class="sub-title text-xs font-light leading-relaxed">A conceptual technical blueprint highlighting front, top, and cross-section parameters designed for clean-energy motorcycle modeling.</p>
-                    </div>
-                    <div class="relative mt-auto" id="project-3-wrap">
-                        <div class="tag-active-bubble" id="project-3-bubble"></div>
-                        <a href="#documents" class="inline-block py-2.5 px-4 text-xs font-mono uppercase tracking-widest z-10 tag-item transition">View Blueprint Track &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start h-80 rounded-[24px] reveal-node transition">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono">Security Logic</span>
-                        <h3 class="text-lg md:text-xl font-bold my-4 main-title">MnemonicGen Core</h3>
-                        <p class="sub-title text-xs font-light leading-relaxed">A production-tier Java application specialized in computing rigid 24-word recovery chains backed by local AES standard key encryption.</p>
-                    </div>
-                    <div class="relative mt-auto" id="project-4-wrap">
-                        <div class="tag-active-bubble" id="project-4-bubble"></div>
-                        <a href="https://github.com/tejasdhakate62-dev/MnemonicGen" target="_blank" class="inline-block py-2.5 px-4 text-xs font-mono uppercase tracking-widest z-10 tag-item transition">Source &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start h-80 rounded-[24px] reveal-node transition" id="project-trending-birthday">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono">Viral 🔥</span>
-                        <h3 class="text-lg md:text-xl font-bold my-4 main-title">trending-Birthday</h3>
-                        <p class="sub-title text-xs font-light leading-relaxed">Interactive validation greeting directory hosting custom physics particle modules and heavy CSS transformation layers.</p>
-                    </div>
-                    <div class="relative mt-auto" id="project-5-wrap">
-                        <div class="tag-active-bubble" id="project-5-bubble"></div>
-                        <a href="https://github.com/tejasdhakate62-dev/trending-Birthday" target="_blank" class="inline-block py-2.5 px-4 text-xs font-mono uppercase tracking-widest z-10 tag-item transition">Source &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6 md:p-8 flex flex-col justify-between items-start h-80 rounded-[24px] reveal-node transition" id="project-happy-birthday">
-                <div class="glass-content w-full flex flex-col justify-between h-full">
-                    <div class="w-full">
-                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono">UI/UX Project</span>
-                        <h3 class="text-lg md:text-xl font-bold my-4 main-title">Happy-Birthday</h3>
-                        <p class="sub-title text-xs font-light leading-relaxed">Specialized portfolio segment focusing heavily on precise spatial balancing, grid structural ratios, and clean scrolling markers.</p>
-                    </div>
-                    <div class="relative mt-auto" id="project-6-wrap">
-                        <div class="tag-active-bubble" id="project-6-bubble"></div>
-                        <a href="https://github.com/tejasdhakate62-dev/Happy-Birthday" target="_blank" class="inline-block py-2.5 px-4 text-xs font-mono uppercase tracking-widest z-10 tag-item transition">Source &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- Contact Communication Section -->
-    <section id="contact" class="py-20 px-6 max-w-4xl mx-auto">
-        <div class="p-8 md:p-12 text-center rounded-[24px] reveal-node relative z-10">
-            <div class="glass-content">
-                <h2 class="text-2xl md:text-3xl font-bold mb-10 main-title uppercase tracking-widest">Let's Connect</h2>
-                <div class="space-y-6">
-                    <p class="text-2xl md:text-3xl font-bold tracking-widest main-title">9529835875</p>
-                    <p class="text-xs md:text-sm sub-title mb-10 uppercase tracking-wider">Wardha, Maharashtra, India</p>
-                    <div class="flex flex-col sm:flex-row justify-center gap-4 relative" id="contact-tags-wrap">
-                        <div class="tag-active-bubble" id="contact-tags-bubble"></div>
-                        <a href="mailto:tejasdhakate62@gmail.com" class="px-6 py-3.5 text-xs font-mono break-all sm:break-normal z-10 tag-item transition">tejasdhakate62@gmail.com</a>
-                        <a href="https://www.linkedin.com/in/tejas-suresh-dhakate-ab3a22321/" target="_blank" class="px-6 py-3.5 text-xs font-mono uppercase z-10 tag-item transition">LinkedIn</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Project Modal Layer -->
-    <div id="projectModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 md:p-6 bg-black/70 backdrop-blur-xl transition-all duration-300 opacity-0">
-        <div class="glass max-w-2xl w-full p-6 md:p-10 relative transform scale-95 transition-all duration-300">
-            <button onclick="closeModal()" class="absolute top-4 right-6 text-slate-400 hover:text-slate-600 text-3xl">&times;</button>
-            <h3 class="text-2xl md:text-3xl font-bold mb-2 main-title">PredictiveRiskAnalyzer</h3>
-            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-8">Status: Delivered Ahead of Schedule</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 text-left">
-                <div class="p-6 glass">
-                    <h4 class="text-slate-400 font-bold uppercase text-[10px] mb-3 tracking-widest">Tech Stack</h4>
-                    <p class="text-xs sub-title font-light">Python (Flask), Synthetic Data Processing, Clean Documented Code.</p>
-                </div>
-                <div class="p-6 glass">
-                    <h4 class="text-slate-400 font-bold uppercase text-[10px] mb-3 tracking-widest">Quality Assurance</h4>
-                    <p class="text-xs sub-title font-light">Rigorous testing and UI polishing completed before deadline.</p>
-                </div>
-            </div>
-            <div class="relative w-full text-center" id="modal-tags-wrap">
-                <div class="tag-active-bubble" id="modal-tags-bubble"></div>
-                <a href="https://github.com/tejasdhakate62-dev/PredictiveRiskAnalyzer-0.1.0" target="_blank" class="block w-full py-4 text-xs uppercase tracking-widest font-bold z-10 tag-item transition">View GitHub Repo</a>
+            <div class="flex justify-end gap-3 border-t border-white/5 pt-4">
+                <button onclick="closeModal()" class="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white rounded-xl text-xs font-semibold tracking-wider transition duration-200">Close</button>
+                <a href="https://github.com/tejasdhakate62-dev/PredictiveRiskAnalyzer-0.1.0" target="_blank" class="px-5 py-2.5 bg-blue-600 text-white hover:bg-blue-700 font-semibold rounded-xl text-xs tracking-wider transition-all duration-200">View Repo</a>
             </div>
         </div>
     </div>
 
-    <!-- CDNs: stable, version-locked libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Certificate Preview Modal -->
+    <div id="certModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 md:p-6 bg-black/90 backdrop-blur-2xl transition-all duration-300 opacity-0">
+        <div class="spec-card max-w-4xl w-full p-6 relative transform scale-95 transition-all duration-300 flex flex-col justify-between h-[85vh] bg-[#0c0c0e]">
+            
+            <div class="flex justify-between items-center pb-4 border-b border-white/5">
+                <div>
+                    <span class="text-blue-500 text-[10px] font-bold uppercase tracking-widest">Credential Preview</span>
+                    <h3 id="cert-modal-title" class="text-lg md:text-xl font-bold text-white tracking-tight mt-0.5">Certificate Preview</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a id="cert-modal-newtab" href="" target="_blank" class="px-3.5 py-1.5 bg-white/5 hover:bg-white/10 text-xs font-semibold text-zinc-300 hover:text-white border border-white/5 rounded-lg transition duration-200 flex items-center gap-1.5">
+                        Open in New Tab &rarr;
+                    </a>
+                    <button onclick="closeCertModal()" class="text-zinc-400 hover:text-white text-2xl font-light px-2">&times;</button>
+                </div>
+            </div>
+
+            <div class="flex-grow my-4 overflow-hidden rounded-xl bg-black flex justify-center items-center">
+                <!-- PDF Preview Iframe -->
+                <iframe id="cert-iframe" src="" class="w-full h-full border-0 rounded-xl" type="application/pdf"></iframe>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-3 border-t border-white/5">
+                <button onclick="closeCertModal()" class="px-5 py-2.5 bg-white text-black hover:bg-zinc-200 font-semibold rounded-xl text-xs tracking-wider transition duration-200">Close Preview</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GSAP Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-    <!-- 🌌 RUNTIME INTERACTIVE MECHANICS -->
+    <!-- CINEMATIC INTERACTIVE SCRIPTS -->
     <script>
         function openModal() {
             const modal = document.getElementById('projectModal');
@@ -973,7 +949,7 @@
             modal.classList.add('flex');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
-                modal.querySelector('.glass').classList.remove('scale-95');
+                modal.querySelector('.spec-card').classList.remove('scale-95');
             }, 10);
             document.body.style.overflow = 'hidden';
         }
@@ -981,7 +957,7 @@
         function closeModal() {
             const modal = document.getElementById('projectModal');
             modal.classList.add('opacity-0');
-            modal.querySelector('.glass').classList.add('scale-95');
+            modal.querySelector('.spec-card').classList.add('scale-95');
             setTimeout(() => {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
@@ -989,981 +965,286 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Global state variables
-        let scene, camera, renderer, clock;
-        let heroGroup, coreMesh, particleSystem;
-        let originalPositions;
-        const satelliteBlobs = [];
-        let ambientLight, dirLight, pointLight;
-        let noMotion = false;
+        // Certificate Preview Modal Actions
+        function openCertModal(pdfPath, title) {
+            const modal = document.getElementById('certModal');
+            const iframe = document.getElementById('cert-iframe');
+            const titleEl = document.getElementById('cert-modal-title');
+            const newTabEl = document.getElementById('cert-modal-newtab');
 
-        // Mouse coordinates
-        const mouse = { x: 0, y: 0, targetX: 0, targetY: 0, lerpX: 0, lerpY: 0 };
+            // Load iframe source
+            iframe.src = pdfPath;
+            titleEl.innerText = title;
+            newTabEl.href = pdfPath;
 
-        // Theme Colors configuration
-        const themes = {
-            dark: {
-                background: '#10111a',
-                torusColor: 0xffffff,
-                particleColor: 0x94a3b8,
-                lightColor: 0x00f0ff,
-                roughness: 0.0,
-                transmission: 1.0
-            },
-            light: {
-                background: '#f1f5f9',
-                torusColor: 0x2563eb,
-                particleColor: 0x64748b,
-                lightColor: 0x2563eb,
-                roughness: 0.3,
-                transmission: 0.7
-            }
-        };
-
-        // 🌗 DYNAMIC THEME CONTROLLER (Cycles through Dark and Light)
-        function toggleTheme() {
-            const body = document.body;
-            const currentTheme = body.getAttribute('data-theme') || 'dark';
-            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            body.setAttribute('data-theme', newTheme);
-            updateThemeUI(newTheme);
-            
-            const tValues = themes[newTheme];
-            
-            // Interpolate Three.js background, fog, and light properties
-            const targetBg = new THREE.Color(tValues.background);
-            gsap.to(scene.fog.color, {
-                r: targetBg.r,
-                g: targetBg.g,
-                b: targetBg.b,
-                duration: 0.6
-            });
-            
-            const targetTorusColor = new THREE.Color(tValues.torusColor);
-            gsap.to(coreMesh.material.color, {
-                r: targetTorusColor.r,
-                g: targetTorusColor.g,
-                b: targetTorusColor.b,
-                duration: 0.6
-            });
-            
-            gsap.to(coreMesh.material, { 
-                roughness: tValues.roughness,
-                transmission: tValues.transmission,
-                duration: 0.6 
-            });
-            
-            const targetLightColor = new THREE.Color(tValues.lightColor);
-            gsap.to(pointLight.color, {
-                r: targetLightColor.r,
-                g: targetLightColor.g,
-                b: targetLightColor.b,
-                duration: 0.6
-            });
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('.spec-card').classList.remove('scale-95');
+            }, 10);
+            document.body.style.overflow = 'hidden';
         }
 
-        function updateThemeUI(theme) {
-            let text = theme === 'dark' ? 'Dark' : 'Light';
-            const txtEl = document.getElementById('theme-text');
-            if (txtEl) txtEl.innerText = text;
-        }
-
-        function getCurrentThemeValues() {
-            const currentTheme = document.body.getAttribute('data-theme') || 'dark';
-            return themes[currentTheme];
-        }
-
-        /**
-         * ==========================================
-         * THREE.JS ENGINE SETUP
-         * ==========================================
-         */
-        function initThree() {
-            const container = document.getElementById('canvas-container');
-            const canvas = document.getElementById('chrome-canvas');
-            clock = new THREE.Clock();
-
-            scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(getCurrentThemeValues().background, 0.08);
-
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100);
-            camera.position.set(0, 0, 5);
-
-            renderer = new THREE.WebGLRenderer({
-                canvas: canvas,
-                antialias: true,
-                alpha: true,
-                powerPreference: "high-performance"
-            });
-            renderer.setSize(width, height);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        function closeCertModal() {
+            const modal = document.getElementById('certModal');
+            const iframe = document.getElementById('cert-iframe');
             
-            renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.2;
-            renderer.outputEncoding = THREE.sRGBEncoding;
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-            canvas.setAttribute('role', 'img');
-            canvas.setAttribute('aria-label', 'Interactive 3D shape and floating particle background.');
-
-            setupLights();
-            setupHeroGeometry();
-            setupParticles();
-
-            renderer.setAnimationLoop(renderLoop);
+            modal.classList.add('opacity-0');
+            modal.querySelector('.spec-card').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                iframe.src = ""; // reset source to save RAM
+            }, 300);
+            document.body.style.overflow = 'auto';
         }
 
-        function setupLights() {
-            ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-            scene.add(ambientLight);
-
-            dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
-            dirLight.position.set(5, 10, 7);
-            dirLight.castShadow = true;
-            dirLight.shadow.mapSize.width = 1024;
-            dirLight.shadow.mapSize.height = 1024;
-            dirLight.shadow.bias = -0.001;
-            scene.add(dirLight);
-
-            const activeColor = getCurrentThemeValues().lightColor;
-            pointLight = new THREE.PointLight(activeColor, 3, 10);
-            pointLight.position.set(0, 0, 2);
-            scene.add(pointLight);
-        }
-
-        function setupHeroGeometry() {
-            heroGroup = new THREE.Group();
-            const tValues = getCurrentThemeValues();
-
-            // 1. Primary Liquid Glass Blob
-            const coreGeo = new THREE.SphereGeometry(1.0, 48, 48);
-            originalPositions = coreGeo.attributes.position.array.slice();
-
-            const coreMat = new THREE.MeshPhysicalMaterial({
-                color: tValues.torusColor,
-                roughness: tValues.roughness,
-                metalness: 0.05,
-                transmission: tValues.transmission,
-                ior: 1.65, // high refractive index
-                thickness: 2.0, // thick glass
-                depthWrite: true,
-                transparent: true,
-                opacity: 1.0,
-                clearcoat: 1.0,
-                clearcoatRoughness: 0.0
-            });
-
-            coreMesh = new THREE.Mesh(coreGeo, coreMat);
-            coreMesh.castShadow = true;
-            coreMesh.receiveShadow = true;
-            heroGroup.add(coreMesh);
-
-            // 2. Smaller Satellite Liquid Glass Droplets
-            const satCount = 3;
-            const satGeo = new THREE.SphereGeometry(0.35, 24, 24);
-            for (let i = 0; i < satCount; i++) {
-                const satMesh = new THREE.Mesh(satGeo, coreMat);
-                satMesh.castShadow = true;
-                
-                const angle = (i / satCount) * Math.PI * 2;
-                satMesh.position.set(Math.cos(angle) * 1.8, Math.sin(angle) * 1.8, (Math.random() - 0.5) * 0.5);
-                satMesh.userData = {
-                    angle: angle,
-                    speed: 0.4 + Math.random() * 0.4,
-                    distance: 1.7 + Math.random() * 0.3,
-                    offsetY: (Math.random() - 0.5) * 0.4,
-                    pulseSpeed: 1 + Math.random() * 1.5,
-                    phase: Math.random() * Math.PI
-                };
-                
-                satelliteBlobs.push(satMesh);
-                heroGroup.add(satMesh);
-            }
-
-            const initialCoords = getSectionCoordinates('hero');
-            heroGroup.position.set(initialCoords.x, initialCoords.y, initialCoords.z);
-            heroGroup.scale.setScalar(initialCoords.scale);
-
-            scene.add(heroGroup);
-        }
-
-        function setupParticles() {
-            const particleCount = 0; // Set to 0 to remove background stars/dots completely as requested
-            const geometry = new THREE.BufferGeometry();
-            const positions = new Float32Array(0);
-
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-            const tValues = getCurrentThemeValues();
-            const material = new THREE.PointsMaterial({
-                color: tValues.particleColor,
-                size: 0.035,
-                transparent: true,
-                opacity: 0.65,
-                depthWrite: false,
-                blending: THREE.AdditiveBlending
-            });
-
-            particleSystem = new THREE.Points(geometry, material);
-            scene.add(particleSystem);
-        }
-
-        /**
-         * ==========================================
-         * LAYOUT RESPONSIVE LOGIC
-         * ==========================================
-         */
-        function getSectionCoordinates(section) {
-            const isMobile = window.innerWidth < 768;
-            const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
-
-            const coords = {
-                hero: {
-                    desktop: { x: 0, y: 0, z: 0, scale: 1.1 },
-                    tablet: { x: 0, y: 1.0, z: -0.5, scale: 0.95 },
-                    mobile: { x: 0, y: 1.3, z: -0.8, scale: 0.8 }
-                },
-                about: {
-                    desktop: { x: 1.8, y: 0, z: -0.5, scale: 0.9 },
-                    tablet: { x: 1.2, y: 0, z: -0.5, scale: 0.8 },
-                    mobile: { x: 0, y: 1.5, z: -1.0, scale: 0.7 }
-                },
-                education: {
-                    desktop: { x: -1.8, y: 0, z: -0.5, scale: 0.9 },
-                    tablet: { x: -1.2, y: 0, z: -0.5, scale: 0.8 },
-                    mobile: { x: 0, y: 1.6, z: -1.2, scale: 0.65 }
-                },
-                documents: {
-                    desktop: { x: 0, y: 0, z: -3.5, scale: 0.7 },
-                    tablet: { x: 0, y: 0, z: -3.0, scale: 0.65 },
-                    mobile: { x: 0, y: 0, z: -2.8, scale: 0.55 }
-                },
-                projects: {
-                    desktop: { x: 2.0, y: -0.5, z: -1.5, scale: 0.85 },
-                    tablet: { x: 1.5, y: -0.3, z: -1.2, scale: 0.75 },
-                    mobile: { x: 0, y: 1.8, z: -1.5, scale: 0.6 }
-                },
-                contact: {
-                    desktop: { x: 0, y: -0.2, z: 0, scale: 1.2 },
-                    tablet: { x: 0, y: 0.5, z: -0.5, scale: 1.0 },
-                    mobile: { x: 0, y: 1.2, z: -0.8, scale: 0.8 }
+        // FAQ Accordion Toggle
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(id + '-icon');
+            
+            // Close other accordion panels
+            document.querySelectorAll('.accordion-content').forEach(el => {
+                if (el.id !== id && el.classList.contains('open')) {
+                    el.classList.remove('open');
+                    document.getElementById(el.id + '-icon').innerText = '+';
+                    document.getElementById(el.id + '-icon').style.transform = 'rotate(0deg)';
                 }
-            };
+            });
 
-            const sectionCoords = coords[section];
-            if (isMobile) return sectionCoords.mobile;
-            if (isTablet) return sectionCoords.tablet;
-            return sectionCoords.desktop;
+            // Toggle selected panel
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                icon.innerText = '+';
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('open');
+                icon.innerText = '−';
+                icon.style.transform = 'rotate(180deg)';
+            }
         }
 
-        /**
-         * ==========================================
-         * GSAP SCROLL-LINKED CHOREOGRAPHY
-         * ==========================================
-         */
-        function initScrollChoreography() {
-            gsap.registerPlugin(ScrollTrigger);
-            const sections = ['hero', 'about', 'education', 'documents', 'projects', 'contact'];
-
-            sections.forEach((sectionId, idx) => {
-                const el = document.getElementById(sectionId);
-                if (!el) return;
-
-                if (idx > 0) {
-                    const currentCoords = getSectionCoordinates(sectionId);
-
-                    gsap.to(heroGroup.position, {
-                        x: currentCoords.x,
-                        y: currentCoords.y,
-                        z: currentCoords.z,
-                        scrollTrigger: {
-                            trigger: el,
-                            start: "top bottom",
-                            end: "top center",
-                            scrub: 1.5,
-                            invalidateOnRefresh: true
-                        }
-                    });
-
-                    gsap.to(heroGroup.scale, {
-                        x: currentCoords.scale,
-                        y: currentCoords.scale,
-                        z: currentCoords.scale,
-                        scrollTrigger: {
-                            trigger: el,
-                            start: "top bottom",
-                            end: "top center",
-                            scrub: 1.5,
-                            invalidateOnRefresh: true
-                        }
-                    });
-                }
-
-                const revealElements = el.querySelectorAll('.reveal-node');
-                revealElements.forEach((node) => {
-                    gsap.fromTo(node, 
-                        { opacity: 0, y: 40 },
-                        {
-                            opacity: 1,
-                            y: 0,
-                            duration: 1.0,
-                            ease: "power3.out",
-                            scrollTrigger: {
-                                trigger: node,
-                                start: "top 85%",
-                                toggleActions: "play none none none"
-                            },
-                            onComplete: () => {
-                                if (node.id === 'skills-trigger') {
-                                    animateSkillBars();
-                                }
-                            }
-                        }
-                    );
-                });
+        function copyToClipboard(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerText;
+                btn.innerText = "Copied!";
+                btn.classList.add("text-blue-500");
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.classList.remove("text-blue-500");
+                }, 2000);
             });
         }
 
-        function animateSkillBars() {
-            const bars = document.querySelectorAll('.skill-bar');
-            bars.forEach(bar => {
-                const width = bar.getAttribute('data-width');
-                bar.style.width = width;
+        // Project filter tabs logic
+        function filterProjects(category) {
+            const cards = document.querySelectorAll('.project-card');
+            
+            const tabs = document.querySelectorAll('.filter-tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('bg-white', 'text-black', 'font-semibold');
+                tab.classList.add('bg-[#121215]', 'text-zinc-400', 'border', 'border-white/5');
             });
-        }
-
-        /**
-         * ==========================================
-         * RENDER LOOP & MOUSE TRACKING
-         * ==========================================
-         */
-        function renderLoop() {
-            const dt = clock.getDelta();
-            const time = clock.getElapsedTime();
-
-            if (!noMotion && heroGroup && particleSystem) {
-                // Morph the primary glass core mesh vertices (Liquid Wobble)
-                if (coreMesh && originalPositions) {
-                    const posAttr = coreMesh.geometry.attributes.position;
-                    const posArray = posAttr.array;
-                    
-                    for (let i = 0; i < posAttr.count; i++) {
-                        const idx = i * 3;
-                        const ox = originalPositions[idx];
-                        const oy = originalPositions[idx + 1];
-                        const oz = originalPositions[idx + 2];
-                        
-                        // Noise perturbation using sines and cosines based on vertex and time
-                        const wave = Math.sin(ox * 2.0 + time * 1.2) * 
-                                     Math.cos(oy * 2.0 + time * 1.0) * 
-                                     Math.sin(oz * 2.0 + time * 1.4);
-                                     
-                        // 14% max displacement amplitude
-                        const scale = 1.0 + wave * 0.14;
-                        
-                        posArray[idx] = ox * scale;
-                        posArray[idx + 1] = oy * scale;
-                        posArray[idx + 2] = oz * scale;
-                    }
-                    posAttr.needsUpdate = true;
-                    coreMesh.geometry.computeVertexNormals();
-                }
-
-                // Orbit and animate satellite glass droplets
-                satelliteBlobs.forEach(sat => {
-                    sat.userData.angle += dt * sat.userData.speed;
-                    
-                    const angle = sat.userData.angle;
-                    const dist = sat.userData.distance;
-                    const bounce = Math.sin(time * sat.userData.pulseSpeed + sat.userData.phase) * 0.15;
-                    
-                    sat.position.x = Math.cos(angle) * dist;
-                    sat.position.y = Math.sin(angle) * dist + sat.userData.offsetY;
-                    sat.position.z = bounce;
-                    
-                    // Rotate individual satellites
-                    sat.rotation.x += dt * 0.15;
-                    sat.rotation.y += dt * 0.2;
-                });
-
-                // Slow overall group rotation
-                heroGroup.rotation.y += dt * 0.04;
-                particleSystem.rotation.y += dt * 0.01;
+            
+            const activeTab = document.getElementById(`tab-${category}`);
+            if (activeTab) {
+                activeTab.classList.remove('bg-[#121215]', 'text-zinc-400', 'border', 'border-white/5');
+                activeTab.classList.add('bg-white', 'text-black', 'font-semibold');
             }
-
-            mouse.lerpX += (mouse.targetX - mouse.lerpX) * 0.05;
-            mouse.lerpY += (mouse.targetY - mouse.lerpY) * 0.05;
-
-            if (heroGroup && !noMotion) {
-                heroGroup.rotation.y += mouse.lerpX * 0.003;
-                heroGroup.rotation.x += mouse.lerpY * 0.003;
-                
-                pointLight.position.x = mouse.lerpX * 3;
-                pointLight.position.y = -mouse.lerpY * 3;
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        /**
-         * ==========================================
-         * TACTILE CARD HOVER (3D TILT)
-         * ==========================================
-         */
-        function initCardTiltEffect() {
-            const cards = document.querySelectorAll('.glass');
 
             cards.forEach(card => {
-                if (card.id === 'projectModal' || card.parentNode.tagName === 'NAV') return;
+                if (category === 'all' || card.classList.contains(`cat-${category}`)) {
+                    gsap.to(card, { opacity: 1, scale: 1, duration: 0.35, ease: "power2.out", display: "flex" });
+                } else {
+                    gsap.to(card, { opacity: 0, scale: 0.96, duration: 0.25, ease: "power2.in", display: "none" });
+                }
+            });
+        }
 
-                const content = card.querySelector('.glass-content');
-                const sheen = card.querySelector('.card-sheen');
+        // Live clock widget
+        function updateISTClock() {
+            const options = {
+                timeZone: 'Asia/Kolkata',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+            const formatter = new Intl.DateTimeFormat([], options);
+            const clockEl = document.getElementById('ist-clock');
+            if (clockEl) clockEl.innerText = formatter.format(new Date());
+        }
+        setInterval(updateISTClock, 1000);
+        updateISTClock();
 
+        // 🍎 3D TILT DEPTH CONTROLLER FOR CARDS
+        function init3DCardDepth() {
+            document.querySelectorAll('.spec-card').forEach(card => {
                 card.addEventListener('mousemove', e => {
                     const rect = card.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
                     
-                    const normX = (x / rect.width) - 0.5;
-                    const normY = (y / rect.height) - 0.5;
+                    const xc = rect.width / 2;
+                    const yc = rect.height / 2;
                     
-                    const maxTilt = 8;
-                    const tiltX = -normY * maxTilt;
-                    const tiltY = normX * maxTilt;
-
-                    card.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02)`;
+                    const tiltX = (yc - y) / 12;
+                    const tiltY = (x - xc) / 12;
                     
-                    if (content) {
-                        content.style.transform = `translateZ(20px)`;
-                    }
-
-                    if (sheen) {
-                        sheen.style.background = `radial-gradient(circle 120px at ${x}px ${y}px, rgba(255, 255, 255, 0.12), transparent 80%)`;
-                    }
+                    gsap.to(card, {
+                        rotateX: tiltX,
+                        rotateY: tiltY,
+                        scale: 1.015,
+                        duration: 0.35,
+                        ease: "power2.out",
+                        overwrite: "auto"
+                    });
                 });
 
                 card.addEventListener('mouseleave', () => {
-                    card.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`;
-                    if (content) content.style.transform = `translateZ(0px)`;
+                    gsap.to(card, {
+                        rotateX: 0,
+                        rotateY: 0,
+                        scale: 1,
+                        duration: 0.55,
+                        ease: "power3.out",
+                        overwrite: "auto"
+                    });
                 });
             });
         }
 
-        // Initialize event handlers
-        function initEventHandlers() {
-            window.addEventListener('mousemove', e => {
-                mouse.targetX = (e.clientX / window.innerWidth) * 2 - 1;
-                mouse.targetY = -(e.clientY / window.innerHeight) * 2 + 1;
-                
-                // Update global mouse coordinates for background frosted glass lens effect
-                document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
-                document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
-            });
+        // GSAP ScrollTrigger reveals
+        function initScrollAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
 
-            window.addEventListener('touchmove', e => {
-                if (e.touches.length > 0) {
-                    const t = e.touches[0];
-                    mouse.targetX = (t.clientX / window.innerWidth) * 2 - 1;
-                    mouse.targetY = -(t.clientY / window.innerHeight) * 2 + 1;
-                    
-                    document.documentElement.style.setProperty('--mouse-x', `${t.clientX}px`);
-                    document.documentElement.style.setProperty('--mouse-y', `${t.clientY}px`);
-                }
-            }, { passive: true });
-
-            window.addEventListener('resize', () => {
-                const width = window.innerWidth;
-                const height = window.innerHeight;
-                if (camera && renderer) {
-                    camera.aspect = width / height;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(width, height);
-                    
-                    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-                    initScrollChoreography();
+            // Fixed background grid scroll parallax
+            gsap.to("#bg-grid", {
+                yPercent: -15,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "body",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: true
                 }
             });
 
-            document.addEventListener('visibilitychange', () => {
-                if (document.hidden) {
-                    renderer.setAnimationLoop(null);
-                } else {
-                    renderer.setAnimationLoop(renderLoop);
-                }
-            });
-        }
-
-        // 💧 SLIDING LIQUID NAV LINK BUBBLE
-        function initNavBubble() {
-            const container = document.getElementById('nav-links-container');
-            const bubble = document.getElementById('nav-active-bubble');
-            const links = container.querySelectorAll('a');
-            
-            let activeLink = null;
-            
-            function moveBubble(target) {
-                if (!target) {
-                    gsap.to(bubble, { opacity: 0, duration: 0.35, ease: "power2.out", overwrite: "auto" });
-                    return;
-                }
-                
-                // Use offset properties for pixel-perfect position calculations unaffected by hover scaling shifts
-                const left = target.offsetLeft;
-                const top = target.offsetTop;
-                const width = target.offsetWidth;
-                const height = target.offsetHeight;
-                
-                gsap.to(bubble, {
-                    left: left,
-                    top: top,
-                    width: width,
-                    height: height,
+            // Apple-style Line-by-Line text highlight
+            gsap.utils.toArray('.scroll-text-span').forEach(span => {
+                gsap.to(span, {
                     opacity: 1,
-                    duration: 0.4,
-                    ease: "power3.out",
-                    overwrite: "auto"
+                    color: '#ffffff',
+                    scrollTrigger: {
+                        trigger: span,
+                        start: "top 80%",
+                        end: "top 55%",
+                        scrub: true
+                    }
                 });
-                
-                // Add wobbly liquid elastic drop bounce effect on click
-                gsap.fromTo(bubble, 
-                    { scaleX: 1.25, scaleY: 0.75 }, 
-                    { scaleX: 1, scaleY: 1, duration: 0.65, ease: "elastic.out(1.2, 0.45)", overwrite: "auto" }
+            });
+
+            // Staggered spec-card reveals
+            gsap.utils.toArray('.spec-card, .project-card').forEach(card => {
+                gsap.fromTo(card, 
+                    { opacity: 0, y: 30 },
+                    { 
+                        opacity: 1, 
+                        y: 0, 
+                        duration: 0.55, 
+                        ease: "power2.out",
+                        scrollTrigger: {
+                            trigger: card,
+                            start: "top 92%",
+                            toggleActions: "play none none none"
+                        }
+                    }
                 );
+            });
+        }
+
+
+        function initNavbarSlider() {
+            const container = document.querySelector('.nav-links-container');
+            const highlight = document.querySelector('.nav-highlight');
+            const links = document.querySelectorAll('.nav-link');
+            
+            if (!container || !highlight || !links.length) return;
+            
+            // Function to move slider to a target element
+            function moveSlider(target) {
+                const rect = target.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+                
+                const left = target.offsetLeft;
+                const width = target.offsetWidth;
+                
+                gsap.to(highlight, {
+                    left: left,
+                    width: width,
+                    opacity: 1,
+                    duration: 0.35,
+                    ease: "power2.out"
+                });
             }
             
+            // Setup hover listeners
             links.forEach(link => {
                 link.addEventListener('mouseenter', () => {
-                    moveBubble(link);
-                });
-                
-                link.addEventListener('click', () => {
-                    links.forEach(l => l.classList.remove('active-nav-link'));
-                    link.classList.add('active-nav-link');
-                    activeLink = link;
-                    moveBubble(link);
+                    moveSlider(link);
                 });
             });
             
+            // Reset slider to active link or fade out on mouse leave
             container.addEventListener('mouseleave', () => {
+                updateSliderToActive();
+            });
+            
+            // Function to find currently active link based on scroll
+            function updateSliderToActive() {
+                let activeLink = null;
+                
+                // Find which section is currently in view
+                const scrollPos = window.scrollY + 200;
+                links.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        const section = document.querySelector(href);
+                        if (section) {
+                            const top = section.offsetTop;
+                            const height = section.offsetHeight;
+                            if (scrollPos >= top && scrollPos < top + height) {
+                                activeLink = link;
+                            }
+                        }
+                    }
+                });
+                
                 if (activeLink) {
-                    moveBubble(activeLink);
+                    moveSlider(activeLink);
                 } else {
-                    bubble.style.opacity = '0';
-                }
-            });
-
-            // Sync with ScrollTrigger for scroll-based active state
-            const sections = ['about', 'education', 'documents', 'projects'];
-            sections.forEach(secId => {
-                const el = document.getElementById(secId);
-                if (el) {
-                    ScrollTrigger.create({
-                        trigger: el,
-                        start: "top center",
-                        end: "bottom center",
-                        onEnter: () => updateActiveNav(secId),
-                        onEnterBack: () => updateActiveNav(secId),
-                        invalidateOnRefresh: true
+                    gsap.to(highlight, {
+                        opacity: 0,
+                        duration: 0.3,
+                        ease: "power2.out"
                     });
-                }
-            });
-
-            function updateActiveNav(sectionId) {
-                const activeNav = document.getElementById(`nav-link-${sectionId}`);
-                if (activeNav) {
-                    links.forEach(l => l.classList.remove('active-nav-link'));
-                    activeNav.classList.add('active-nav-link');
-                    activeLink = activeNav;
-                    
-                    const isHoveringNav = container.matches(':hover');
-                    if (!isHoveringNav) {
-                        moveBubble(activeNav);
-                    }
                 }
             }
-        }
-
-        // 💧 ACTIVE ROTATING WATER BORDERS FOR GLASS BLOCKS
-        function initActiveSectionBorders() {
-            const sections = ['about', 'education', 'documents', 'projects', 'contact'];
             
-            sections.forEach(sectionId => {
-                const section = document.getElementById(sectionId);
-                if (!section) return;
-                
-                // Exclude inner tech tags from auto-scroll triggers to keep layouts clean
-                const cards = Array.from(section.querySelectorAll('.glass')).filter(c => !c.classList.contains('tech-tag'));
-                cards.forEach(card => {
-                    if (card.id === 'projectModal' || card.parentNode.tagName === 'NAV') return;
-                    
-                    ScrollTrigger.create({
-                        trigger: card,
-                        start: "top 65%",
-                        end: "bottom 35%",
-                        onEnter: () => card.classList.add('active-water-border'),
-                        onEnterBack: () => card.classList.add('active-water-border'),
-                        onLeave: () => card.classList.remove('active-water-border'),
-                        onLeaveBack: () => card.classList.remove('active-water-border'),
-                        invalidateOnRefresh: true
-                    });
-                });
-            });
-        }
-
-        // 💧 PROXIMITY-ACTIVATED ACTIVE WATER BORDERS (NATIVE CURSOR MODE)
-        function initProximityBorders() {
-            // Query all types of glass blocks on the page
-            const allGlass = document.querySelectorAll('.glass');
-            const mainCards = Array.from(allGlass).filter(c => !c.classList.contains('tech-tag') && c.id !== 'projectModal' && c.parentNode.tagName !== 'NAV');
-            const techTags = Array.from(allGlass).filter(c => c.classList.contains('tech-tag'));
-            const buttons = Array.from(document.querySelectorAll('.glass-pill'));
-            const toggles = Array.from(document.querySelectorAll('#theme-toggle-wrap'));
-            const navbar = document.querySelector('nav .glass'); // navbar card container
+            // Run on scroll and resize
+            window.addEventListener('scroll', updateSliderToActive);
+            window.addEventListener('resize', updateSliderToActive);
             
-            // Combine sub-blocks (tech tags, buttons, toggles) for compact tracking
-            const subBlocks = [...techTags, ...buttons, ...toggles];
-            
-            let mouseX = 0, mouseY = 0;
-
-            window.addEventListener('mousemove', e => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-                
-                // 1. Main container cards & navbar proximity (radius: 280px)
-                let closestMain = null;
-                let minMainDist = Infinity;
-                
-                // Check cards
-                mainCards.forEach(card => {
-                    const rect = card.getBoundingClientRect();
-                    const cx = rect.left + rect.width / 2;
-                    const cy = rect.top + rect.height / 2;
-                    const dist = Math.hypot(cx - mouseX, cy - mouseY);
-                    if (dist < minMainDist) {
-                        minMainDist = dist;
-                        closestMain = card;
-                    }
-                });
-                
-                // Check navbar
-                if (navbar) {
-                    const rect = navbar.getBoundingClientRect();
-                    const cx = rect.left + rect.width / 2;
-                    const cy = rect.top + rect.height / 2;
-                    const dist = Math.hypot(cx - mouseX, cy - mouseY);
-                    if (dist < minMainDist) {
-                        minMainDist = dist;
-                        closestMain = navbar;
-                    }
-                }
-
-                // Reset main active borders
-                mainCards.forEach(card => {
-                    if (!card.classList.contains('scroll-active-border')) {
-                        card.classList.remove('active-water-border');
-                    }
-                });
-                if (navbar) navbar.classList.remove('active-water-border');
-
-                // Activate closest main card or navbar
-                if (closestMain && minMainDist < 280) {
-                    closestMain.classList.add('active-water-border');
-                }
-
-                // 2. Inner sub-blocks (tags, buttons, toggles) proximity (radius: 120px)
-                let closestSub = null;
-                let minSubDist = Infinity;
-                
-                subBlocks.forEach(sub => {
-                    if (sub.offsetWidth === 0 && sub.offsetHeight === 0) return;
-                    const rect = sub.getBoundingClientRect();
-                    const cx = rect.left + rect.width / 2;
-                    const cy = rect.top + rect.height / 2;
-                    const dist = Math.hypot(cx - mouseX, cy - mouseY);
-                    if (dist < minSubDist) {
-                        minSubDist = dist;
-                        closestSub = sub;
-                    }
-                });
-
-                subBlocks.forEach(sub => {
-                    sub.classList.remove('active-water-border');
-                });
-
-                if (closestSub && minSubDist < 120) {
-                    closestSub.classList.add('active-water-border');
-                }
-            });
+            // Initial run
+            setTimeout(updateSliderToActive, 100);
         }
 
-        // 💧 TOGGLE HANDLERS FOR SECTION FILTERS
-        function animateSkillBars() {
-            const bars = document.querySelectorAll('.skill-bar');
-            bars.forEach(bar => {
-                bar.style.width = '0%';
-                setTimeout(() => {
-                    bar.style.width = bar.getAttribute('data-width');
-                }, 50);
-            });
-        }
-
-        // Obsolete tab navigation functions removed, content now displayed directly.
-
-        function initTagFollowers() {
-            const wraps = document.querySelectorAll('[id$="-wrap"]');
-            wraps.forEach(wrap => {
-                const bubble = wrap.querySelector('.tag-active-bubble');
-                const items = wrap.querySelectorAll('.tag-item');
-                let lastActiveIndex = -1;
-                
-                wrap.addEventListener('mousemove', e => {
-                    const mouseX = e.clientX;
-                    const mouseY = e.clientY;
-                    
-                    let closestItem = null;
-                    let minDistance = Infinity;
-                    let closestIdx = -1;
-                    
-                    // Find the closest tag-item based on mouse coordinates relative to item centers
-                    items.forEach((item, idx) => {
-                        const rect = item.getBoundingClientRect();
-                        const cx = rect.left + rect.width / 2;
-                        const cy = rect.top + rect.height / 2;
-                        const dist = Math.hypot(mouseX - cx, mouseY - cy);
-                        
-                        if (dist < minDistance) {
-                            minDistance = dist;
-                            closestItem = item;
-                            closestIdx = idx;
-                        }
-                    });
-                    
-                    if (closestItem && bubble) {
-                        const left = closestItem.offsetLeft;
-                        const top = closestItem.offsetTop;
-                        const width = closestItem.offsetWidth;
-                        const height = closestItem.offsetHeight;
-                        
-                        const borderRadius = window.getComputedStyle(closestItem).borderRadius;
-                        gsap.to(bubble, {
-                            left: left,
-                            top: top,
-                            width: width,
-                            height: height,
-                            borderRadius: borderRadius,
-                            opacity: 1,
-                            duration: 0.35,
-                            ease: "power3.out",
-                            overwrite: "auto"
-                        });
-                        
-                        // Wobble the bubble when active target changes
-                        if (closestIdx !== lastActiveIndex) {
-                            lastActiveIndex = closestIdx;
-                            gsap.fromTo(bubble, 
-                                { scaleX: 1.25, scaleY: 0.75 }, 
-                                { scaleX: 1, scaleY: 1, duration: 0.6, ease: "elastic.out(1.2, 0.45)", overwrite: "auto" }
-                            );
-                        }
-
-                        // Exclude the hovered card block from the global frosted background blur overlay (Capsule shape)
-                        const rect = closestItem.getBoundingClientRect();
-                        const path = document.getElementById('blur-overlay-path');
-                        if (path) {
-                            const W = window.innerWidth;
-                            const H = window.innerHeight;
-                            const r = Math.min(rect.width / 2, rect.height / 2, parseFloat(window.getComputedStyle(closestItem).borderRadius) || 24);
-                            
-                            const outer = `M 0 0 H ${W} V ${H} H 0 Z`;
-                            const inner = `M ${rect.left + r} ${rect.top} H ${rect.left + rect.width - r} A ${r} ${r} 0 0 1 ${rect.left + rect.width} ${rect.top + r} V ${rect.top + rect.height - r} A ${r} ${r} 0 0 1 ${rect.left + rect.width - r} ${rect.top + rect.height} H ${rect.left + r} A ${r} ${r} 0 0 1 ${rect.left} ${rect.top + rect.height - r} V ${rect.top + r} A ${r} ${r} 0 0 1 ${rect.left + r} ${rect.top} Z`;
-                            
-                            path.setAttribute('d', `${outer} ${inner}`);
-                        }
-                    }
-                    
-                    const currentTheme = document.body.getAttribute('data-theme') || 'dark';
-                    const activeColor = currentTheme === 'dark' ? '#ffffff' : '#0f172a';
-                    const defaultColor = currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : '#475569';
-                    
-                    // Apply continuous macOS Dock magnification waves based on cursor proximity
-                    items.forEach(item => {
-                        const rect = item.getBoundingClientRect();
-                        const cx = rect.left + rect.width / 2;
-                        const cy = rect.top + rect.height / 2;
-                        const dist = Math.hypot(mouseX - cx, mouseY - cy);
-                        
-                        const maxDist = 120; // range of proximity magnification (pixels)
-                        const maxScale = 1.15; // zoom peak
-                        
-                        if (dist < maxDist) {
-                            const ratio = 1 - dist / maxDist;
-                            const scale = 1 + (maxScale - 1) * Math.sin(ratio * Math.PI / 2);
-                            const opacity = 0.55 + 0.45 * Math.sin(ratio * Math.PI / 2);
-                            
-                            gsap.to(item, {
-                                scale: scale,
-                                color: activeColor,
-                                opacity: opacity,
-                                duration: 0.25,
-                                ease: "power2.out",
-                                overwrite: "auto"
-                            });
-                        } else {
-                            gsap.to(item, {
-                                scale: 1.0,
-                                color: defaultColor,
-                                opacity: 0.55,
-                                duration: 0.25,
-                                ease: "power2.out",
-                                overwrite: "auto"
-                            });
-                        }
-                    });
-                });
-                
-                wrap.addEventListener('mouseleave', () => {
-                    lastActiveIndex = -1;
-                    if (bubble) {
-                        gsap.to(bubble, {
-                            opacity: 0,
-                            duration: 0.3,
-                            ease: "power2.out",
-                            overwrite: "auto"
-                        });
-                    }
-                    const path = document.getElementById('blur-overlay-path');
-                    if (path) {
-                        const W = window.innerWidth;
-                        const H = window.innerHeight;
-                        path.setAttribute('d', `M 0 0 H ${W} V ${H} H 0 Z`);
-                    }
-                    items.forEach(item => {
-                        const currentTheme = document.body.getAttribute('data-theme') || 'dark';
-                        const defaultColor = currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : '#0f172a';
-                        gsap.to(item, {
-                            scale: 1.0,
-                            color: defaultColor,
-                            opacity: 1.0,
-                            duration: 0.3,
-                            overwrite: "auto"
-                        });
-                    });
-                });
-            });
-        }
-
-        // 🍎 macOS DOCK MAGNIFICATION EFFECT ON NAVIGATION LINKS
-        function initNavDockEffect() {
-            const container = document.getElementById('nav-links-container');
-            if (!container) return;
-
-            const links = container.querySelectorAll('a');
-            const maxDistance = 120; // range of magnification (pixels)
-            const maxScale = 1.38; // Increased zoom intensity
-
-            container.addEventListener('mousemove', e => {
-                const mouseX = e.clientX;
-                
-                links.forEach(link => {
-                    const rect = link.getBoundingClientRect();
-                    const center = rect.left + rect.width / 2;
-                    const dist = Math.abs(mouseX - center);
-                    
-                    if (dist < maxDistance) {
-                        // Smooth magnification sine-curve peaking at maxScale
-                        const ratio = 1 - dist / maxDistance; 
-                        const scale = 1 + (maxScale - 1) * Math.sin(ratio * Math.PI / 2);
-                        
-                        // Push neighboring items outward to prevent overlapping text (increased to 12)
-                        const pushDirection = mouseX > center ? -1 : 1;
-                        const pushVal = pushDirection * 12 * Math.sin(ratio * Math.PI / 2) * (1 - ratio);
-                        
-                        gsap.to(link, {
-                            scale: scale,
-                            x: pushVal,
-                            duration: 0.25,
-                            overwrite: "auto",
-                            ease: "power2.out"
-                        });
-                    } else {
-                        // Beyond range: ease back to scale 1
-                        gsap.to(link, {
-                            scale: 1,
-                            x: 0,
-                            duration: 0.3,
-                            overwrite: "auto",
-                            ease: "power2.out"
-                        });
-                    }
-                });
-            });
-
-            container.addEventListener('mouseleave', () => {
-                // Spring back smoothly on mouseleave
-                links.forEach(link => {
-                    gsap.to(link, {
-                        scale: 1,
-                        x: 0,
-                        duration: 0.45,
-                        overwrite: "auto",
-                        ease: "elastic.out(1, 0.65)"
-                    });
-                });
-            });
-        }
-
-        // Setup IntersectionObserver for skill bars fallback reveal
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if(entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    const bars = entry.target.querySelectorAll('.skill-bar');
-                    bars.forEach(bar => { bar.style.width = bar.getAttribute('data-width'); });
-                }
-            });
-        }, { threshold: 0.15 });
-
-        // Run bootstrap operations on load
         window.addEventListener('DOMContentLoaded', () => {
-            initThree();
-            initScrollChoreography();
-            initCardTiltEffect();
-            initNavBubble();
-            initActiveSectionBorders();
-            initProximityBorders();
-            initNavDockEffect();
-            initTagFollowers();
-            initEventHandlers();
-            
-            // Re-align nav bubble once fonts are fully loaded to prevent accuracy layout offsets
-            if (document.fonts) {
-                document.fonts.ready.then(() => {
-                    const activeLink = document.querySelector('#nav-links-container a.active-nav-link');
-                    if (activeLink) {
-                        moveBubble(activeLink);
-                    }
-                });
-            }
-            
-            const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-            noMotion = mq.matches;
-            mq.addEventListener('change', e => { noMotion = e.matches; });
-
-            // Attach scroll observers for layout containers fallback
-            document.querySelectorAll('.reveal-node, #skills-trigger').forEach(node => {
-                if(node) revealObserver.observe(node);
-            });
-
-            document.querySelectorAll('.glass').forEach((el) => {
-                if(!el.parentNode.classList.contains('relative') && el.id !== 'projectModal' && el.parentNode.tagName !== 'NAV') {
-                    el.classList.add('reveal-node');
-                    revealObserver.observe(el);
-                }
-            });
+            initScrollAnimations();
+            init3DCardDepth();
+            initNavbarSlider();
         });
     </script>
 </body>
