@@ -209,6 +209,8 @@
                 </video>
                 <!-- Dark overlay to ensure contrast on playback buttons -->
                 <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition duration-300 z-10 pointer-events-none"></div>
+                <!-- Smooth gradient top blend to eliminate hard cuts -->
+                <div class="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black to-transparent z-10 pointer-events-none"></div>
                 <!-- Smooth gradient bottom blend to eliminate hard cuts -->
                 <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent z-10 pointer-events-none"></div>
                 <!-- Play/Pause & Mute overlays -->
