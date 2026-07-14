@@ -1914,9 +1914,10 @@ function closeProjectModal() {
                 }
             );
 
-            // Parallax scale zoom for the Hero video card on scroll
+            // Parallax scale and zoom for the inner video element on scroll (Prevents container clash)
             gsap.to('#portfolio-video', {
-                scale: 1.1,
+                yPercent: 12,  // Slowly slide the video downwards inside the overflow-hidden container
+                scale: 1.15,   // Zoom slightly to maintain bleed margins during translation
                 ease: "none",
                 scrollTrigger: {
                     trigger: '#hero',
@@ -1926,11 +1927,9 @@ function closeProjectModal() {
                 }
             });
 
-            // Linked scroll motion between video card and profile block
-            gsap.to('#hero-video-card', {
-                yPercent: 15, // Positive translation to slow down scroll and keep video visible longer (Parallax)
-                scale: 0.96,
-                opacity: 0.85,
+            // Parallax lift for the profile content block
+            gsap.to('#hero-profile-block', {
+                y: -50,        // Slide the text and avatar upwards as you scroll down
                 ease: "none",
                 scrollTrigger: {
                     trigger: '#hero',
@@ -1939,20 +1938,6 @@ function closeProjectModal() {
                     scrub: true
                 }
             });
-
-            gsap.fromTo('#hero-profile-block',
-                { y: 0 },
-                {
-                    y: -50,
-                    ease: "none",
-                    scrollTrigger: {
-                        trigger: '#hero',
-                        start: "top top",
-                        end: "bottom top",
-                        scrub: true
-                    }
-                }
-            );
         }
 
         function initNavbarSlider() {
