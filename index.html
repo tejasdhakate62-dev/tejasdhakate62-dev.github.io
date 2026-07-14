@@ -225,7 +225,7 @@
             </div>
 
             <!-- Hero content (centered text block below the video banner) -->
-            <div class="max-w-4xl px-6 space-y-6 flex flex-col items-center mt-12">
+            <div id="hero-profile-block" class="max-w-4xl px-6 space-y-6 flex flex-col items-center mt-12">
                 <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-white/10 shadow-[0_0_30px_rgba(255,255,255,0.05)] mb-2">
                     <img src="assets/avatar.png" class="w-full h-full object-cover" alt="Tejas Dhakate Profile Avatar">
                 </div>
@@ -1925,6 +1925,34 @@ function closeProjectModal() {
                     scrub: true
                 }
             });
+
+            // Linked scroll motion between video card and profile block
+            gsap.to('#hero-video-card', {
+                yPercent: -12,
+                scale: 0.96,
+                opacity: 0.85,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: '#hero',
+                    start: "top top",
+                    end: "bottom top",
+                    scrub: true
+                }
+            });
+
+            gsap.fromTo('#hero-profile-block',
+                { y: 0 },
+                {
+                    y: -50,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: '#hero',
+                        start: "top top",
+                        end: "bottom top",
+                        scrub: true
+                    }
+                }
+            );
         }
 
         function initNavbarSlider() {
