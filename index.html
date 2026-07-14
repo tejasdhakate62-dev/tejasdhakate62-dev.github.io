@@ -99,8 +99,8 @@
 <body class="selection:bg-white selection:text-black pt-16">
 
     <!-- Intro Video Splash Screen (Autoplays Muted, Limited to 3 Seconds, Skippable) -->
-    <div id="intro-splash" class="fixed inset-0 z-[9999] bg-black flex items-center justify-center transition-opacity duration-500">
-        <video id="splash-video" class="w-full h-full object-cover" autoplay muted playsinline preload="auto">
+    <div id="intro-splash" class="fixed inset-0 z-[9999] bg-black flex items-center justify-center transition-opacity duration-500 overflow-hidden">
+        <video id="splash-video" class="w-full h-full object-cover scale-[1.04]" autoplay muted playsinline preload="auto">
             <source src="assets/intro.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
@@ -203,7 +203,7 @@
         <section class="relative min-h-screen flex flex-col items-center justify-start text-center" id="hero">
             <!-- Full-bleed widescreen video banner (Top Position) -->
             <div id="hero-video-card" class="w-full overflow-hidden bg-black border-b border-white/10 shadow-2xl relative group opacity-0" style="aspect-ratio: 21 / 9;">
-                <video id="portfolio-video" class="w-full h-full" style="object-fit: cover;" autoplay muted loop playsinline preload="auto">
+                <video id="portfolio-video" class="w-full h-full scale-[1.04]" style="object-fit: cover;" autoplay muted loop playsinline preload="auto">
                     <source src="assets/intro.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
