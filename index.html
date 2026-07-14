@@ -114,7 +114,54 @@
     </div>
     
     <script>
+        function skipIntro() {
+            const splash = document.getElementById('intro-splash');
+            if (!splash) return;
 
+            localStorage.setItem('hasSeenIntro', 'true');
+            splash.classList.add('opacity-0');
+            document.body.classList.remove('overflow-hidden');
+
+            setTimeout(() => {
+                splash.remove();
+            }, 500);
+        }
+
+        function initIntroSplash() {
+            const splash = document.getElementById('intro-splash');
+            const video = document.getElementById('splash-video');
+            const brand = document.getElementById('splash-brand');
+            
+            if (!splash) return;
+
+            // If user has seen the intro already, bypass completely
+            if (localStorage.getItem('hasSeenIntro') === 'true') {
+                splash.remove();
+                document.body.classList.remove('overflow-hidden');
+                return;
+            }
+
+            // Lock scrolling
+            document.body.classList.add('overflow-hidden');
+
+            if (video) {
+                video.play().catch(() => {
+                    skipIntro(); // Browser blocked autoplay fallback
+                });
+
+                // At 2.2 seconds, display the personal brand text
+                setTimeout(() => {
+                    if (brand) brand.classList.remove('opacity-0');
+                }, 2200);
+
+                // At 3.0 seconds, initiate transition exit
+                setTimeout(() => {
+                    skipIntro();
+                }, 3000);
+            } else {
+                skipIntro();
+            }
+        }
 
         // Check localStorage immediately to prevent splash flash for returning users
         if (localStorage.getItem('hasSeenIntro') === 'true') {
