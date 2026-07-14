@@ -104,7 +104,7 @@
             <source src="assets/intro.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-        <button id="skip-intro-btn" onclick="skipIntro()" class="absolute bottom-8 right-8 z-50 bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-semibold px-5 py-2.5 rounded-full backdrop-blur-md transition duration-200 flex items-center gap-1.5 cursor-pointer">
+        <button id="skip-intro-btn" onclick="skipIntro()" class="absolute top-8 right-8 z-50 bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-semibold px-5 py-2.5 rounded-full backdrop-blur-md transition duration-200 flex items-center gap-1.5 cursor-pointer animate-pulse">
             Skip Intro &rarr;
         </button>
         <div id="splash-brand" class="absolute inset-0 bg-black/75 flex flex-col items-center justify-center text-center space-y-2 opacity-0 transition-opacity duration-500 pointer-events-none">
@@ -231,8 +231,11 @@
                 <h1 class="text-6xl sm:text-8xl md:text-9xl font-black tracking-tighter titanium-text leading-none">
                     Tejas Dhakate
                 </h1>
-                <p class="text-xl sm:text-2xl text-zinc-400 font-medium max-w-2xl mx-auto leading-normal">
-                    React Native & Android Developer building high-performance mobile applications using React Native, Firebase, and modern UI/UX principles.
+                <h2 class="text-xl sm:text-2xl text-white font-extrabold max-w-3xl mx-auto leading-normal float-depth">
+                    React Native Developer building high-performance cross-platform mobile applications with modern UI/UX and scalable architecture.
+                </h2>
+                <p class="text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto mt-4 font-light float-depth">
+                    Passionate about creating intuitive mobile experiences using React Native, Firebase, TypeScript, and modern frontend technologies.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
                     <a href="#projects" class="w-full sm:w-auto bg-white text-black hover:bg-zinc-200 text-xs font-bold uppercase tracking-wider px-6 py-3 rounded-full transition duration-200 text-center">
@@ -256,10 +259,19 @@
         <section id="about" class="py-44 px-6 md:px-16 max-w-7xl mx-auto space-y-32">
             <div class="space-y-6">
                 <span class="text-xs font-semibold text-zinc-500 uppercase tracking-widest">[ About Me ]</span>
-                <p class="text-3xl sm:text-5xl font-bold tracking-tighter leading-tight text-zinc-700">
-                    <span class="scroll-text-span block mb-4 transition-colors duration-300" style="opacity: 0.15">I architect software solutions that solve real business problems and scale under heavy user demand.</span>
-                    <span class="scroll-text-span block mb-4 transition-colors duration-300" style="opacity: 0.15">My mission is to bridge complex systems engineering with premium, user-first mobile interfaces.</span>
-                    <span class="scroll-text-span block transition-colors duration-300" style="opacity: 0.15">Let's build stable, performant products that users love to interact with every day.</span>
+                <p class="text-2xl sm:text-4xl font-bold tracking-tighter leading-relaxed text-zinc-700 space-y-6">
+                    <span class="scroll-text-span block mb-4 transition-colors duration-300" style="opacity: 0.15">
+                        <strong class="text-white font-extrabold">My Journey:</strong> Building modular cross-platform and native mobile apps, scaling open-source solutions.
+                    </span>
+                    <span class="scroll-text-span block mb-4 transition-colors duration-300" style="opacity: 0.15">
+                        <strong class="text-white font-extrabold">My Goals:</strong> Engineering highly optimized MVVM architecture layers and real-time backend synchronization logic.
+                    </span>
+                    <span class="scroll-text-span block mb-4 transition-colors duration-300" style="opacity: 0.15">
+                        <strong class="text-white font-extrabold">What Excites Me:</strong> Merging low-overhead programmatic cryptographic layers with responsive, pixel-perfect user designs.
+                    </span>
+                    <span class="scroll-text-span block transition-colors duration-300" style="opacity: 0.15">
+                        <strong class="text-emerald-400 font-extrabold">Opportunities:</strong> Open to internships and entry-level Software Engineering opportunities.
+                    </span>
                 </p>
             </div>
 
