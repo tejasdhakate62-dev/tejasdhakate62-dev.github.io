@@ -151,7 +151,7 @@
                 </div>
 
                 <!-- Showcase Video Card directly inside Hero -->
-                <div class="w-full max-w-2xl aspect-video rounded-3xl overflow-hidden bg-black border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] mt-8 relative group">
+                <div id="hero-video-card" class="w-full max-w-2xl aspect-video rounded-3xl overflow-hidden bg-black border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] mt-8 relative group opacity-0">
                     <video id="portfolio-video" class="w-full h-full object-cover" autoplay muted loop playsinline preload="auto">
                         <source src="assets/intro.mp4" type="video/mp4">
                         Your browser does not support the video tag.
@@ -1674,6 +1674,23 @@ function closeProjectModal() {
                         }
                     }
                 );
+            // Slide/expand video card down from profile avatar on load
+            gsap.fromTo('#hero-video-card', 
+                { 
+                    y: -120, 
+                    scale: 0.35, 
+                    opacity: 0 
+                },
+                {
+                    y: 0,
+                    scale: 1,
+                    opacity: 1,
+                    duration: 1.4,
+                    ease: "power4.out",
+                    delay: 0.25
+                }
+            );
+
             // Parallax scale zoom for the Hero video card on scroll
             gsap.to('#portfolio-video', {
                 scale: 1.1,
