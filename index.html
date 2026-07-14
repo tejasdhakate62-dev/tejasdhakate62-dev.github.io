@@ -914,7 +914,7 @@
                         </div>
                         <div class="pt-4 border-t border-white/5 mt-6 flex justify-between items-center gap-2 float-depth">
                             <a href="https://github.com/tejasdhakate62-dev/Fake-Credit-Card-Generator-And-Detector" target="_blank" class="text-[11px] font-semibold text-zinc-400 hover:text-white transition" onclick="event.stopPropagation()">GitHub</a>
-                            <span class="text-[11px] font-semibold text-blue-500 hover:underline transition">Case Study</span>
+                            <button onclick="openProjectModal('card_detector'); event.stopPropagation()" class="text-[11px] font-semibold text-blue-500 hover:underline transition cursor-pointer">Case Study</button>
                             <a href="https://github.com/tejasdhakate62-dev/Fake-Credit-Card-Generator-And-Detector" target="_blank" class="text-[11px] font-semibold text-emerald-500 hover:text-emerald-400 transition" onclick="event.stopPropagation()">Live Demo</a>
                         </div>
                     </div>
@@ -938,7 +938,7 @@
                         </div>
                         <div class="pt-4 border-t border-white/5 mt-6 flex justify-between items-center gap-2 float-depth">
                             <a href="https://github.com/tejasdhakate62-dev/PredictiveRiskAnalyzer" target="_blank" class="text-[11px] font-semibold text-zinc-400 hover:text-white transition" onclick="event.stopPropagation()">GitHub</a>
-                            <span class="text-[11px] font-semibold text-blue-500 hover:underline transition">Case Study</span>
+                            <button onclick="openProjectModal('risk_analyzer'); event.stopPropagation()" class="text-[11px] font-semibold text-blue-500 hover:underline transition cursor-pointer">Case Study</button>
                             <a href="https://github.com/tejasdhakate62-dev/PredictiveRiskAnalyzer" target="_blank" class="text-[11px] font-semibold text-emerald-500 hover:text-emerald-400 transition" onclick="event.stopPropagation()">Live Demo</a>
                         </div>
                     </div>
@@ -984,7 +984,7 @@
                         </div>
                         <div class="pt-4 border-t border-white/5 mt-6 flex justify-between items-center gap-2 float-depth">
                             <a href="https://github.com/tejasdhakate62-dev/MnemonicGen" target="_blank" class="text-[11px] font-semibold text-zinc-400 hover:text-white transition" onclick="event.stopPropagation()">GitHub</a>
-                            <span class="text-[11px] font-semibold text-blue-500 hover:underline transition">Case Study</span>
+                            <button onclick="openProjectModal('mnemonic'); event.stopPropagation()" class="text-[11px] font-semibold text-blue-500 hover:underline transition cursor-pointer">Case Study</button>
                             <a href="https://github.com/tejasdhakate62-dev/MnemonicGen/releases" target="_blank" class="text-[11px] font-semibold text-emerald-500 hover:text-emerald-400 transition" onclick="event.stopPropagation()">Live Demo</a>
                         </div>
                     </div>
@@ -1008,7 +1008,7 @@
                         </div>
                         <div class="pt-4 border-t border-white/5 mt-6 flex justify-between items-center gap-2 float-depth">
                             <a href="https://github.com/tejasdhakate62-dev/trending-Birthday" target="_blank" class="text-[11px] font-semibold text-zinc-400 hover:text-white transition" onclick="event.stopPropagation()">GitHub</a>
-                            <span class="text-[11px] font-semibold text-blue-500 hover:underline transition">Case Study</span>
+                            <button onclick="openProjectModal('trending_birthday'); event.stopPropagation()" class="text-[11px] font-semibold text-blue-500 hover:underline transition cursor-pointer">Case Study</button>
                             <a href="https://tejasdhakate62-dev.github.io/trending-Birthday/" target="_blank" class="text-[11px] font-semibold text-emerald-500 hover:text-emerald-400 transition" onclick="event.stopPropagation()">Live Demo</a>
                         </div>
                     </div>
@@ -1032,7 +1032,7 @@
                         </div>
                         <div class="pt-4 border-t border-white/5 mt-6 flex justify-between items-center gap-2 float-depth">
                             <a href="https://github.com/tejasdhakate62-dev/Happy-Birthday" target="_blank" class="text-[11px] font-semibold text-zinc-400 hover:text-white transition" onclick="event.stopPropagation()">GitHub</a>
-                            <span class="text-[11px] font-semibold text-blue-500 hover:underline transition">Case Study</span>
+                            <button onclick="openProjectModal('happy_birthday'); event.stopPropagation()" class="text-[11px] font-semibold text-blue-500 hover:underline transition cursor-pointer">Case Study</button>
                             <a href="https://tejasdhakate62-dev.github.io/Happy-Birthday/" target="_blank" class="text-[11px] font-semibold text-emerald-500 hover:text-emerald-400 transition" onclick="event.stopPropagation()">Live Demo</a>
                         </div>
                     </div>
@@ -1614,7 +1614,7 @@ function closeProjectModal() {
             titleEl.innerText = title;
             newTabEl.href = pdfPath;
 
-            modal.remove('hidden');
+            modal.classList.remove('hidden');
             modal.classList.add('flex');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
