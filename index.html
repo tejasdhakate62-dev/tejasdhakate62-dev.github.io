@@ -1928,7 +1928,7 @@ function closeProjectModal() {
 
             // Linked scroll motion between video card and profile block
             gsap.to('#hero-video-card', {
-                yPercent: -12,
+                yPercent: 15, // Positive translation to slow down scroll and keep video visible longer (Parallax)
                 scale: 0.96,
                 opacity: 0.85,
                 ease: "none",
