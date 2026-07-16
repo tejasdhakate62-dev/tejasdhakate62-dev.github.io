@@ -12,6 +12,8 @@ Welcome to my personal portfolio repository! This is a high-performance, single-
 * **3D Interactive Elements:** Powered by **Three.js** to render interactive, responsive wireframe elements that dynamically float based on real-time execution loops.
 * **GSAP Scroll Animation Engine:** Implements line-by-line text highlights and sliding glass capsules (`.nav-highlight`) linked directly to viewport scroll triggers.
 * **Modern Mockups:** Overlaid screenshots behind a custom transparent front-facing device frame (`assets/phone_mockup.png`), aligning screenshots perfectly with the bezel borders and camera hole.
+* **Interactive SQLite Sandbox:** A live, mock database shell bento grid item where visitors can run preset SQL queries (Invoices, Calories, Sync Queue) to test off-line database architecture patterns.
+* **Functional Lofi Audio Player:** An interactive "Coding Beats" bento card with an HTML5 audio music stream and dancing CSS equalizing visualizer bars.
 * **Document Grid Integration:** Custom cloud/local assets grid highlighting academic presentations, bootcamp validations, and national conference certificates.
 * **Responsive Layout:** Fully styled with **Tailwind CSS**, offering seamless media breakpoint transitions for desktops, tablets, and smartphones.
 
