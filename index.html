@@ -694,8 +694,16 @@
                             <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-zinc-500 border border-black"></div>
                             <div class="space-y-1">
                                 <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">2019 — 2021</span>
-                                <h4 class="text-lg font-bold text-white tracking-tight">Higher Secondary Certificate (HSC)</h4>
-                                <p class="text-xs text-zinc-400">Saraswati Junior College | Nagpur, MH</p>
+                                <h4 class="text-lg font-bold text-white tracking-tight">Higher Secondary Certificate (HSC) — 74.00%</h4>
+                                <p class="text-xs text-zinc-400">Vidya Vikas Arts, Commerce & Science College Samudrapur</p>
+                            </div>
+                        </div>
+                        <div class="relative pl-8">
+                            <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-zinc-600 border border-black"></div>
+                            <div class="space-y-1">
+                                <span class="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">2017 — 2019</span>
+                                <h4 class="text-lg font-bold text-white tracking-tight">Secondary School Certificate (SSC) — 58.60%</h4>
+                                <p class="text-xs text-zinc-400">Yeshwant Junior College & High School Mandgaon</p>
                             </div>
                         </div>
                     </div>
@@ -879,9 +887,14 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center bg-[#0d0d0f] border border-white/5 rounded-[32px] p-8 md:p-12 depth-wrapper">
                 <div class="flex justify-center items-center w-full">
-                    <div class="relative w-[240px] h-[480px] border-[5px] border-zinc-800 rounded-[36px] bg-black shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col justify-between shrink-0 float-depth">
-                        <div class="absolute top-3 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-[#121214] rounded-full z-20 border border-zinc-900 shadow-inner"></div>
-                        <img src="assets/projects/invoix_screen1.png" class="absolute inset-0 w-full h-full object-cover z-10" alt="Invoix App UI Screenshot">
+                    <div class="relative w-[240px] h-[520px] shrink-0 float-depth shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+                        <!-- Bezel Overlay (Z-20) -->
+                        <img src="assets/phone_mockup.png" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-20" alt="Mobile Device Bezel">
+                        
+                        <!-- Screenshot Overlay (Z-10, fitted inside transparent area) -->
+                        <div class="absolute overflow-hidden z-10 bg-black" style="top: 2.89%; bottom: 5.26%; left: 5.58%; right: 5.58%; border-radius: 28px;">
+                            <img src="assets/projects/invoix_screen1.png" class="w-full h-full object-cover" alt="Invoix App UI Screenshot">
+                        </div>
                     </div>
                 </div>
 
@@ -946,9 +959,14 @@
                 </div>
 
                 <div class="flex justify-center items-center w-full order-1 lg:order-2">
-                    <div class="relative w-[240px] h-[480px] border-[5px] border-zinc-800 rounded-[36px] bg-black shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col justify-between shrink-0 float-depth">
-                        <div class="absolute top-3 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-[#121214] rounded-full z-20 border border-zinc-900 shadow-inner"></div>
-                        <img src="assets/projects/diet_plan_screen1.png" class="absolute inset-0 w-full h-full object-cover z-10" alt="Diet Plan App UI Screenshot">
+                    <div class="relative w-[240px] h-[520px] shrink-0 float-depth shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+                        <!-- Bezel Overlay (Z-20) -->
+                        <img src="assets/phone_mockup.png" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-20" alt="Mobile Device Bezel">
+                        
+                        <!-- Screenshot Overlay (Z-10, fitted inside transparent area) -->
+                        <div class="absolute overflow-hidden z-10 bg-black" style="top: 2.89%; bottom: 5.26%; left: 5.58%; right: 5.58%; border-radius: 28px;">
+                            <img src="assets/projects/diet_plan_splash.png" class="w-full h-full object-cover" alt="Diet Plan App UI Screenshot">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1113,6 +1131,116 @@
             </div>
 
             <div class="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-12 px-6 md:px-16 max-w-[1400px] mx-auto scroll-smooth depth-wrapper">
+                <!-- Google AI Essentials Specialization -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Coursera 2GM91DFMMP5Y.pdf', 'Google AI Essentials Specialization')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Coursera 2GM91DFMMP5Y.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Google AI Essentials Specialization Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Google AI Essentials.</span> 5-course specialization authorized by Google on Coursera, validating core generative AI workflows and tools.
+                    </p>
+                </div>
+
+                <!-- Google Prompting Essentials Specialization -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Coursera 7T1RDL349TDC.pdf', 'Google Prompting Essentials Specialization')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Coursera 7T1RDL349TDC.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Google Prompting Essentials Specialization Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Google Prompting Essentials.</span> 4-course specialization authorized by Google on Coursera, designing advanced prompts for productivity.
+                    </p>
+                </div>
+
+                <!-- Intro to AI -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Coursera QTCAHBISM72V.pdf', 'Introduction to AI')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Coursera QTCAHBISM72V.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Introduction to AI Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Introduction to AI.</span> Google course on generative models, machine learning concepts, and neural networks.
+                    </p>
+                </div>
+
+                <!-- Maximize Productivity with AI -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Coursera KEB8ZQ2E8NQ4.pdf', 'Maximize Productivity With AI Tools')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Coursera KEB8ZQ2E8NQ4.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Maximize Productivity Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">AI Productivity Tools.</span> Google course utilizing generative AI to automate spreadsheets, documents, and workflows.
+                    </p>
+                </div>
+
+                <!-- Discover the Art of Prompting -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Coursera BKZP46A8IM2V.pdf', 'Discover the Art of Prompting')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Coursera BKZP46A8IM2V.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Art of Prompting Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Art of Prompting.</span> Google course establishing foundational prompt architectures and structures.
+                    </p>
+                </div>
+
+                <!-- Use AI Responsibly -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Coursera WLSMT74246DS.pdf', 'Use AI Responsibly')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Coursera WLSMT74246DS.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Use AI Responsibly Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Responsible AI.</span> Google course covering ethical guardrails, bias detection, and data security in AI deployments.
+                    </p>
+                </div>
+
+                <!-- Stay Ahead of the AI Curve -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Coursera L8HNTTRTLNVV.pdf', 'Stay Ahead of the AI Curve')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Coursera L8HNTTRTLNVV.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Stay Ahead of AI Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">AI Trends.</span> Google course tracking prompt optimization techniques and emerging LLM capabilities.
+                    </p>
+                </div>
+
+                <!-- Start Writing Prompts like a Pro -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Coursera AFUFSLI7Q43J.pdf', 'Start Writing Prompts like a Pro')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Coursera AFUFSLI7Q43J.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Start Writing Prompts Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Pro Prompting.</span> Google course for writing high-fidelity prompts with constraints and variables.
+                    </p>
+                </div>
+
+                <!-- Design Prompts for Everyday Work Tasks -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Coursera YBC16G7BAJP7.pdf', 'Design Prompts for Everyday Work Tasks')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Coursera YBC16G7BAJP7.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Design Prompts Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Everyday Prompt Design.</span> Google course templates automating recurring analysis and communication tasks.
+                    </p>
+                </div>
+
+                <!-- Speed Up Data Analysis and Presentation Building -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Coursera ULI82FNOWWS5.pdf', 'Speed Up Data Analysis and Presentation Building')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Coursera ULI82FNOWWS5.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Data Analysis and Presentations Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">AI Data Analysis.</span> Google course leveraging AI tools to clean, analyze datasets and build presentation drafts.
+                    </p>
+                </div>
+
+                <!-- Use AI as a Creative or Expert Partner -->
+                <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
+                    <div onclick="openCertModal('My Certificate/Coursera R6LXY3H5O5DU.pdf', 'Use AI as a Creative or Expert Partner')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
+                        <img src="My Certificate/images/Coursera R6LXY3H5O5DU.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Creative Partner Preview">
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-snug px-2.5">
+                        <span class="font-bold text-white">Creative AI Partner.</span> Google course designing prompts to co-create copy, brainstorm features, and build code.
+                    </p>
+                </div>
+
                 <div class="snap-start shrink-0 w-[300px] sm:w-[360px] space-y-5">
                     <div onclick="openCertModal('My Certificate/Ybi_Foundation_Python_Programming.pdf', 'Python Programming')" class="spec-card w-full aspect-square rounded-[36px] overflow-hidden bg-zinc-950 border border-white/5 flex items-center justify-center relative group cursor-pointer shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:border-white/15 transition duration-500">
                         <img src="My Certificate/images/Ybi_Foundation_Python_Programming.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] float-depth" alt="Python Programming Certificate Preview">
