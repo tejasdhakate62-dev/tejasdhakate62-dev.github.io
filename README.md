@@ -79,9 +79,9 @@ tejasdhakate62-dev.github.io/
 ## 🎓 Academic Progression & Credentials
 
 ### 🏫 Education Timeline
-* **B.Tech in Computer Engineering** (2021 — 2026 expected) — *RTMNU Nagpur University*
-* **Higher Secondary Certificate (HSC) — 74.00%** (2019 — 2021) — *Vidya Vikas Arts, Commerce & Science College Samudrapur*
-* **Secondary School Certificate (SSC) — 58.60%** (2017 — 2019) — *Yeshwant Junior College & High School Mandgaon*
+* **B.Tech in Computer Engineering** (2021 — 2026 expected) — *RTMNU Nagpur University | Nagpur, MH*
+* **Higher Secondary Certificate (HSC) — 74.00%** (2019 — 2021) — *Vidya Vikas Arts, Commerce & Science College Samudrapur | Samudrapur, MH*
+* **Secondary School Certificate (SSC) — 58.60%** (2017 — 2019) — *Yeshwant Junior College & High School Mandgaon | Mandgaon, MH*
 
 ### 🏅 Verified Certifications (Google Authorizations)
 * **Google AI Essentials Specialization** (5-Course program: Introduction to AI, Maximize Productivity, Discover the Art of Prompting, Use AI Responsibly, Stay Ahead of the AI Curve)
