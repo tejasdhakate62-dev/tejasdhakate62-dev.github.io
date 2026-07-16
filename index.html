@@ -132,7 +132,6 @@
             -webkit-backdrop-filter: blur(8px) saturate(220%);
             filter: url(#glass-distortion); 
             overflow: hidden;
-            border-radius: 9999px;
         }
 
         .tint {
@@ -141,17 +140,6 @@
             inset: 0;
             background: rgba(255, 255, 255, 0.05);
             pointer-events: none;
-            border-radius: 9999px;
-        }
-
-        .shine {
-            position: absolute;
-            inset: 0;
-            z-index: 30;
-            overflow: hidden;
-            box-shadow: inset 2px 2px 1.5px 0 rgba(255, 255, 255, 0.35);
-            pointer-events: none;
-            border-radius: 9999px;
         }
 
         @keyframes liquid-flow-1 {
@@ -316,11 +304,9 @@
 
     <div class="floating-nav fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-[1200px] h-12 rounded-full px-4 sm:px-6 flex items-center justify-between z-30 overflow-hidden transition duration-500">
         
-        <!-- Custom Glass Refraction & Shine Layers (z-index: 10, 20, 30) -->
+        <!-- Custom Glass Refraction & Tint Layers -->
         <div class="effect"></div>
         <div class="tint"></div>
-        <div class="shine"></div>
-        <div class="shine"></div>
 
         <!-- 3. Navigation Content (z-index: 50) -->
         <a href="#hero" class="relative z-50 text-white text-xs font-bold tracking-tight hover:opacity-80 transition duration-200">Tejas Dhakate</a>
