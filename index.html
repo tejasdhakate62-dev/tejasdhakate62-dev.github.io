@@ -129,6 +129,35 @@
             background: rgba(15, 15, 18, 0.5) !important;
         }
 
+        /* SVG Glass Distortion Effects */
+        .effect {
+            position: absolute;
+            z-index: 0;
+            inset: 0;
+            backdrop-filter: blur(3px);
+            filter: url(#glass-distortion); 
+            overflow: hidden;
+        }
+
+        .tint {
+            z-index: 1;
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.08);
+            pointer-events: none;
+        }
+
+        .shine {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            overflow: hidden;
+            box-shadow: 
+                inset 2px 2px 1px 0 rgba(255, 255, 255, 0.2),
+                inset -1px -1px 1px 1px rgba(255, 255, 255, 0.15);
+            pointer-events: none;
+        }
+
         @keyframes liquid-flow-1 {
             0%, 100% { transform: translate(0, 0) scale(1); }
             50% { transform: translate(30%, 10%) scale(1.2); }
@@ -279,10 +308,23 @@
         }
     </script>
 
+    <!-- SVG Filter for Liquid Glass Refraction -->
+    <svg width="0" height="0" class="absolute pointer-events-none">
+        <filter id="glass-distortion">
+            <feTurbulence type="fractalNoise" baseFrequency="0.012 0.03" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="22" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+    </svg>
+
     <div id="bg-grid"></div>
 
-    <div class="floating-nav fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-[1200px] h-12 bg-[#161617]/40 backdrop-blur-3xl border border-white/10 rounded-full px-4 sm:px-6 flex items-center justify-between z-30 shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden transition duration-500 hover:border-white/15">
+    <div class="floating-nav fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-[1200px] h-12 rounded-full px-4 sm:px-6 flex items-center justify-between z-30 shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden transition duration-500">
         
+        <!-- Liquid Glass Effect Layers from User Code -->
+        <div class="effect"></div>
+        <div class="tint"></div>
+        <div class="shine"></div>
+        <div class="shine"></div>
         <!-- Liquid Glass Flow Effect Layer -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden rounded-full z-0">
             <div class="absolute -top-1/2 -left-1/4 w-[60%] h-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-[35px] opacity-40 animate-liquid-flow-1"></div>
