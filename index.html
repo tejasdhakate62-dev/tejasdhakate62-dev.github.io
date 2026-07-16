@@ -111,6 +111,34 @@
         .animate-bar1 { animation: bar-anim-1 0.8s ease-in-out infinite; }
         .animate-bar2 { animation: bar-anim-2 0.7s ease-in-out infinite; }
         .animate-bar3 { animation: bar-anim-3 0.9s ease-in-out infinite; }
+
+        /* Liquid Glass Navigation Bar Styles */
+        .floating-nav {
+            background: rgba(10, 10, 12, 0.45) !important;
+            backdrop-filter: blur(28px) saturate(200%) !important;
+            -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 
+                0 16px 40px -10px rgba(0, 0, 0, 0.7),
+                inset 0 1px 1px rgba(255, 255, 255, 0.18),
+                0 0 100px -30px rgba(120, 119, 198, 0.15) !important;
+        }
+
+        .floating-nav:hover {
+            border-color: rgba(255, 255, 255, 0.15) !important;
+            background: rgba(15, 15, 18, 0.5) !important;
+        }
+
+        @keyframes liquid-flow-1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30%, 10%) scale(1.2); }
+        }
+        @keyframes liquid-flow-2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-30%, -10%) scale(1.25); }
+        }
+        .animate-liquid-flow-1 { animation: liquid-flow-1 12s ease-in-out infinite; }
+        .animate-liquid-flow-2 { animation: liquid-flow-2 15s ease-in-out infinite; }
     </style>
 </head>
 <body class="selection:bg-white selection:text-black pt-16">
@@ -191,6 +219,12 @@
     <div id="bg-grid"></div>
 
     <div class="floating-nav fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-[1200px] h-12 bg-[#161617]/40 backdrop-blur-3xl border border-white/10 rounded-full px-4 sm:px-6 flex items-center justify-between z-30 shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden transition duration-500 hover:border-white/15">
+        
+        <!-- Liquid Glass Flow Effect Layer -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden rounded-full z-0">
+            <div class="absolute -top-1/2 -left-1/4 w-[60%] h-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-[35px] opacity-40 animate-liquid-flow-1"></div>
+            <div class="absolute -bottom-1/2 -right-1/4 w-[60%] h-full bg-gradient-to-r from-pink-500/20 to-orange-500/20 blur-[35px] opacity-40 animate-liquid-flow-2"></div>
+        </div>
 
         <a href="#hero" class="relative z-10 text-white text-xs font-bold tracking-tight hover:opacity-80 transition duration-200">Tejas Dhakate</a>
         
