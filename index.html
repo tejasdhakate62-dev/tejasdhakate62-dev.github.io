@@ -123,6 +123,42 @@
             background: rgba(255, 255, 255, 0.05) !important;
         }
 
+        /* Hover Zoom Animations for Navigation Elements */
+        .nav-link {
+            transition: color 0.3s ease, transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+            transform-origin: center center;
+            display: inline-block;
+        }
+        .nav-link:hover {
+            transform: scale(1.08) !important;
+            color: #ffffff !important;
+        }
+
+        .floating-nav a[href="#hero"] {
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+            transform-origin: center center;
+            display: inline-block;
+        }
+        .floating-nav a[href="#hero"]:hover {
+            transform: scale(1.05) !important;
+        }
+
+        .floating-nav a[download] {
+            transition: background 0.2s ease, transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+            transform-origin: center center;
+        }
+        .floating-nav a[download]:hover {
+            transform: scale(1.05) !important;
+        }
+
+        .floating-nav a[href="#contact"] {
+            transition: background 0.2s ease, transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+            transform-origin: center center;
+        }
+        .floating-nav a[href="#contact"]:hover {
+            transform: scale(1.05) !important;
+        }
+
         /* SVG Glass Distortion Effects */
         .effect {
             position: absolute;
