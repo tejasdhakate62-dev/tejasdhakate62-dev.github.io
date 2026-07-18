@@ -199,7 +199,7 @@ Welcome to my digital workspace. I am a Computer Engineering student specializin
   <table border="0">
     <tr>
       <td align="center" valign="top">
-        <img src="https://github-readme-stats.vercel.app/api?username=tejasdhakate62-dev&show_icons=true&theme=radical&bg_color=0f172a&title_color=a855f7&text_color=e2e8f0&icon_color=6366f1&border_color=334155&hide_border=false" alt="Tejas's GitHub Stats" />
+        <img src="https://github-stats-extended.vercel.app/api?username=tejasdhakate62-dev&show_icons=true&theme=radical&bg_color=0f172a&title_color=a855f7&text_color=e2e8f0&icon_color=6366f1&border_color=334155&hide_border=false" alt="Tejas's GitHub Stats" />
       </td>
       <td align="center" valign="top">
         <img src="https://github-readme-streak-stats.herokuapp.com/?user=tejasdhakate62-dev&theme=dark&background=0f172a&fire=a855f7&ring=6366f1&currStreakNum=e2e8f0&sideNums=e2e8f0&sideLabels=e2e8f0&currStreakLabel=a855f7&border=334155&hide_border=false" alt="Tejas's GitHub Streak" />
@@ -207,7 +207,7 @@ Welcome to my digital workspace. I am a Computer Engineering student specializin
     </tr>
   </table>
   <br/>
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=tejasdhakate62-dev&layout=compact&theme=radical&bg_color=0f172a&title_color=a855f7&text_color=e2e8f0&border_color=334155&hide_border=false" alt="Tejas's Top Languages" />
+  <img src="https://github-stats-extended.vercel.app/api/top-langs/?username=tejasdhakate62-dev&layout=compact&theme=radical&bg_color=0f172a&title_color=a855f7&text_color=e2e8f0&border_color=334155&hide_border=false" alt="Tejas's Top Languages" />
 </div>
 
 ---
