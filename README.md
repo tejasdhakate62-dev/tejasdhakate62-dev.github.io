@@ -16,7 +16,7 @@
   <a href="https://linkedin.com/in/tejas-suresh-dhakate">
     <img src="https://img.shields.io/badge/LinkedIn-Connect-1E1E2F?style=for-the-badge&logo=linkedin&logoColor=6366F1" alt="LinkedIn Badge" />
   </a>
-  <a href="https://tejasdhakate62-dev.github.io">
+  <a href="https://tejasdhakate.github.io">
     <img src="https://img.shields.io/badge/Portfolio-Interactive%203D-1E1E2F?style=for-the-badge&logo=react&logoColor=A855F7" alt="Portfolio Badge" />
   </a>
   <br/>
